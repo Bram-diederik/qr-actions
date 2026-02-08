@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Actions</title>
-    
-    <!-- PWA Manifest -->
+
     <link rel="manifest" href="./manifest.json">
-    
+
     <style>
         /* Reset and Base */
         * {
@@ -16,7 +15,7 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: #121212;
@@ -26,7 +25,7 @@
             overflow-x: hidden;
             touch-action: pan-y;
         }
-        
+
         /* Header */
         .header {
             display: flex;
@@ -42,14 +41,14 @@
             top: 0;
             z-index: 100;
         }
-        
+
         .header h1 {
             font-size: 1.4rem;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .stats-badge {
             background: #007bff;
             color: white;
@@ -58,7 +57,7 @@
             font-size: 11px;
             font-weight: bold;
         }
-        
+
         /* Tabs */
         .tabs {
             display: flex;
@@ -68,7 +67,7 @@
             margin-bottom: 15px;
             border: 1px solid #333;
         }
-        
+
         .tab {
             flex: 1;
             padding: 12px;
@@ -84,12 +83,12 @@
             justify-content: center;
             gap: 8px;
         }
-        
+
         .tab.active {
             background: #007bff;
             color: white;
         }
-        
+
         /* Scanner */
         #reader {
             width: 100%;
@@ -100,14 +99,14 @@
             overflow: hidden;
             border: 2px solid #333;
         }
-        
+
         /* Buttons */
         .btn-row {
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
         }
-        
+
         .btn {
             padding: 16px;
             border: none;
@@ -122,23 +121,23 @@
             font-size: 15px;
             transition: transform 0.1s;
         }
-        
+
         .btn:active {
             transform: scale(0.98);
         }
-        
+
         .btn-scan {
             flex: 2;
             background: linear-gradient(135deg, #28a745, #1e7e34);
         }
-        
+
         .btn-upload {
             flex: 1;
             background: linear-gradient(135deg, #444, #2a2a2a);
             position: relative;
             overflow: hidden;
         }
-        
+
         .btn-upload input {
             position: absolute;
             width: 100%;
@@ -146,20 +145,20 @@
             opacity: 0;
             cursor: pointer;
         }
-        
+
         .btn-generate {
             width: 100%;
             background: linear-gradient(135deg, #6f42c1, #5a32a3);
             margin-bottom: 15px;
         }
-        
+
         .btn-stop {
             width: 100%;
             background: linear-gradient(135deg, #dc3545, #c82333);
             margin-bottom: 15px;
             display: none;
         }
-        
+
         /* History Cards */
         .card {
             background: #1e1e1e;
@@ -169,25 +168,25 @@
             margin-bottom: 15px;
             position: relative;
         }
-        
+
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
-        
+
         .badge {
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: bold;
         }
-        
+
         .badge-url { background: rgba(40, 167, 69, 0.2); color: #28a745; }
         .badge-wifi { background: rgba(108, 117, 125, 0.2); color: #6c757d; }
         .badge-text { background: rgba(0, 123, 255, 0.2); color: #007bff; }
-        
+
         .favorite-btn {
             background: none;
             border: none;
@@ -195,32 +194,32 @@
             font-size: 20px;
             cursor: pointer;
         }
-        
+
         .favorite-btn.active {
             color: #ffc107;
         }
-        
+
         .card-content {
             margin-bottom: 15px;
             padding-right: 40px;
         }
-        
+
         .card-actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             gap: 8px;
         }
-        
+
         .btn-small {
             padding: 10px;
             font-size: 13px;
         }
-        
+
         .btn-copy { background: #17a2b8; }
         .btn-open { background: #28a745; }
         .btn-share { background: #007bff; }
         .btn-delete { background: #6c757d; }
-        
+
         /* Overlays */
         .overlay {
             display: none;
@@ -236,7 +235,7 @@
             padding: 20px;
             overflow-y: auto;
         }
-        
+
         .overlay-content {
             background: #222;
             border-radius: 16px;
@@ -247,28 +246,28 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-        
+
         /* Settings */
         .settings-section {
             margin-bottom: 25px;
             padding-bottom: 20px;
             border-bottom: 1px solid #333;
         }
-        
+
         .settings-section h3 {
             margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         label {
             display: block;
             font-size: 13px;
             color: #aaa;
             margin-bottom: 5px;
         }
-        
+
         input, select {
             width: 100%;
             padding: 12px;
@@ -279,20 +278,20 @@
             font-size: 15px;
             margin-bottom: 15px;
         }
-        
+
         /* QR Display */
         #qrCodeDisplay {
             display: none;
             text-align: center;
             margin: 20px 0;
         }
-        
+
         #qrCodeCanvas {
             background: white;
             padding: 20px;
             border-radius: 12px;
         }
-        
+
         /* URL Modal */
         .url-warning {
             background: rgba(220, 53, 69, 0.1);
@@ -301,7 +300,7 @@
             border-radius: 8px;
             margin: 15px 0;
         }
-        
+
         /* Toast */
         .toast {
             position: fixed;
@@ -320,28 +319,28 @@
             align-items: center;
             gap: 10px;
         }
-        
+
         .toast.show {
             transform: translateX(-50%) translateY(0);
         }
-        
+
         .toast.error {
             background: #dc3545;
         }
-        
+
         /* Empty State */
         .empty {
             text-align: center;
             padding: 40px 20px;
             color: #666;
         }
-        
+
         .empty-icon {
             font-size: 48px;
             margin-bottom: 10px;
             opacity: 0.3;
         }
-        
+
         /* Footer */
         .footer {
             text-align: center;
@@ -351,7 +350,7 @@
             border-top: 1px solid #333;
             margin-top: 30px;
         }
-        
+
         .footer-links {
             display: flex;
             justify-content: center;
@@ -359,29 +358,29 @@
             margin: 15px 0;
             flex-wrap: wrap;
         }
-        
+
         .footer a {
             color: #007bff;
             text-decoration: none;
         }
-        
+
         /* Responsive */
         @media (max-width: 500px) {
             .btn {
                 padding: 14px;
                 font-size: 14px;
             }
-            
+
             .card-actions {
                 grid-template-columns: 1fr 1fr;
             }
-            
+
             .header {
                 border-radius: 0;
                 margin: -10px -10px 15px -10px;
             }
         }
-        
+
         /* Install Button */
         .install-btn {
             position: fixed;
@@ -399,13 +398,13 @@
             z-index: 100;
             display: none;
         }
-        
+
         .install-btn.show {
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        
+
         /* Camera Test Buttons */
         .camera-test-buttons {
             display: flex;
@@ -416,26 +415,22 @@
 </head>
 <body>
 
-    <!-- Install Button -->
     <button class="install-btn" id="installBtn" title="Install App">📱</button>
 
-    <!-- Header -->
     <div class="header">
         <h1>📋 QR Actions <span class="statsBadge">0</span></h1>
         <button onclick="toggleSettings()" style="background:none; border:none; color:#888; font-size:24px; cursor:pointer;">⚙️</button>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
         <button class="tab active" onclick="switchTab('scan')">🔍 Scan</button>
         <button class="tab" onclick="switchTab('history')">📜 History</button>
         <button class="tab" onclick="switchTab('favorites')">⭐ Favorites</button>
     </div>
 
-    <!-- Scan Tab -->
     <div id="scanTab">
         <div id="reader"></div>
-        
+
         <div class="btn-row">
             <button class="btn btn-scan" onclick="startScan()" id="scanBtn">📷 Scan QR Code</button>
             <button class="btn btn-upload">
@@ -443,35 +438,32 @@
                 <input type="file" accept="image/*" onchange="uploadImage(event)">
             </button>
         </div>
-        
+
         <button class="btn btn-stop" onclick="stopScan()" id="stopBtn">🛑 Stop Scanning</button>
         <button class="btn btn-generate" onclick="toggleGenerateQR()">🔄 Generate QR Code</button>
     </div>
 
-    <!-- History Tab -->
     <div id="historyTab" style="display:none;">
         <input type="text" placeholder="Search history..." style="width:100%; padding:12px; background:#222; border:1px solid #333; border-radius:8px; color:white; margin-bottom:15px;" oninput="searchHistory(this.value)">
-        
+
         <div id="historyList"></div>
     </div>
 
-    <!-- Favorites Tab -->
     <div id="favoritesTab" style="display:none;">
         <div id="favoritesList"></div>
     </div>
 
-    <!-- Settings Overlay -->
     <div class="overlay" id="settingsOverlay">
         <div class="overlay-content">
             <h2 style="margin-bottom:20px;">⚙️ Settings</h2>
-            
+
             <div class="settings-section">
                 <h3>📷 Camera</h3>
                 <label>Preferred Camera</label>
                 <select id="cameraSelect">
                     <option value="">Default (Environment)</option>
                 </select>
-                
+
                 <div class="camera-test-buttons">
                     <button class="btn btn-small btn-copy" onclick="testCamera()" style="flex:1;">
                         Test Camera
@@ -481,37 +473,37 @@
                     </button>
                 </div>
             </div>
-            
+
             <div class="settings-section">
                 <h3>📜 History</h3>
                 <label>History Limit (0 = Unlimited)</label>
                 <input type="number" id="historyLimit" value="50" min="0">
-                
+
                 <label>Auto-delete after (days)</label>
                 <input type="number" id="autoDelete" value="30" min="0">
             </div>
-            
+
             <div class="settings-section">
                 <h3>🔒 Security</h3>
                 <label>Transmission PIN (optional)</label>
                 <input type="password" id="pin" placeholder="Enter PIN">
-                
+
                 <label style="display:flex; align-items:center; gap:10px; margin:15px 0;">
                     <input type="checkbox" id="maskSensitive" checked>
                     Mask sensitive data
                 </label>
-                
+
                 <h4 style="margin:20px 0 10px 0;">URL Allowlist</h4>
                 <p style="color:#888; font-size:13px; margin-bottom:15px;">URLs matching these prefixes will open directly.</p>
-                
+
                 <div id="allowlistItems" style="margin-bottom:15px;"></div>
-                
+
                 <div style="display:flex; gap:10px;">
                     <input type="text" id="newAllowlist" placeholder="https://example.com/" style="flex:2;">
                     <button class="btn btn-small btn-copy" onclick="addAllowlist()" style="flex:1;">Add</button>
                 </div>
             </div>
-            
+
             <div class="settings-section">
                 <h3>📱 App</h3>
                 <button class="btn btn-share" onclick="installPWA()" style="width:100%; margin-bottom:10px;">
@@ -521,7 +513,7 @@
                     ℹ️ App Info
                 </button>
             </div>
-            
+
             <button class="btn btn-scan" onclick="saveSettings()" style="width:100%; margin-bottom:10px;">
                 💾 Save Settings
             </button>
@@ -534,11 +526,10 @@
         </div>
     </div>
 
-    <!-- Generate QR Overlay -->
     <div class="overlay" id="generateOverlay">
         <div class="overlay-content">
             <h2 style="margin-bottom:20px;">🔄 Generate QR Code</h2>
-            
+
             <label>Type</label>
             <select id="qrType" onchange="changeQRType()" style="margin-bottom:20px;">
                 <option value="text">Text</option>
@@ -547,15 +538,15 @@
                 <option value="contact">Contact</option>
                 <option value="email">Email</option>
             </select>
-            
+
             <div id="qrFields">
                 <input type="text" id="qrContent" placeholder="Enter content..." style="margin-bottom:20px;">
             </div>
-            
+
             <div id="qrCodeDisplay">
                 <canvas id="qrCodeCanvas" width="250" height="250"></canvas>
             </div>
-            
+
             <button class="btn btn-generate" onclick="generateQR()" style="width:100%; margin:20px 0 10px;">
                 Generate QR Code
             </button>
@@ -568,56 +559,52 @@
         </div>
     </div>
 
-    <!-- URL Modal -->
     <div class="overlay" id="urlModal">
         <div class="overlay-content">
             <h2 style="margin-bottom:15px;">🌐 Open URL?</h2>
-            
+
             <div style="background:#000; padding:15px; border-radius:8px; margin-bottom:15px; word-break:break-all;">
                 <code id="modalUrl"></code>
             </div>
-            
+
             <div class="url-warning" id="urlWarning" style="display:none;">
                 ⚠️ This URL is not in your allowlist
             </div>
-            
+
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:20px 0;">
                 <button class="btn btn-open" onclick="openModalUrl()">Open</button>
                 <button class="btn btn-copy" onclick="copyModalUrl()">Copy</button>
             </div>
-            
+
             <label style="display:flex; align-items:center; gap:10px; margin:15px 0;">
                 <input type="checkbox" id="addToAllowlist">
                 Add to allowlist
             </label>
-            
+
             <button class="btn" onclick="closeUrlModal()" style="width:100%; background:#444;">
                 Cancel
             </button>
         </div>
     </div>
 
-    <!-- Toast Container -->
     <div id="toastContainer"></div>
 
-    <!-- Footer -->
     <div class="footer">
-        <strong>QR Actions - Professional QR Scanner</strong>
+        <strong>QR Actions</strong>
         <div class="footer-links">
+            <a href="./index.html">Home</a>
+            <a href="./about.html">About</a>
             <a href="./autoconnect.html">AutoConnect</a>
             <a href="./cookie.html">Cookie Tool</a>
-            <a href="./index.html">Home</a>
-            <a href="#" onclick="showAbout()">About</a>
             <a href="#" onclick="showHelp()">Help</a>
             <a href="#" onclick="toggleSettings()">Settings</a>
             <a href="#" onclick="exportData()">Export</a>
         </div>
         <div style="margin-top:10px; color:#666;">
-            Made by Bram Diederik • PWA • Works offline • No tracking
+            Written by Bram Diederik • PWA • Works offline • No tracking
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
         // ============ APP CONFIGURATION ============
@@ -627,7 +614,7 @@
             FAVORITES_KEY: 'qr_favorites',
             ALLOWLIST_KEY: 'qr_allowlist'
         };
-        
+
         let scanner = null;
         let deferredPrompt = null;
         let currentUrl = null;
@@ -639,14 +626,14 @@
             maskSensitive: true,
             allowlist: ['https://github.com/', 'https://stackoverflow.com/']
         };
-        
+
         // ============ PWA INSTALLATION ============
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             document.getElementById('installBtn').classList.add('show');
         });
-        
+
         async function installPWA() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
@@ -658,30 +645,29 @@
                 deferredPrompt = null;
             }
         }
-        
+
         // ============ SCANNER FUNCTIONS ============
         async function startScan() {
             try {
                 scanner = new Html5Qrcode("reader");
                 const cameras = await Html5Qrcode.getCameras();
-                
-                let cameraId = 'environment'; // Default
-                
+
+                let cameraId = 'environment'; // Default to back camera
+
+                // Persistent Camera Selection logic
                 if (settings.camera && settings.camera !== '') {
-                    // Use saved camera if it exists
                     const savedCameraExists = cameras.some(cam => cam.id === settings.camera);
                     if (savedCameraExists) {
                         cameraId = settings.camera;
                     }
                 } else if (cameras.length > 0) {
-                    // Try to find back camera first
-                    const backCamera = cameras.find(cam => 
-                        cam.label.toLowerCase().includes('back') || 
+                    const backCamera = cameras.find(cam =>
+                        cam.label.toLowerCase().includes('back') ||
                         cam.label.toLowerCase().includes('rear')
                     );
                     cameraId = backCamera ? backCamera.id : cameras[0].id;
                 }
-                
+
                 await scanner.start(
                     cameraId,
                     {
@@ -694,40 +680,40 @@
                     onScanSuccess,
                     () => {}
                 );
-                
+
                 document.getElementById('scanBtn').style.display = 'none';
                 document.getElementById('stopBtn').style.display = 'block';
-                
+
                 showToast('Camera started');
             } catch (err) {
                 showToast('Camera error: ' + err.message, true);
                 console.error('Camera error:', err);
             }
         }
-        
+
         function stopScan() {
             if (scanner) {
                 scanner.stop().then(() => {
                     scanner = null;
                     document.getElementById('scanBtn').style.display = 'block';
                     document.getElementById('stopBtn').style.display = 'none';
-                });
+                }).catch(err => console.error("Error stopping scanner", err));
             }
         }
-        
+
         function onScanSuccess(decodedText) {
             stopScan();
             vibrate();
             saveScan(decodedText);
             showToast('QR code scanned!');
         }
-        
+
         function uploadImage(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
-            const scanner = new Html5Qrcode("reader");
-            scanner.scanFile(file, true)
+
+            const tempScanner = new Html5Qrcode("reader");
+            tempScanner.scanFile(file, true)
                 .then(decodedText => {
                     vibrate();
                     saveScan(decodedText);
@@ -737,11 +723,11 @@
                     showToast('No QR code found', true);
                 });
         }
-        
+
         // ============ SCAN HISTORY ============
         function saveScan(text) {
             let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
-            
+
             history.unshift({
                 id: Date.now(),
                 text: text,
@@ -749,21 +735,19 @@
                 favorite: false,
                 type: detectType(text)
             });
-            
-            // Apply limit
+
             if (settings.historyLimit > 0) {
                 history = history.slice(0, settings.historyLimit);
             }
-            
+
             localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
             updateStats();
-            
-            // Handle URL
+
             if (text.startsWith('http')) {
                 handleUrl(text);
             }
         }
-        
+
         function detectType(text) {
             if (text.startsWith('http')) return 'url';
             if (text.startsWith('WIFI:')) return 'wifi';
@@ -772,17 +756,14 @@
             if (text.includes('@')) return 'email';
             return 'text';
         }
-        
+
         function toggleFavorite(id) {
             let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
             const index = history.findIndex(item => item.id === id);
-            
+
             if (index !== -1) {
                 history[index].favorite = !history[index].favorite;
                 localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
-                localStorage.setItem(CONFIG.FAVORITES_KEY, JSON.stringify(
-                    history.filter(item => item.favorite)
-                ));
                 
                 renderHistory();
                 renderFavorites();
@@ -790,29 +771,29 @@
                 showToast(history[index].favorite ? 'Added to favorites' : 'Removed from favorites');
             }
         }
-        
+
         function deleteScan(id) {
             let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
             history = history.filter(item => item.id !== id);
             localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
-            
+
             renderHistory();
             renderFavorites();
             updateStats();
             showToast('Scan deleted', true);
         }
-        
+
         function renderHistory(search = '') {
             const container = document.getElementById('historyList');
             let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
-            
+
             if (search) {
-                history = history.filter(item => 
+                history = history.filter(item =>
                     item.text.toLowerCase().includes(search.toLowerCase()) ||
                     item.date.toLowerCase().includes(search.toLowerCase())
                 );
             }
-            
+
             if (history.length === 0) {
                 container.innerHTML = `
                     <div class="empty">
@@ -822,7 +803,7 @@
                 `;
                 return;
             }
-            
+
             container.innerHTML = history.map(item => `
                 <div class="card">
                     <div class="card-header">
@@ -831,11 +812,11 @@
                             ${item.favorite ? '⭐' : '☆'}
                         </button>
                     </div>
-                    
+
                     <div class="card-content">
                         ${formatContent(item.text, item.type)}
                     </div>
-                    
+
                     <div class="card-actions">
                         <button class="btn btn-small btn-copy" onclick="copyText('${escapeText(item.text)}')">
                             📋 Copy
@@ -852,21 +833,21 @@
                             🗑️ Delete
                         </button>
                     </div>
-                    
+
                     <div style="font-size:12px; color:#666; margin-top:10px;">
                         📅 ${item.date}
                     </div>
                 </div>
             `).join('');
         }
-        
+
         function formatContent(text, type) {
             if (type === 'wifi') {
                 const wifi = parseWifi(text);
                 return `
                     <div>
                         <strong>WiFi:</strong> ${wifi.ssid || 'Unknown'}<br>
-                        <strong>Password:</strong> 
+                        <strong>Password:</strong>
                         <span onclick="this.classList.toggle('show')" style="filter:blur(5px); cursor:pointer; background:#333; padding:2px 6px; border-radius:4px;">
                             ${wifi.password || 'None'}
                         </span>
@@ -875,7 +856,7 @@
             }
             return `<code style="word-break:break-all; background:#000; padding:8px; border-radius:6px; display:block;">${text}</code>`;
         }
-        
+
         function parseWifi(text) {
             const result = { ssid: '', password: '' };
             const parts = text.replace('WIFI:', '').split(';');
@@ -885,16 +866,16 @@
             });
             return result;
         }
-        
+
         function searchHistory(query) {
             renderHistory(query);
         }
-        
+
         function renderFavorites() {
             const container = document.getElementById('favoritesList');
             const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
             const favorites = history.filter(item => item.favorite);
-            
+
             if (favorites.length === 0) {
                 container.innerHTML = `
                     <div class="empty">
@@ -904,7 +885,7 @@
                 `;
                 return;
             }
-            
+
             container.innerHTML = favorites.map(item => `
                 <div class="card" style="border-color:#ffc107;">
                     <div class="card-header">
@@ -913,11 +894,11 @@
                             ⭐
                         </button>
                     </div>
-                    
+
                     <div class="card-content">
                         ${formatContent(item.text, item.type)}
                     </div>
-                    
+
                     <div class="card-actions">
                         <button class="btn btn-small btn-copy" onclick="copyText('${escapeText(item.text)}')">
                             📋 Copy
@@ -934,19 +915,18 @@
                 </div>
             `).join('');
         }
-        
+
         // ============ URL HANDLING ============
         function handleUrl(url) {
             currentUrl = url;
             document.getElementById('modalUrl').textContent = url;
-            
-            // Check if in allowlist
+
             const isAllowed = settings.allowlist.some(prefix => url.startsWith(prefix));
             document.getElementById('urlWarning').style.display = isAllowed ? 'none' : 'block';
-            
+
             document.getElementById('urlModal').style.display = 'flex';
         }
-        
+
         function openModalUrl() {
             if (currentUrl) {
                 if (document.getElementById('addToAllowlist').checked) {
@@ -956,20 +936,20 @@
                 closeUrlModal();
             }
         }
-        
+
         function copyModalUrl() {
             if (currentUrl) {
                 copyText(currentUrl);
                 closeUrlModal();
             }
         }
-        
+
         function closeUrlModal() {
             document.getElementById('urlModal').style.display = 'none';
             currentUrl = null;
             document.getElementById('addToAllowlist').checked = false;
         }
-        
+
         // ============ ALLOWLIST MANAGEMENT ============
         function renderAllowlist() {
             const container = document.getElementById('allowlistItems');
@@ -980,16 +960,16 @@
                 </div>
             `).join('');
         }
-        
+
         function addAllowlist() {
             const input = document.getElementById('newAllowlist');
             const prefix = input.value.trim();
-            
+
             if (!prefix.startsWith('http')) {
                 showToast('URL must start with http:// or https://', true);
                 return;
             }
-            
+
             if (!settings.allowlist.includes(prefix)) {
                 settings.allowlist.push(prefix);
                 renderAllowlist();
@@ -997,20 +977,18 @@
                 showToast('Added to allowlist');
             }
         }
-        
+
         function addToAllowlist(url) {
-            // Find base URL for allowlist
             try {
                 const urlObj = new URL(url);
                 const baseUrl = `${urlObj.protocol}//${urlObj.hostname}/`;
-                
+
                 if (!settings.allowlist.includes(baseUrl)) {
                     settings.allowlist.push(baseUrl);
                     renderAllowlist();
                     showToast('Added to allowlist');
                 }
             } catch (e) {
-                // If not a valid URL, use the string as prefix
                 if (!settings.allowlist.includes(url)) {
                     settings.allowlist.push(url);
                     renderAllowlist();
@@ -1018,23 +996,23 @@
                 }
             }
         }
-        
+
         function removeAllowlist(index) {
             settings.allowlist.splice(index, 1);
             renderAllowlist();
             showToast('Removed from allowlist', true);
         }
-        
+
         // ============ QR GENERATION ============
         function toggleGenerateQR() {
-            document.getElementById('generateOverlay').style.display = 
+            document.getElementById('generateOverlay').style.display =
                 document.getElementById('generateOverlay').style.display === 'flex' ? 'none' : 'flex';
         }
-        
+
         function changeQRType() {
             const type = document.getElementById('qrType').value;
             const qrFields = document.getElementById('qrFields');
-            
+
             if (type === 'wifi') {
                 qrFields.innerHTML = `
                     <input type="text" id="wifiSsid" placeholder="Network name (SSID)" style="margin-bottom:10px;">
@@ -1063,11 +1041,11 @@
                 `;
             }
         }
-        
+
         async function generateQR() {
             const type = document.getElementById('qrType').value;
             let content = '';
-            
+
             switch(type) {
                 case 'text':
                 case 'url':
@@ -1077,7 +1055,7 @@
                         return;
                     }
                     break;
-                    
+
                 case 'wifi':
                     const ssid = document.getElementById('wifiSsid').value;
                     const password = document.getElementById('wifiPassword').value;
@@ -1088,7 +1066,7 @@
                     }
                     content = `WIFI:S:${ssid};T:${security};P:${password};;`;
                     break;
-                    
+
                 case 'contact':
                     const name = document.getElementById('contactName').value;
                     const phone = document.getElementById('contactPhone').value;
@@ -1102,7 +1080,7 @@
                     if (email) content += `\nEMAIL:${email}`;
                     content += `\nEND:VCARD`;
                     break;
-                    
+
                 case 'email':
                     const to = document.getElementById('emailTo').value;
                     const subject = document.getElementById('emailSubject').value;
@@ -1121,24 +1099,22 @@
                     }
                     break;
             }
-            
-            // Generate QR code
+
             await loadQRCodeLibrary();
-            
+
             const qr = qrcode(0, 'M');
             qr.addData(content);
             qr.make();
-            
+
             const canvas = document.getElementById('qrCodeCanvas');
             const ctx = canvas.getContext('2d');
             const size = 250;
             const scale = 10;
             const qrSize = qr.getModuleCount();
-            
-            // Clear and draw
+
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, size, size);
-            
+
             ctx.fillStyle = '#000000';
             for (let y = 0; y < qrSize; y++) {
                 for (let x = 0; x < qrSize; x++) {
@@ -1151,14 +1127,14 @@
                     }
                 }
             }
-            
+
             document.getElementById('qrCodeDisplay').style.display = 'block';
             document.getElementById('downloadBtn').disabled = false;
             canvas.dataset.content = content;
-            
+
             showToast('QR code generated!');
         }
-        
+
         function downloadQR() {
             const canvas = document.getElementById('qrCodeCanvas');
             const link = document.createElement('a');
@@ -1167,7 +1143,7 @@
             link.click();
             showToast('QR code saved');
         }
-        
+
         async function loadQRCodeLibrary() {
             if (typeof qrcode === 'undefined') {
                 await new Promise((resolve, reject) => {
@@ -1179,65 +1155,52 @@
                 });
             }
         }
-        
+
         // ============ SETTINGS ============
         function loadSettings() {
             const saved = localStorage.getItem(CONFIG.SETTINGS_KEY);
             if (saved) {
                 settings = { ...settings, ...JSON.parse(saved) };
             }
-            
-            // Update UI
+
             document.getElementById('historyLimit').value = settings.historyLimit;
             document.getElementById('autoDelete').value = settings.autoDeleteDays;
             document.getElementById('pin').value = settings.pin;
             document.getElementById('maskSensitive').checked = settings.maskSensitive;
-            
+
             renderAllowlist();
-            
-            // Load cameras and set selection
-            loadCameras().then(() => {
-                // Set camera selection after cameras are loaded
-                const cameraSelect = document.getElementById('cameraSelect');
-                if (settings.camera && cameraSelect) {
-                    cameraSelect.value = settings.camera;
-                }
-            });
+
+            // Setup camera select list and pre-select saved ID
+            loadCameras();
         }
-        
+
         function saveSettings() {
-            // Get camera selection
             const cameraSelect = document.getElementById('cameraSelect');
             settings.camera = cameraSelect.value || '';
-            
-            // Get other settings
+
             settings.historyLimit = parseInt(document.getElementById('historyLimit').value) || 50;
             settings.autoDeleteDays = parseInt(document.getElementById('autoDelete').value) || 30;
             settings.pin = document.getElementById('pin').value;
             settings.maskSensitive = document.getElementById('maskSensitive').checked;
-            
-            // Save to localStorage
+
             localStorage.setItem(CONFIG.SETTINGS_KEY, JSON.stringify(settings));
             showToast('Settings saved');
             toggleSettings();
-            
-            // Clean old scans
+
             cleanupOldScans();
         }
-        
+
         async function loadCameras() {
             try {
                 const cameras = await Html5Qrcode.getCameras();
                 const select = document.getElementById('cameraSelect');
                 select.innerHTML = '<option value="">Default (Environment)</option>';
-                
+
                 cameras.forEach(camera => {
                     const option = document.createElement('option');
                     option.value = camera.id;
-                    // Extract camera name from label (remove device IDs etc.)
                     let label = camera.label;
                     if (label) {
-                        // Remove device IDs for cleaner display
                         label = label.split('(')[0].trim();
                         label = label.split('id=')[0].trim();
                         if (label.length > 30) label = label.substring(0, 30) + '...';
@@ -1245,17 +1208,14 @@
                     option.text = label || `Camera ${select.length}`;
                     select.appendChild(option);
                 });
-                
-                // Set the selected camera if it exists
+
+                // Apply persisted camera ID from settings
                 if (settings.camera) {
-                    // Check if the saved camera still exists
                     const cameraExists = cameras.some(cam => cam.id === settings.camera);
                     if (cameraExists) {
                         select.value = settings.camera;
                     } else {
-                        // Camera not found, clear the setting
                         settings.camera = '';
-                        select.value = '';
                     }
                 }
             } catch (err) {
@@ -1263,53 +1223,52 @@
                 showToast('Could not load camera list', true);
             }
         }
-        
+
         function testCamera() {
-            // Show a preview without scanning
-            const previewDiv = document.getElementById('reader');
             if (scanner) {
                 showToast('Camera already active');
                 return;
             }
-            
+
             startScan().then(() => {
                 setTimeout(() => {
                     if (scanner) stopScan();
-                }, 3000); // Auto-stop after 3 seconds
+                }, 3000); 
             });
         }
-        
+
         function resetCamera() {
             settings.camera = '';
             document.getElementById('cameraSelect').value = '';
+            localStorage.setItem(CONFIG.SETTINGS_KEY, JSON.stringify(settings));
             showToast('Camera preference reset');
         }
-        
+
         function cleanupOldScans() {
             if (settings.autoDeleteDays <= 0) return;
-            
+
             let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
             const cutoff = Date.now() - (settings.autoDeleteDays * 24 * 60 * 60 * 1000);
-            
+
             const originalCount = history.length;
             history = history.filter(item => item.id > cutoff);
-            
+
             if (history.length < originalCount) {
                 localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
                 updateStats();
                 showToast(`Cleaned ${originalCount - history.length} old scans`);
             }
         }
-        
+
         function toggleSettings() {
-            document.getElementById('settingsOverlay').style.display = 
-                document.getElementById('settingsOverlay').style.display === 'flex' ? 'none' : 'flex';
-            
-            if (document.getElementById('settingsOverlay').style.display === 'flex') {
+            const overlay = document.getElementById('settingsOverlay');
+            overlay.style.display = overlay.style.display === 'flex' ? 'none' : 'flex';
+
+            if (overlay.style.display === 'flex') {
                 loadSettings();
             }
         }
-        
+
         function clearAllData() {
             if (confirm('Delete ALL data including history, favorites, and settings?')) {
                 localStorage.clear();
@@ -1317,15 +1276,14 @@
                 setTimeout(() => location.reload(), 1000);
             }
         }
-        
+
         // ============ UTILITIES ============
         function updateStats() {
             const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
             const favorites = history.filter(item => item.favorite).length;
-            
+
             document.querySelector('.statsBadge').textContent = history.length;
-            
-            // Update tab badges
+
             document.querySelectorAll('.tab').forEach(tab => {
                 if (tab.textContent.includes('History')) {
                     tab.innerHTML = `📜 History <span style="font-size:10px; background:#28a745; color:white; padding:2px 6px; border-radius:10px;">${history.length}</span>`;
@@ -1335,28 +1293,23 @@
                 }
             });
         }
-        
+
         function switchTab(tabName) {
-            // Hide all tabs
             document.getElementById('scanTab').style.display = 'none';
             document.getElementById('historyTab').style.display = 'none';
             document.getElementById('favoritesTab').style.display = 'none';
-            
-            // Remove active class
+
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            
-            // Show selected tab
+
             document.getElementById(tabName + 'Tab').style.display = 'block';
-            
-            // Mark button as active
+
             document.querySelectorAll('.tab').forEach(tab => {
-                if (tab.textContent.includes(tabName === 'scan' ? 'Scan' : 
-                                           tabName === 'history' ? 'History' : 'Favorites')) {
+                const label = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+                if (tab.textContent.includes(label)) {
                     tab.classList.add('active');
                 }
             });
-            
-            // Load content
+
             if (tabName === 'history') {
                 renderHistory();
             } else if (tabName === 'favorites') {
@@ -1365,12 +1318,11 @@
                 stopScan();
             }
         }
-        
+
         function copyText(text) {
             navigator.clipboard.writeText(text).then(() => {
                 showToast('Copied to clipboard');
             }).catch(() => {
-                // Fallback
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
                 document.body.appendChild(textarea);
@@ -1380,7 +1332,7 @@
                 showToast('Copied to clipboard');
             });
         }
-        
+
         function shareScan(text) {
             if (navigator.share) {
                 navigator.share({
@@ -1391,44 +1343,40 @@
                 copyText(text);
             }
         }
-        
+
         function vibrate() {
             if (navigator.vibrate) {
                 navigator.vibrate(50);
             }
         }
-        
+
         function showToast(message, isError = false) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = 'toast' + (isError ? ' error' : '');
             toast.innerHTML = `${isError ? '❌' : '✓'} ${message}`;
             container.appendChild(toast);
-            
+
             setTimeout(() => toast.classList.add('show'), 10);
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
-        
+
         function escapeText(text) {
             return text.replace(/'/g, "\\'").replace(/"/g, '\\"');
         }
-        
-        function showAbout() {
-            alert('QR Actions v2.0\n\nA professional QR code scanner and generator that works offline.\n\nFeatures:\n• Scan QR codes with camera\n• Upload images to scan\n• Generate QR codes\n• History and favorites\n• URL allowlist for safe opening\n• PWA - Install on home screen\n• Camera preferences saved\n\n100% offline - no data collection!');
-        }
-        
+
         function showHelp() {
-            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n3. Scan results save automatically\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙️ SETTINGS:\n• Set preferred camera (saved automatically)\n• Set URL allowlist for safe opening\n• Configure history limits\n• Install as PWA\n\n🔄 GENERATE:\nCreate QR codes for WiFi, contacts, URLs, and more\n\nAll data stays on your device!');
+            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙️ SETTINGS:\n• Set and save preferred camera\n• Configure history limits\n\nAll data stays on your device!');
         }
-        
+
         function showAppInfo() {
             const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
-            alert(`App Information:\n\nScans: ${history.length}\nFavorites: ${history.filter(item => item.favorite).length}\nAllowlist: ${settings.allowlist.length} URLs\n\nStorage: ${(JSON.stringify(localStorage).length / 1024).toFixed(2)} KB\n\nInstall from browser menu or Settings page.`);
+            alert(`App Information:\n\nScans: ${history.length}\nFavorites: ${history.filter(item => item.favorite).length}\nStorage: ${(JSON.stringify(localStorage).length / 1024).toFixed(2)} KB`);
         }
-        
+
         function exportData() {
             const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
             const data = JSON.stringify(history, null, 2);
@@ -1441,33 +1389,25 @@
             URL.revokeObjectURL(url);
             showToast('Data exported');
         }
-        
+
         // ============ INITIALIZATION ============
         document.addEventListener('DOMContentLoaded', function() {
-            // Load settings
             loadSettings();
-            
-            // Update stats
             updateStats();
-            
-            // Show scan tab
             switchTab('scan');
-            
-            // Setup service worker for PWA
+
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('./sw.js').catch(console.error);
             }
-            
-            // Show welcome message
+
             if (!localStorage.getItem('welcome_shown')) {
                 setTimeout(() => {
-                    showToast('Welcome to QR Actions! Tap Settings to install as app.');
+                    showToast('Welcome to QR Actions!');
                 }, 1000);
                 localStorage.setItem('welcome_shown', 'true');
             }
         });
-        
-        // Handle offline/online
+
         window.addEventListener('offline', () => showToast('Working offline', true));
         window.addEventListener('online', () => showToast('Back online'));
     </script>
