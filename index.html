@@ -3,63 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QR Actions</title>
+    <title>QR ACTIONS</title>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <style>
-        :root { --bg: #121212; --card: #1e1e1e; --accent: #007bff; --green: #28a745; --red: #dc3545; --grey: #444; }
-        body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; text-align: center; min-height: 100vh; display: flex; flex-direction: column; }
-        #authOverlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        :root { --bg: #121212; --card: #1e1e1e; --accent: #007bff; --green: #28a745; --red: #dc3545; --orange: #fd7e14; --grey: #444; }
+        body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; min-height: 100vh; }
+        #authOverlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
         .pin-btn { width: 60px; height: 60px; border-radius: 50%; border: 1px solid #444; background: #222; color: white; font-size: 20px; font-weight: bold; cursor: pointer; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px; max-width: 500px; margin: 0 auto; width: 100%; box-sizing: border-box; }
-        .settings-icon { font-size: 24px; cursor: pointer; background: none; border: none; color: #888; padding: 10px; }
-        #settingsOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; justify-content: center; align-items: center; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px; max-width: 500px; margin: 0 auto; width: 100%; }
+        #settingsOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
         .settings-content { background: #222; padding: 25px; border-radius: 15px; width: 85%; max-width: 350px; border: 1px solid #444; text-align: left; }
         #reader { width: 100%; max-width: 450px; margin: auto; border-radius: 12px; overflow: hidden; background: #000; min-height: 250px; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-top: 8px; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; text-decoration: none; }
-        .qr-card { background: var(--card); border: 1px solid #333; padding: 15px; margin: 12px auto; max-width: 450px; border-radius: 10px; text-align: left; position: relative; }
-        code { background: #000; padding: 8px; color: #0f0; word-break: break-all; border-radius: 4px; font-family: monospace; display: block; margin: 10px 0; font-size: 12px; border: 1px solid #333; }
-        input, select { padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 5px; font-size: 16px; }
-        .val-msg { font-size: 12px; margin-bottom: 12px; height: 15px; }
-        footer { margin-top: auto; padding: 20px; font-size: 0.85em; color: #666; }
-        footer a { color: var(--accent); text-decoration: none; margin: 0 5px; }
-        #stopBtn { display: none; background: var(--red); margin-top: 10px; }
+        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-top: 8px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; font-size: 14px; box-sizing: border-box; }
+        .qr-card { background: var(--card); border: 1px solid #333; padding: 15px; margin: 12px auto; max-width: 450px; border-radius: 10px; position: relative; text-align: left; }
+        .inspect-box { background: #111; border-left: 3px solid var(--accent); padding: 10px; margin-top: 10px; font-size: 13px; border-radius: 4px; overflow-wrap: break-word; line-height: 1.6; }
+        code { background: #000; padding: 8px; color: #0f0; word-break: break-all; border-radius: 4px; display: block; margin: 10px 0; font-family: monospace; font-size: 11px; white-space: pre-wrap; }
+        input, select { padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 8px; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        .act-link { color: var(--accent); text-decoration: underline; cursor: pointer; display: block; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
     <div id="authOverlay">
-        <h2>🔒 Locked</h2>
+        <h2>🔒 Vault Locked</h2>
         <div id="pinDisplay" style="font-size: 30px; letter-spacing: 10px; height: 40px; margin: 20px 0;"></div>
         <div class="pin-pad" id="pinPad"></div>
         <button class="btn" style="background:#600; width:auto; margin-top:20px;" onclick="nuke(false)">Nuke Data</button>
     </div>
 
-    <div id="app">
+    <div id="app" style="display:none;">
         <div class="header">
-            <h2 style="margin:0;">📋 QR Actions</h2>
-            <button class="settings-icon" onclick="toggleSettings()">⚙️</button>
+            <h2 style="margin:0;">📋 QR ACTIONS</h2>
+            <button onclick="toggleSettings()" style="background:none; border:none; font-size:24px; cursor:pointer;">⚙️</button>
         </div>
 
         <div id="settingsOverlay">
             <div class="settings-content">
                 <h3 style="margin-top:0;">Settings</h3>
-                
-                <label>NEW VAULT PIN (App Lock)</label>
-                <input type="password" id="vPin1" placeholder="Enter PIN" oninput="validatePins()">
+                <label>VAULT PIN (App Lock)</label>
+                <input type="password" id="vPin1" placeholder="New PIN" oninput="validatePins()">
                 <input type="password" id="vPin2" placeholder="Confirm PIN" oninput="validatePins()">
-                <div id="valMsg" class="val-msg"></div>
-                
+                <div id="valMsg" style="font-size:12px; height:15px; margin-bottom:10px;"></div>
                 <label>STATION PIN (Plain Text)</label>
-                <input type="text" id="bPin" placeholder="For listener script">
-                <div style="font-size:10px; color:#888; margin-bottom:12px;">Appended to Line 2 of shared text.</div>
-
-                <label>HISTORY LIMIT (0 = None)</label>
-                <input type="number" id="hLimit" value="15" min="0">
-
-                <label>CAMERA SENSOR</label>
-                <select id="cameraSelect"></select>
-
+                <input type="text" id="bPin" placeholder="Station Script PIN">
                 <button id="saveBtn" class="btn" style="background:var(--accent);" onclick="saveSettings()">Save & Close</button>
                 <button class="btn" style="background:#600;" onclick="nuke(false)">⚠️ Nuke All Data</button>
                 <button class="btn" style="background:transparent;" onclick="toggleSettings()">Cancel</button>
@@ -67,37 +55,26 @@
         </div>
 
         <div id="reader"></div>
-        <button id="stopBtn" class="btn" onclick="stopScan()">🛑 Stop Scanning</button>
+        <button id="stopBtn" class="btn" style="display:none; background:var(--red);" onclick="stopScan()">🛑 Stop Scanning</button>
 
-        <div id="controls" class="action-row" style="display:flex; gap:10px; max-width:450px; margin: 10px auto;">
+        <div style="display:flex; gap:10px; max-width:450px; margin: 10px auto;">
             <button class="btn" style="background:var(--green); flex:2;" onclick="startScan()">📷 Scan</button>
             <div class="btn" style="background:var(--grey); flex:1; position:relative; overflow:hidden;">📁 Upload<input type="file" style="position:absolute; inset:0; opacity:0;" onchange="upload(event)"></div>
         </div>
         
         <div id="history"></div>
-
-        <footer>
-            By Bram Diederik<br>
-            <a href="about.html">About</a> | <a href="autoconnect.html">Setup</a> | <a href="cookie.html">Cookies</a>
-        </footer>
     </div>
 
     <script>
         /**
-         * PRODUCTION PROTOCOL FOR LLM COLLABORATORS:
-         * 1. STORAGE KEYS (HIST_KEY, AUTH_KEY, BT_KEY, CAM_KEY, LIMIT_KEY) ARE PERMANENT. DO NOT CHANGE.
-         * 2. DUAL PIN LOGIC: AUTH_KEY is the internal hash/pin for the app UI. BT_KEY is the plain-text PIN shared via shareData().
-         * 3. UI PROTECTION: vPin1 and vPin2 must match before saveSettings() is allowed.
-         * 4. BASH COMPATIBILITY: The shareData() function must keep the PIN on the second line for script parsing.
-         * 5. DATA SAFETY: nuke() MUST require double user confirmation.
-         * 6. SCANNER CONTROL: Do not remove stopScan() button functionality.
+         * PRODUCTION PROTOCOL - QR ACTIONS:
+         * 1. VCARD: Must parse Name, Tel, Email, URL.
+         * 2. SHARING: Filename format QR_YYYYMMDD_HHMMSS.txt + Station PIN on Line 2.
+         * 3. UPLOAD: fileScanner must be cleared after scan.
          */
-
-        const HIST_KEY = 'qr_history'; 
-        const AUTH_KEY = 'qr_auth_pin'; 
-        const BT_KEY = 'qr_bt_pin';     
-        const CAM_KEY = 'qr_camera_id';
-        const LIMIT_KEY = 'qr_history_limit';
+        const HIST_KEY = 'qr_history';
+        const AUTH_KEY = 'qr_auth_pin';
+        const BT_KEY = 'qr_bt_pin';
 
         let tempPin = "";
         let html5QrCode = null;
@@ -105,24 +82,95 @@
         function validatePins() {
             const p1 = document.getElementById('vPin1').value;
             const p2 = document.getElementById('vPin2').value;
-            const msg = document.getElementById('valMsg');
             const btn = document.getElementById('saveBtn');
+            const match = (p1 === p2 && p1 !== "");
+            btn.disabled = !match;
+            btn.style.opacity = match ? "1" : "0.5";
+            document.getElementById('valMsg').innerText = match ? "✅ Match" : "❌ No Match";
+            document.getElementById('valMsg').style.color = match ? "var(--green)" : "var(--red)";
+        }
 
-            if (p1 === "" && p2 === "") {
-                msg.innerText = "";
-                btn.disabled = false;
-                btn.style.opacity = "1";
-            } else if (p1 !== p2) {
-                msg.innerText = "❌ PINs do not match";
-                msg.style.color = "var(--red)";
-                btn.disabled = true;
-                btn.style.opacity = "0.5";
+        function getQRType(text) {
+            if (text.startsWith('http')) return { type: 'URL', icon: '🔗' };
+            if (text.includes('BEGIN:VCARD')) return { type: 'VCARD', icon: '👤' };
+            if (text.includes('BEGIN:VEVENT')) return { type: 'EVENT', icon: '📅' };
+            if (text.startsWith('WIFI:')) return { type: 'WIFI', icon: '📶' };
+            if (text.startsWith('geo:')) return { type: 'GEO', icon: '📍' };
+            if (text.startsWith('mailto:')) return { type: 'EMAIL', icon: '✉️' };
+            if (text.startsWith('tel:')) return { type: 'PHONE', icon: '📞' };
+            if (text.startsWith('sms:')) return { type: 'SMS', icon: '📱' };
+            if (text.match(/^(bitcoin:|bc1|[13])[a-zA-HJ-NP-Z0-9]/)) return { type: 'BITCOIN', icon: '₿' };
+            if (text.startsWith('0x')) return { type: 'ETHEREUM', icon: 'Ξ' };
+            return { type: 'TEXT', icon: '📄' };
+        }
+
+        function parseActions(text, typeInfo) {
+            let html = `<span class="tag" style="background:var(--accent)">${typeInfo.icon} ${typeInfo.type}</span><br>`;
+            
+            if (typeInfo.type === 'VCARD') {
+                const fn = text.match(/FN:(.*)/)?.[1] || "Contact";
+                const tel = text.match(/TEL.*:(.*)/)?.[1] || "";
+                const em = text.match(/EMAIL.*:(.*)/)?.[1] || "";
+                const url = text.match(/URL.*:(.*)/)?.[1] || "";
+                html += `<b>${fn}</b><br>`;
+                if (tel) html += `<a class="act-link" href="tel:${tel.trim()}">📞 Call: ${tel}</a>`;
+                if (em) html += `<a class="act-link" href="mailto:${em.trim()}">✉️ Email: ${em}</a>`;
+                if (url) html += `<a class="act-link" href="${url.trim()}" target="_blank">🌐 Website</a>`;
+            } else if (typeInfo.type === 'URL') {
+                html += `<a href="${text}" target="_blank" class="act-link">Visit Website</a>`;
+                html += `<a href="https://www.virustotal.com/gui/url/${btoa(text).replace(/=/g,"")}" target="_blank" style="color:var(--orange)">🛡️ Virus Scan</a>`;
+            } else if (typeInfo.type === 'GEO') {
+                const clean = text.replace('geo:', '').split('?')[0];
+                html += `<a href="https://www.google.com/maps/search/?api=1&query=${clean}" target="_blank" class="act-link">📍 View on Google Maps</a>`;
+            } else if (typeInfo.type === 'WIFI') {
+                const ssid = text.match(/S:(.*?);/)?.[1] || "Hidden";
+                const pass = text.match(/P:(.*?);/)?.[1] || "";
+                html += `<b>SSID:</b> ${ssid}<br><b>Pass:</b> ${pass}`;
             } else {
-                msg.innerText = "✅ PINs match";
-                msg.style.color = "var(--green)";
-                btn.disabled = false;
-                btn.style.opacity = "1";
+                html += `<i>Raw Data Inspection Available Below</i>`;
             }
+            return `<div class="inspect-box">${html}</div>`;
+        }
+
+        async function shareData(id) {
+            const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+            const item = items.find(i => i.id === id);
+            const btPin = localStorage.getItem(BT_KEY);
+            const payload = item.text + (btPin ? `\nPIN: ${btPin}` : "");
+            const now = new Date();
+            const ts = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + "_" + 
+                       String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0') + String(now.getSeconds()).padStart(2,'0');
+            if (navigator.share) {
+                const file = new File([payload], `QR_${ts}.txt`, { type: 'text/plain' });
+                try { await navigator.share({ files: [file], title: `Export_${ts}` }); } catch(e) {}
+            }
+        }
+
+        function render() {
+            const container = document.getElementById('history');
+            const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+            container.innerHTML = items.length ? "" : "<p style='color:#666'>History Empty</p>";
+            items.forEach(item => {
+                const typeInfo = getQRType(item.text);
+                const div = document.createElement('div');
+                div.className = 'qr-card';
+                div.innerHTML = `
+                    <button style="position:absolute; top:10px; right:10px; background:none; border:none; color:#666;" onclick="del(${item.id})">🗑</button>
+                    <small style="color:#888">${item.date}</small>
+                    <code>${item.text}</code>
+                    ${parseActions(item.text, typeInfo)}
+                    <div style="display:flex; gap:8px; margin-top:10px;">
+                        <button class="btn" style="background:#444; margin:0;" onclick="copy('${item.text.replace(/'/g,"\\'")}')">Copy</button>
+                        <button class="btn" style="background:var(--accent); margin:0;" onclick="shareData(${item.id})">📤 Share</button>
+                    </div>`;
+                container.appendChild(div);
+            });
+        }
+
+        function unlock() {
+            document.getElementById('authOverlay').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            tempPin = ""; render();
         }
 
         function checkAuth() {
@@ -131,7 +179,7 @@
                 document.getElementById('app').style.display = 'none';
                 document.getElementById('authOverlay').style.display = 'flex';
                 renderPinPad();
-            } else { render(); }
+            } else { unlock(); }
         }
 
         function renderPinPad() {
@@ -139,16 +187,12 @@
             pad.innerHTML = "";
             [1,2,3,4,5,6,7,8,9,'C',0,'OK'].forEach(v => {
                 const b = document.createElement('button');
-                b.className = 'pin-btn';
-                b.innerText = v;
+                b.className = 'pin-btn'; b.innerText = v;
                 b.onclick = () => {
                     if (v === 'C') tempPin = "";
                     else if (v === 'OK') {
-                        if (tempPin === localStorage.getItem(AUTH_KEY)) {
-                            document.getElementById('app').style.display = 'block';
-                            document.getElementById('authOverlay').style.display = 'none';
-                            render();
-                        } else { alert("Locked"); tempPin = ""; }
+                        if (tempPin === localStorage.getItem(AUTH_KEY)) unlock();
+                        else { tempPin = ""; document.getElementById('pinDisplay').innerText = ""; alert("Failed"); }
                     } else if (tempPin.length < 8) tempPin += v;
                     document.getElementById('pinDisplay').innerText = "*".repeat(tempPin.length);
                 };
@@ -156,140 +200,47 @@
             });
         }
 
-async function shareData(id) {
-    const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-    const item = items.find(i => i.id === id);
-    const btPin = localStorage.getItem(BT_KEY);
-    
-    // Formatted for station script: Line 1 = Data, Line 2 = Shared PIN
-    const payload = item.text + (btPin ? `\nPIN: ${btPin}` : "");
-
-    // GENERATE UNIQUE FILENAME WITH SECONDS
-    const now = new Date();
-    const ts = now.getFullYear() + 
-               String(now.getMonth() + 1).padStart(2, '0') + 
-               String(now.getDate()).padStart(2, '0') + "_" +
-               String(now.getHours()).padStart(2, '0') + 
-               String(now.getMinutes()).padStart(2, '0') + 
-               String(now.getSeconds()).padStart(2, '0');
-    const fileName = `QR_${ts}.txt`;
-
-    if (navigator.share) {
-        const file = new File([payload], fileName, { type: 'text/plain' });
-        try { 
-            await navigator.share({ 
-                files: [file], 
-                title: 'Share QR Data',
-                text: fileName // Included in metadata for the station script
-            }); 
-        } catch(e) {
-            console.error("Share failed", e);
-        }
-    } else {
-        alert("Web Share API not supported on this browser.");
-    }
-}
-
-        function render() {
-            const container = document.getElementById('history');
-            const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            container.innerHTML = items.length ? "" : "<p style='color:#666'>History Empty</p>";
-            items.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'qr-card';
-                div.innerHTML = `
-                    <button style="position:absolute; top:10px; right:10px; background:none; border:none; color:#666;" onclick="del(${item.id})">🗑</button>
-                    <small style="color:#888">${item.date}</small>
-                    <code>${item.text}</code>
-                    <div style="display:flex; gap:8px; margin-top:10px;">
-                        <button class="btn" style="background:#444; margin:0;" onclick="navigator.clipboard.writeText('${item.text.replace(/'/g,"\\'")}')">Copy</button>
-                        <button class="btn" style="background:var(--accent); margin:0;" onclick="shareData(${item.id})">📤 Share</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+        async function startScan() {
+            if (html5QrCode) await html5QrCode.stop();
+            document.getElementById('stopBtn').style.display = 'block';
+            html5QrCode = new Html5Qrcode("reader");
+            try { await html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, (t) => { stopScan(); save(t); }); } catch (e) { stopScan(); }
         }
 
-        async function toggleSettings() {
-            const o = document.getElementById('settingsOverlay');
-            if (o.style.display === 'flex') {
-                o.style.display = 'none';
-            } else {
-                o.style.display = 'flex';
-                const currentAuth = localStorage.getItem(AUTH_KEY) || "";
-                document.getElementById('vPin1').value = currentAuth;
-                document.getElementById('vPin2').value = currentAuth;
-                document.getElementById('bPin').value = localStorage.getItem(BT_KEY) || "";
-                document.getElementById('hLimit').value = localStorage.getItem(LIMIT_KEY) || "15";
-                validatePins();
-                try {
-                    const devices = await Html5Qrcode.getCameras();
-                    const select = document.getElementById('cameraSelect');
-                    select.innerHTML = devices.map(d => `<option value="${d.id}" ${localStorage.getItem(CAM_KEY) === d.id ? 'selected' : ''}>${d.label}</option>`).join('');
-                } catch(e) {}
-            }
+        function stopScan() {
+            if (html5QrCode) { html5QrCode.stop(); html5QrCode = null; }
+            document.getElementById('stopBtn').style.display = 'none';
         }
 
-        function saveSettings() {
-            const newPin = document.getElementById('vPin1').value;
-            localStorage.setItem(AUTH_KEY, newPin);
-            localStorage.setItem(BT_KEY, document.getElementById('bPin').value);
-            localStorage.setItem(LIMIT_KEY, document.getElementById('hLimit').value);
-            localStorage.setItem(CAM_KEY, document.getElementById('cameraSelect').value);
-            toggleSettings();
-            checkAuth();
+        function upload(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const fileScanner = new Html5Qrcode("reader");
+            fileScanner.scanFile(file, true).then(t => { save(t); fileScanner.clear(); }).catch(e => alert("Scan Failed"));
         }
 
-        function nuke(force) {
-            if (force || (confirm("DANGER: Wipe all history and settings?") && confirm("FINAL WARNING: Are you sure?"))) { 
-                localStorage.clear(); 
-                location.reload(); 
-            }
+        function save(text) {
+            let h = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+            h.unshift({ text, date: new Date().toLocaleString(), id: Date.now() });
+            localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, 30)));
+            render();
         }
 
+        function copy(t) { navigator.clipboard.writeText(t); }
         function del(id) {
             const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]").filter(i => i.id !== id);
             localStorage.setItem(HIST_KEY, JSON.stringify(items));
             render();
         }
-
-        async function startScan() {
-            if (html5QrCode) await html5QrCode.stop();
-            document.getElementById('stopBtn').style.display = 'inline-flex';
-            html5QrCode = new Html5Qrcode("reader");
-            const savedCam = localStorage.getItem(CAM_KEY);
-            const config = savedCam ? { deviceId: { exact: savedCam } } : { facingMode: "environment" };
-            try {
-                await html5QrCode.start(config, { fps: 15, qrbox: 250 }, (t) => {
-                    stopScan();
-                    save(t);
-                });
-            } catch (e) { alert("Camera Access Required"); stopScan(); }
+        function nuke(f) { if(f || (confirm("Wipe all?") && confirm("Sure?"))) { localStorage.clear(); location.reload(); } }
+        function toggleSettings() {
+            const o = document.getElementById('settingsOverlay');
+            o.style.display = (o.style.display === 'flex') ? 'none' : 'flex';
         }
-
-        async function stopScan() {
-            if (html5QrCode) {
-                try { await html5QrCode.stop(); } catch(e) {}
-                html5QrCode = null;
-            }
-            document.getElementById('stopBtn').style.display = 'none';
+        function saveSettings() {
+            localStorage.setItem(AUTH_KEY, document.getElementById('vPin1').value);
+            localStorage.setItem(BT_KEY, document.getElementById('bPin').value);
+            toggleSettings(); checkAuth();
         }
-
-        function save(text) {
-            const limit = parseInt(localStorage.getItem(LIMIT_KEY) || "15");
-            if (limit === 0) return;
-            let h = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            h.unshift({ text, date: new Date().toLocaleString(), id: Date.now() });
-            localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, limit)));
-            render();
-        }
-
-        function upload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            new Html5Qrcode("reader").scanFile(file, true).then(t => save(t));
-        }
-
         checkAuth();
     </script>
 </body>
