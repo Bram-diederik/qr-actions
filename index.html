@@ -3,32 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QR Actions</title>
+    <title>QR Actions Offline</title>
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlFSIEFjdGlvbnMiLAogICJzaG9ydF9uYW1lIjogIlFSIEFjdGlvbnMiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzEyMTIxMiIsCiAgInRoZW1lX2NvbG9yIjogIiMxMjEyMTIiLAogICJpY29ucyI6IFt7ICJzcmMiOiAiaHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsYXRpY29uLmNvbS81MTIvMjQxLzI0MTUyOC5wbmciLCAic2l6ZXMiOiAiNTEyeDUxMiIsICJ0eXBlIjogImltYWdlL3BuZyIgfV0KfQ==">
+    
     <script src="https://unpkg.com/html5-qrcode"></script>
-    <style>
-        :root { --bg: #121212; --card: #1e1e1e; --accent: #007bff; --green: #28a745; }
-        body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; text-align: center; }
-        
-        /* Header & Settings Icon */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px; max-width: 500px; margin: 0 auto; }
-        .settings-icon { font-size: 24px; cursor: pointer; background: none; border: none; color: #888; }
-        
-        /* Settings Overlay */
-        #settingsOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; justify-content: center; align-items: center; }
-        .settings-content { background: #222; padding: 30px; border-radius: 15px; width: 80%; max-width: 300px; border: 1px solid #444; }
 
-        #reader { width: 100%; max-width: 450px; margin: auto; border-radius: 12px; overflow: hidden; background: #000; }
-        .qr-card { background: var(--card); border: 1px solid #333; padding: 15px; margin: 12px auto; max-width: 450px; border-radius: 10px; text-align: left; }
+    <style>
+        :root { --bg: #121212; --card: #1e1e1e; --accent: #007bff; --green: #28a745; --red: #dc3545; }
+        body { background: var(--bg); color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 10px; text-align: center; }
         
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-top: 8px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px; max-width: 500px; margin: 0 auto; }
+        .settings-icon { font-size: 24px; cursor: pointer; background: none; border: none; color: #888; padding: 10px; }
+        
+        #settingsOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; justify-content: center; align-items: center; overflow-y: auto; }
+        .settings-content { background: #222; padding: 25px; border-radius: 15px; width: 85%; max-width: 320px; border: 1px solid #444; text-align: left; }
+
+        #reader { width: 100%; max-width: 450px; margin: auto; border-radius: 12px; overflow: hidden; background: #000; min-height: 250px; }
+        .qr-card { background: var(--card); border: 1px solid #333; padding: 15px; margin: 12px auto; max-width: 450px; border-radius: 10px; text-align: left; position: relative; }
+        
+        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-top: 8px; font-size: 14px; }
         .btn-share { background: var(--accent); }
         .btn-scan { background: var(--green); margin-bottom: 15px; font-size: 16px; }
+        .btn-abort { background: var(--red); margin-bottom: 15px; font-size: 16px; display: none; }
         .btn-sec { background: #444; font-size: 12px; }
+        .btn-danger { background: #600; border: 1px solid var(--red); margin-top: 20px; }
         
-        input { padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; width: 100%; box-sizing: border-box; margin: 10px 0; }
-        code { background: #000; padding: 4px; color: #0f0; word-break: break-all; border-radius: 4px; }
+        .btn-delete { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #666; font-size: 20px; cursor: pointer; }
         
-        /* WiFi Masking */
+        input, select { padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; width: 100%; box-sizing: border-box; margin: 5px 0 15px 0; font-size: 16px; }
+        code { background: #000; padding: 4px; color: #0f0; word-break: break-all; border-radius: 4px; font-family: monospace; }
+        
         .wifi-pass { filter: blur(5px); transition: filter 0.3s; cursor: pointer; background: #333; padding: 2px 6px; border-radius: 4px; }
         .wifi-pass.show { filter: blur(0); }
 
@@ -40,100 +44,171 @@
 
     <div class="header">
         <h2 style="margin:0;">📋 QR Actions</h2>
-        <button class="settings-icon" onclick="toggleSettings()">⚙️</button>
+        <button class="settings-icon" onclick="toggleSettings()" aria-label="Settings">⚙️</button>
     </div>
 
     <div id="settingsOverlay">
         <div class="settings-content">
-            <h3>Settings</h3>
-            <label style="font-size: 12px;">Transmission PIN (Optional)</label>
+            <h3 style="margin-top:0;">Settings</h3>
+            
+            <label style="font-size: 11px; color: #aaa;">PREFERRED CAMERA</label>
+            <select id="cameraSelect"><option value="">Default (Environment)</option></select>
+
+            <label style="font-size: 11px; color: #aaa;">HISTORY LIMIT (0 = UNLIMITED)</label>
+            <input type="number" id="limitInput" min="0" value="15">
+
+            <label style="font-size: 11px; color: #aaa;">TRANSMISSION PIN (OPTIONAL)</label>
             <input type="password" id="pinInput" placeholder="e.g. 2626">
+            
             <button class="btn btn-share" onclick="saveSettings()">Save & Close</button>
             <button class="btn" style="background:transparent;" onclick="toggleSettings()">Cancel</button>
+            
+            <button class="btn btn-danger" onclick="clearAllData()">⚠️ Clear All Data</button>
         </div>
     </div>
 
     <div id="app">
         <div id="reader"></div>
         <button id="cameraBtn" class="btn btn-scan" onclick="startScan()">📷 Scan QR Code</button>
+        <button id="abortBtn" class="btn btn-abort" onclick="stopScan()">🛑 Stop Scanning</button>
         <div id="history"></div>
     </div>
 
     <div class="footer">
         By <strong>Bram Diederik</strong><br><br>
-        <a href="about.html">About</a> | 
-        <a href="autoconnect.html">Auto Connect Laptop</a>
+        <a href="#">About</a> | 
+        <a href="#">Auto Connect Laptop</a>
     </div>
 
     <script>
         const AUTH_KEY = 'qr_actions_pin_v2';
         const HIST_KEY = 'qr_actions_history_v2';
+        const CAM_KEY = 'qr_actions_camera_id';
+        const LIMIT_KEY = 'qr_actions_limit';
         let html5QrCode = null;
+
+        // --- Offline Service Worker Setup ---
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'qr-offline-v1';
+                const ASSETS = ['./', './index.html', 'https://unpkg.com/html5-qrcode'];
+                self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS))));
+                self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+            `;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(blob));
+        }
+
+        async function getCameras() {
+            try {
+                const devices = await Html5Qrcode.getCameras();
+                const select = document.getElementById('cameraSelect');
+                if (devices && devices.length > 0) {
+                    select.innerHTML = '';
+                    devices.forEach(device => {
+                        const option = document.createElement('option');
+                        option.value = device.id;
+                        option.text = device.label || `Camera ${select.length + 1}`;
+                        if(localStorage.getItem(CAM_KEY) === device.id) option.selected = true;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (e) { console.error("Camera error", e); }
+        }
 
         function toggleSettings() {
             const overlay = document.getElementById('settingsOverlay');
             overlay.style.display = (overlay.style.display === 'flex') ? 'none' : 'flex';
-            if(localStorage.getItem(AUTH_KEY)) {
-                document.getElementById('pinInput').value = localStorage.getItem(AUTH_KEY);
+            if(overlay.style.display === 'flex') {
+                document.getElementById('pinInput').value = localStorage.getItem(AUTH_KEY) || "";
+                document.getElementById('limitInput').value = localStorage.getItem(LIMIT_KEY) || "15";
+                getCameras();
             }
         }
 
         function saveSettings() {
-            const val = document.getElementById('pinInput').value;
-            localStorage.setItem(AUTH_KEY, val);
+            localStorage.setItem(AUTH_KEY, document.getElementById('pinInput').value);
+            localStorage.setItem(CAM_KEY, document.getElementById('cameraSelect').value);
+            localStorage.setItem(LIMIT_KEY, document.getElementById('limitInput').value);
             toggleSettings();
+            render();
+        }
+
+        function clearAllData() {
+            if(confirm("Delete all history and settings?") && confirm("Final confirmation: Clear everything?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        async function stopScan() {
+            if (html5QrCode) {
+                await html5QrCode.stop();
+                html5QrCode = null;
+            }
+            document.getElementById('cameraBtn').style.display = 'block';
+            document.getElementById('cameraBtn').disabled = false;
+            document.getElementById('cameraBtn').innerText = "📷 Scan QR Code";
+            document.getElementById('abortBtn').style.display = 'none';
         }
 
         function startScan() {
             const btn = document.getElementById('cameraBtn');
+            const abortBtn = document.getElementById('abortBtn');
+            const prefCamId = localStorage.getItem(CAM_KEY);
+
             btn.disabled = true;
-            btn.innerText = "Initializing Camera...";
+            btn.innerText = "Starting...";
 
             html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, (text) => {
-                // One-shot scan: stop immediately
-                html5QrCode.stop().then(() => {
-                    html5QrCode = null;
-                    btn.disabled = false;
-                    btn.innerText = "📷 Scan QR Code";
+            const config = prefCamId ? { deviceId: { exact: prefCamId } } : { facingMode: "environment" };
+
+            html5QrCode.start(config, { fps: 15, qrbox: 250 }, (text) => {
+                stopScan().then(() => {
                     if (navigator.vibrate) navigator.vibrate(100);
                     saveScan(text);
                 });
+            }).then(() => {
+                btn.style.display = 'none';
+                abortBtn.style.display = 'block';
             }).catch(err => {
                 btn.disabled = false;
                 btn.innerText = "📷 Retry Scanner";
-                alert("Camera Access Denied or HTTP used.");
+                alert("Camera Error: Please ensure you use HTTPS.");
             });
         }
 
         function saveScan(text) {
             let history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
             history.unshift({ text, date: new Date().toLocaleString(), id: Date.now() });
-            localStorage.setItem(HIST_KEY, JSON.stringify(history.slice(0, 15)));
+            const limit = parseInt(localStorage.getItem(LIMIT_KEY) || "15");
+            if(limit > 0) history = history.slice(0, limit);
+            localStorage.setItem(HIST_KEY, JSON.stringify(history));
             render();
         }
 
-function checkSafety(urlToTest) {
-    // 1. Clean the URL
-    const cleanUrl = urlToTest.trim();
-    
-    // 2. Base64 Encode and remove the '=' padding as per VT API specs
-    const encodedUrl = btoa(cleanUrl).replace(/=/g, "");
-    
-    // 3. Construct the direct report URL
-    const vtUrl = `https://www.virustotal.com/gui/url/${encodedUrl}/detection`;
-    
-    // 4. Open in a new tab
-    window.open(vtUrl, '_blank');
-}
+        function deleteItem(id) {
+            let history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+            history = history.filter(item => item.id !== id);
+            localStorage.setItem(HIST_KEY, JSON.stringify(history));
+            render();
+        }
+
+        function checkSafety(urlToTest) {
+            const encodedUrl = btoa(urlToTest.trim()).replace(/=/g, "");
+            window.open(`https://www.virustotal.com/gui/url/${encodedUrl}/detection`, '_blank');
+        }
 
         function togglePass(id) {
             document.getElementById(id).classList.toggle('show');
         }
 
-function render() {
+        function render() {
             const container = document.getElementById('history');
-            const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+            let items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+            const limit = parseInt(localStorage.getItem(LIMIT_KEY) || "15");
+            if(limit > 0 && items.length > limit) items = items.slice(0, limit);
+
             container.innerHTML = items.length ? "" : "<p style='color:#666;'>No scan history.</p>";
 
             items.forEach((item, idx) => {
@@ -150,13 +225,14 @@ function render() {
                 const div = document.createElement('div');
                 div.className = 'qr-card';
                 div.innerHTML = `
+                    <button class="btn-delete" onclick="deleteItem(${item.id})">🗑</button>
                     <div style="font-size:0.7em; color:#666; margin-bottom:5px;">${item.date}</div>
-                    <div style="margin-bottom:10px;">${contentHtml}</div>
+                    <div style="margin-bottom:10px; padding-right: 30px;">${contentHtml}</div>
                     <div style="display:flex; flex-wrap:wrap; gap:8px;">
-                        <button class="btn btn-share" style="flex:1; min-width:80px;" onclick="shareData(${idx})">Share</button>
+                        <button class="btn btn-share" onclick="shareData(${idx})">Share</button>
                         ${isUrl ? `
-                            <button class="btn btn-sec" style="flex:1; min-width:120px;" onclick="checkSafety('${item.text}')">🛡 Security Check</button>
-                            <a href="${item.text}" target="_blank" class="btn" style="flex:1; min-width:80px; background:var(--green); text-decoration:none; text-align:center; display:flex; align-items:center; justify-content:center;">🌐 Visit</a>
+                            <button class="btn btn-sec" onclick="checkSafety('${item.text}')">🛡 VirusTotal</button>
+                            <a href="${item.text}" target="_blank" class="btn" style="background:var(--green); text-decoration:none; text-align:center; display:flex; align-items:center; justify-content:center;">🌐 Visit</a>
                         ` : ''}
                     </div>
                 `;
@@ -168,16 +244,14 @@ function render() {
             const items = JSON.parse(localStorage.getItem(HIST_KEY));
             const entry = items[idx];
             const pin = localStorage.getItem(AUTH_KEY);
-
-            // Correct format for your Debian listener (Line 1: Data, Line 2: PIN)
             const payload = entry.text + (pin ? `\nPIN: ${pin}` : "");
-            const fileName = `qr_actions_${Date.now()}.txt`;
+            const fileName = `qr_${Date.now()}.txt`;
 
             if (navigator.share) {
                 try {
                     const file = new File([payload], fileName, { type: 'text/plain' });
                     await navigator.share({ files: [file], title: 'QR Actions' });
-                } catch (e) {}
+                } catch (e) { /* Share cancelled */ }
             } else {
                 const blob = new Blob([payload], { type: 'text/plain' });
                 const a = document.createElement('a');
@@ -188,6 +262,7 @@ function render() {
         }
 
         render();
+        getCameras();
     </script>
 </body>
 </html>
