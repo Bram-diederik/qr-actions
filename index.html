@@ -2,157 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Actions</title>
     
     <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlFSIEFjdGlvbnMiLAogICJzaG9ydF9uYW1lIjogIlFSIEFjdGlvbnMiLAogICJkZXNjcmlwdGlvbiI6ICJQcm8gUU0gQ29kZSBTY2FubmVyICYgR2VuZXJhdG9yIiwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxMjEyMTIiLAogICJ0aGVtZV9jb2xvciI6ICIjMTIxMjEyIiwKICAib3JpZW50YXRpb24iOiAiYW55IiwKICAic2NvcGUiOiAiLiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaUlIQnlaWE5sY25abFFYTndaV04wU1M1d2FHRWlJSFpwWlhkQ2IzZzlJakFnTUNBek5UQWlJSE4wZVd4bFBTSnVZVzFsSWo0OGNHRjBhQ0JrUFNKTk1UQXhJREV4TUN3Mk1UazdNVEk3TFRJMExUQTRMVEUwTFRFeE9pNDBMakF1TkM0MExqY3VNVEl1TVRBdU1UQXVOelF1TlRNN0lEQXVNREF1TURBdU1EQXBJajQ4ZEdWNGRDQmtQU0pOTVRBeElERXhNQ3cyTVRrN01USTdMVEkwTFRBNExURTBMVEV4T2k0MExqQXVOQzQwTGpjdU1USXVNVEF1TVRBdU56UXVOVE03SURBdU1EQXVNREF1TURBcElqNDhkR1Y0ZENCa1BTSk5NVEF4SURFeE1DdzJNVGs3TVRJN0xUSTBMVEE0TFRFMExURXhPaTQwTGpBdU5DNDBMamN1TVRJdU1UQXVNVEF1TnpRdU5UTTdJREF1TURBdU1EQXVNREFwSWo0OGNHRjBhQ0JrUFNKTk1UQXhJREV4TUN3Mk1UazdNVEk3TFRJMExUQTRMVEUwTFRFeE9pNDBMakF1TkM0MExqY3VNVEl1TVRBdU1UQXVOelF1TlRNN0lEQXVNREF1TURBdU1EQXBJajQ4ZEdWNGRDQmtQU0pOTVRBeElERXhNQ3cyTVRrN01USTdMVEkwTFRBNExURTBMVEV4T2k0MExqQXVOQzQwTGpjdU1USXVNVEF1TnpRdU5UTTdJREF1TURBdU1EQXVNREFwSWo0OGNHRjBhQ0JrUFNKTk1UQXhJREV4TUN3Mk1UazdNVEk3TFRJMExUQTRMVEUwTFRFeE9pNDBMakF1TkM0MExqY3VNVEl1TVRBdU1UQXVOelF1TlRNN0lEQXVNREF1TURBdU1EQXBJajQ4ZEdWNGRDQmtQU0pOTVRBeElERXhNQ3cyTVRrN01USTdMVEkwTFRBNExURTBMVEV4T2k0MExqQXVOQzQwTGpjdU1USXVNVEF1TnpRdU5UTTdJREF1TURBdU1EQXVNREFwSWo0OGNHRjBhQ0JrUFNKTk1UQXhJREV4TUN3Mk1UazdNVEk3TFRJMExUQTRMVEUwTFRFeE9pNDBMakF1TkM0MExqY3VNVEl1TVRBdU1UQXVOelF1TlRNN0lEQXVNREF1TURBdU1EQXBJajQ4ZEdWNGRDQmtQU0pOTVRBeElERXhNQ3cyTVRrN01USTdMVEkwTFRBNExURTBMVEV4T2k0MExqQXVOQzQwTGpjdU1USXVNVEF1TnpRdU5UTTdJREF1TURBdU1EQXVNREFwSWo0OEwzQmhkR2d2YkdsdVpTOU1aVzVuZEdnK1BITjVjM1JsYlNCa1BTSk5NVEF4SURFeE1DdzJNVGs3TVRJN0xUSTBMVEE0TFRFMExURXhPaTQwTGpBdU5DNDBMamN1TVRJdU1UQXVNVEF1TnpRdU5UTTdJREF1TURBdU1EQXVNREFwSWo0OGNHRjBhQ0JrUFNKTk1UQXhJREV4TUN3Mk1UazdNVEk3TFRJMExUQTRMVEUwTFRFeE9pNDBMakF1TkM0MExqY3VNVEl1TVRBdU1UQXVOelF1TlRNN0lEQXVNREF1TURBdU1EQXBJajQ4ZEdWNGRDQmtQU0pOTVRBeElERXhNQ3cyTVRrN01USTdMVEkwTFRBNExURTBMVEV4T2k0MExqQXVOQzQwTGpjdU1USXVNVEF1TnpRdU5UTTdJREF1TURBdU1EQXVNREFwSWo0OGNHRjBhQ0JrUFNKTk1UQXhJREV4TUN3Mk1UazdNVEk3TFRJMExUQTRMVEUwTFRFeE9pNDBMakF1TkM0MExqY3VNVEl1TVRBdU1UQXVOelF1TlRNN0lEQXVNREF1TURBdU1EQXBJajQ4ZEdWNGRDQmtQU0pOTVRBeElERXhNQ3cyTVRrN01USTdMVEkwTFRBNExURTBMVEV4T2k0MExqQXVOQzQwTGpjdU1USXVNVEF1TnpRdU5UTTdJREF1TURBdU1EQXVNREFwSWo0OGNHRjBhQ0JrUFNKTk1UQXhJREV4TUN3Mk1UazdNVEk3TFRJMExUQTRMVEUwTFRFeE9pNDBMakF1TkM0MExqY3VNVEl1TVRBdU1UQXVOelF1TlRNN0lEQXVNREF1TURBdU1EQXBJajQ4ZEdWNGRDQmtQU0pOTVRBeElERXhNQ3cyTVRrN01USTdMVEkwTFRBNExURTBMVEV4T2k0MExqQXVOQzQwTGpjdU1USXVNVEF1TnpRdU5UTTdJREF1TURBdU1EQXVNREFwSWo0OEwzQmhkR2d2YkdsdVpTOU1aVzVuZEdnK1BDOXpkbWMrIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9CiAgXQp9">
-    
-    <!-- iOS Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="QR Actions">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
-    
-    <!-- Android/Chrome Meta Tags -->
-    <meta name="theme-color" content="#121212">
-    <meta name="mobile-web-app-capable" content="yes">
-    
-    <!-- Microsoft Meta Tags -->
-    <meta name="msapplication-TileColor" content="#121212">
-    <meta name="msapplication-TileImage" content="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
-    
-    <!-- Scripts -->
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <link rel="manifest" href="./manifest.json">
     
     <style>
-        :root {
-            --bg: #121212;
-            --card: #1e1e1e;
-            --accent: #007bff;
-            --green: #28a745;
-            --red: #dc3545;
-            --yellow: #ffc107;
-            --purple: #6f42c1;
-            --orange: #fd7e14;
-            --teal: #20c997;
-            --cyan: #17a2b8;
-            --grey: #444;
-            --dark-grey: #2a2a2a;
-        }
-        
+        /* Reset and Base */
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
         
         body {
-            background: var(--bg);
-            color: #fff;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #121212;
+            color: white;
             margin: 0;
             padding: 10px;
-            text-align: center;
-            line-height: 1.4;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            overscroll-behavior: none;
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
+            overflow-x: hidden;
+            touch-action: pan-y;
         }
         
-        /* Install Prompt */
-        #installPrompt {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            left: 10px;
-            right: 10px;
-            background: var(--card);
-            border: 1px solid var(--accent);
-            border-radius: 12px;
-            padding: 15px;
-            z-index: 1000;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            animation: slideUp 0.3s ease;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        /* Main Container */
-        #appContainer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 10px;
-        }
-        
-        /* Header & Navigation */
+        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px;
-            margin: 0 auto 15px auto;
+            background: rgba(30, 30, 30, 0.95);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
             position: sticky;
             top: 0;
-            z-index: 50;
-            background: rgba(18, 18, 18, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            border: 1px solid #333;
-            max-width: 500px;
+            z-index: 100;
         }
         
-        .app-title {
+        .header h1 {
+            font-size: 1.4rem;
             display: flex;
             align-items: center;
             gap: 10px;
-            margin: 0;
-            font-size: 1.4rem;
         }
         
         .stats-badge {
-            background: var(--accent);
+            background: #007bff;
             color: white;
             padding: 2px 8px;
             border-radius: 10px;
             font-size: 11px;
             font-weight: bold;
-            margin-left: 8px;
         }
         
-        .nav-tabs {
+        /* Tabs */
+        .tabs {
             display: flex;
-            justify-content: space-around;
-            margin: 0 auto 20px auto;
-            background: var(--dark-grey);
+            background: #2a2a2a;
             border-radius: 12px;
             padding: 5px;
+            margin-bottom: 15px;
             border: 1px solid #333;
-            max-width: 500px;
         }
         
-        .tab-btn {
+        .tab {
             flex: 1;
-            padding: 14px;
-            background: transparent;
+            padding: 12px;
+            background: none;
             border: none;
             color: #aaa;
             font-weight: 600;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
             font-size: 14px;
             display: flex;
             align-items: center;
@@ -160,48 +85,42 @@
             gap: 8px;
         }
         
-        .tab-btn.active {
-            background: var(--accent);
+        .tab.active {
+            background: #007bff;
             color: white;
-            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
         }
         
-        /* Main Scanner */
+        /* Scanner */
         #reader {
             width: 100%;
-            margin: 0 auto 20px auto;
+            height: 280px;
+            background: black;
             border-radius: 16px;
+            margin-bottom: 15px;
             overflow: hidden;
-            background: #000;
-            min-height: 280px;
             border: 2px solid #333;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            max-width: 500px;
         }
         
-        /* Action Buttons */
-        .action-row {
+        /* Buttons */
+        .btn-row {
             display: flex;
             gap: 10px;
-            margin: 0 auto 15px auto;
-            max-width: 500px;
+            margin-bottom: 15px;
         }
         
         .btn {
             padding: 16px;
             border: none;
             border-radius: 12px;
-            cursor: pointer;
             font-weight: 600;
             color: white;
-            width: 100%;
-            margin-top: 8px;
-            font-size: 15px;
-            transition: all 0.2s;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            font-size: 15px;
+            transition: transform 0.1s;
         }
         
         .btn:active {
@@ -209,322 +128,100 @@
         }
         
         .btn-scan {
-            background: linear-gradient(135deg, var(--green), #1e7e34);
             flex: 2;
-            margin-top: 0;
+            background: linear-gradient(135deg, #28a745, #1e7e34);
         }
         
         .btn-upload {
-            background: linear-gradient(135deg, var(--grey), #2a2a2a);
             flex: 1;
-            margin-top: 0;
+            background: linear-gradient(135deg, #444, #2a2a2a);
             position: relative;
             overflow: hidden;
         }
         
         .btn-upload input {
             position: absolute;
-            left: 0;
-            top: 0;
+            width: 100%;
+            height: 100%;
             opacity: 0;
             cursor: pointer;
-            height: 100%;
-            width: 100%;
         }
         
         .btn-generate {
-            background: linear-gradient(135deg, var(--purple), #5a32a3);
-            margin-top: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #6f42c1, #5a32a3);
+            margin-bottom: 15px;
         }
         
-        .btn-batch {
-            background: linear-gradient(135deg, var(--orange), #e95e00);
-            margin-top: 0;
-        }
-        
-        .btn-abort {
-            background: linear-gradient(135deg, var(--red), #c82333);
+        .btn-stop {
+            width: 100%;
+            background: linear-gradient(135deg, #dc3545, #c82333);
             margin-bottom: 15px;
             display: none;
         }
         
-        .btn-share {
-            background: linear-gradient(135deg, var(--accent), #0056b3);
-        }
-        
-        .btn-copy {
-            background: linear-gradient(135deg, var(--cyan), #138496);
-        }
-        
-        .btn-favorite {
-            background: linear-gradient(135deg, var(--yellow), #e0a800);
-            color: #212529;
-        }
-        
-        .btn-delete {
-            background: linear-gradient(135deg, #6c757d, #545b62);
-        }
-        
-        .btn-email {
-            background: linear-gradient(135deg, var(--teal), #179b7d);
-        }
-        
-        .btn-phone {
-            background: linear-gradient(135deg, #6610f2, #5300d6);
-        }
-        
-        .btn-maps {
-            background: linear-gradient(135deg, #dc3545, #bd2130);
-        }
-        
-        .btn-crypto {
-            background: linear-gradient(135deg, #f7931a, #e68516);
-            color: white;
-        }
-        
-        .btn-calendar {
-            background: linear-gradient(135deg, #20c997, #199d76);
-        }
-        
-        /* Card Styling */
-        .qr-card {
-            background: var(--card);
+        /* History Cards */
+        .card {
+            background: #1e1e1e;
             border: 1px solid #333;
-            padding: 20px;
-            margin: 15px auto;
-            border-radius: 14px;
-            text-align: left;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
             position: relative;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
         }
         
-        .qr-card.highlight {
-            animation: highlight 1.5s ease;
-            border-color: var(--green);
-        }
-        
-        .qr-card-header {
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         
-        .qr-type-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
+        .badge {
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 11px;
+            font-weight: bold;
         }
         
-        .badge-url { background: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid rgba(40, 167, 69, 0.3); }
-        .badge-wifi { background: rgba(108, 117, 125, 0.2); color: #6c757d; border: 1px solid rgba(108, 117, 125, 0.3); }
-        .badge-text { background: rgba(0, 123, 255, 0.2); color: #007bff; border: 1px solid rgba(0, 123, 255, 0.3); }
-        .badge-email { background: rgba(111, 66, 193, 0.2); color: #6f42c1; border: 1px solid rgba(111, 66, 193, 0.3); }
-        .badge-tel { background: rgba(23, 162, 184, 0.2); color: #17a2b8; border: 1px solid rgba(23, 162, 184, 0.3); }
-        .badge-sms { background: rgba(32, 201, 151, 0.2); color: #20c997; border: 1px solid rgba(32, 201, 151, 0.3); }
-        .badge-geo { background: rgba(220, 53, 69, 0.2); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.3); }
-        .badge-vcard { background: rgba(255, 193, 7, 0.2); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.3); }
-        .badge-calendar { background: rgba(253, 126, 20, 0.2); color: #fd7e14; border: 1px solid rgba(253, 126, 20, 0.3); }
-        .badge-crypto { background: rgba(247, 147, 26, 0.2); color: #f7931a; border: 1px solid rgba(247, 147, 26, 0.3); }
-        .badge-barcode { background: rgba(134, 142, 150, 0.2); color: #868e96; border: 1px solid rgba(134, 142, 150, 0.3); }
-        .badge-whatsapp { background: rgba(37, 211, 102, 0.2); color: #25d366; border: 1px solid rgba(37, 211, 102, 0.3); }
+        .badge-url { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+        .badge-wifi { background: rgba(108, 117, 125, 0.2); color: #6c757d; }
+        .badge-text { background: rgba(0, 123, 255, 0.2); color: #007bff; }
         
         .favorite-btn {
             background: none;
             border: none;
             color: #666;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
-            transition: all 0.2s;
-            padding: 5px;
         }
         
         .favorite-btn.active {
-            color: var(--yellow);
-            text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+            color: #ffc107;
         }
         
-        .delete-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(220, 53, 69, 0.1);
-            border: 1px solid rgba(220, 53, 69, 0.3);
-            color: #666;
-            font-size: 14px;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .delete-btn:hover {
-            background: rgba(220, 53, 69, 0.2);
-            color: var(--red);
-        }
-        
-        .qr-date {
-            font-size: 0.8em;
-            color: #888;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .qr-content {
-            margin-bottom: 20px;
-            padding-right: 45px;
-            line-height: 1.5;
-        }
-        
-        .qr-preview {
+        .card-content {
             margin-bottom: 15px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            border: 1px solid #333;
+            padding-right: 40px;
         }
         
-        .wifi-pass {
-            filter: blur(5px);
-            transition: filter 0.3s;
-            cursor: pointer;
-            background: #333;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-family: monospace;
-            display: inline-block;
-            margin: 5px 0;
-        }
-        
-        .wifi-pass.show {
-            filter: blur(0);
-        }
-        
-        .contact-info {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 12px;
-            border-radius: 8px;
-            margin: 10px 0;
-            font-size: 14px;
-        }
-        
-        .contact-field {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 8px 0;
-        }
-        
-        .contact-field i {
-            color: var(--accent);
-            width: 20px;
-            text-align: center;
-        }
-        
-        /* URL Actions */
-        .url-actions {
+        .card-actions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        /* Action Buttons Grid */
-        .qr-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 10px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
         }
         
         .btn-small {
-            padding: 12px;
+            padding: 10px;
             font-size: 13px;
-            gap: 6px;
         }
         
-        /* Search & Filter */
-        .search-container {
-            margin: 0 auto 20px auto;
-            position: relative;
-            max-width: 500px;
-        }
+        .btn-copy { background: #17a2b8; }
+        .btn-open { background: #28a745; }
+        .btn-share { background: #007bff; }
+        .btn-delete { background: #6c757d; }
         
-        .search-input {
-            padding: 15px 50px 15px 20px;
-            background: #222;
-            border: 1px solid #333;
-            border-radius: 12px;
-            color: white;
-            font-size: 15px;
-            width: 100%;
-            transition: all 0.2s;
-        }
-        
-        .search-input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-        }
-        
-        .search-icon {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #888;
-            font-size: 18px;
-        }
-        
-        .filter-tabs {
-            display: flex;
-            gap: 8px;
-            margin: 0 auto 20px auto;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            flex-wrap: wrap;
-            max-width: 500px;
-        }
-        
-        .filter-tabs::-webkit-scrollbar {
-            height: 4px;
-        }
-        
-        .filter-tab {
-            padding: 10px 18px;
-            background: var(--dark-grey);
-            border: 1px solid #333;
-            color: #aaa;
-            border-radius: 20px;
-            font-size: 13px;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .filter-tab.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: white;
-        }
-        
-        /* Settings & Generate Overlays */
+        /* Overlays */
         .overlay {
             display: none;
             position: fixed;
@@ -532,150 +229,96 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.97);
+            background: rgba(0,0,0,0.95);
             z-index: 1000;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            overflow-y: auto;
+            justify-content: center;
             padding: 20px;
-            backdrop-filter: blur(10px);
+            overflow-y: auto;
         }
         
         .overlay-content {
             background: #222;
-            padding: 30px;
-            border-radius: 20px;
-            width: 95%;
-            max-width: 450px;
+            border-radius: 16px;
+            padding: 25px;
+            width: 100%;
+            max-width: 400px;
             border: 1px solid #444;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
         
+        /* Settings */
         .settings-section {
             margin-bottom: 25px;
             padding-bottom: 20px;
             border-bottom: 1px solid #333;
         }
         
-        .settings-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        
-        .settings-section h4 {
-            margin: 0 0 15px 0;
-            color: #ddd;
-            font-size: 17px;
+        .settings-section h3 {
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
-        /* URL Allowlist Manager */
-        .allowlist-manager {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 15px;
+        label {
+            display: block;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+        
+        /* QR Display */
+        #qrCodeDisplay {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        #qrCodeCanvas {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        /* URL Modal */
+        .url-warning {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            padding: 12px;
+            border-radius: 8px;
             margin: 15px 0;
         }
         
-        .allowlist-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: #333;
-            border-radius: 8px;
-            margin: 8px 0;
-        }
-        
-        .allowlist-item .prefix {
-            font-family: monospace;
-            color: var(--green);
-        }
-        
-        /* QR Code Display */
-        #qrCodeDisplay {
-            margin: 25px auto;
-            background: white;
-            padding: 25px;
-            border-radius: 16px;
-            max-width: 280px;
-            border: 2px solid #444;
-        }
-        
-        /* Inputs & Selects */
-        input, select, textarea {
-            padding: 14px;
-            background: #333;
-            color: white;
-            border: 1px solid #555;
-            border-radius: 10px;
-            width: 100%;
-            box-sizing: border-box;
-            margin: 8px 0 20px 0;
-            font-size: 16px;
-            transition: all 0.2s;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-        }
-        
-        label {
-            font-size: 13px;
-            color: #aaa;
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        /* Batch Scan */
-        .batch-counter {
-            background: var(--accent);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            margin: 15px auto;
-            display: inline-block;
-            animation: pulse 2s infinite;
-            max-width: 500px;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
-        /* Toast Notifications */
+        /* Toast */
         .toast {
             position: fixed;
-            bottom: 25px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: var(--green);
+            background: #28a745;
             color: white;
-            padding: 16px 28px;
-            border-radius: 12px;
+            padding: 14px 24px;
+            border-radius: 10px;
             font-weight: 600;
             z-index: 2000;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            max-width: 90%;
-            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
             display: flex;
             align-items: center;
-            gap: 12px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 10px;
         }
         
         .toast.show {
@@ -683,75 +326,43 @@
         }
         
         .toast.error {
-            background: linear-gradient(135deg, var(--red), #bd2130);
-        }
-        
-        .toast.warning {
-            background: linear-gradient(135deg, var(--yellow), #e0a800);
-            color: #212529;
-        }
-        
-        .toast.info {
-            background: linear-gradient(135deg, var(--cyan), #138496);
+            background: #dc3545;
         }
         
         /* Empty State */
-        .empty-state {
+        .empty {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: #666;
-            max-width: 500px;
-            margin: 0 auto;
         }
         
         .empty-icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.2;
-        }
-        
-        .empty-text {
-            font-size: 16px;
-            color: #888;
-            margin-top: 10px;
+            font-size: 48px;
+            margin-bottom: 10px;
+            opacity: 0.3;
         }
         
         /* Footer */
         .footer {
-            margin-top: 50px;
+            text-align: center;
             padding: 30px 20px;
-            border-top: 1px solid #333;
+            color: #666;
             font-size: 14px;
-            color: #888;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
+            border-top: 1px solid #333;
+            margin-top: 30px;
         }
         
         .footer-links {
             display: flex;
             justify-content: center;
-            gap: 25px;
-            margin: 20px 0;
+            gap: 20px;
+            margin: 15px 0;
             flex-wrap: wrap;
         }
         
         .footer a {
-            color: var(--accent);
+            color: #007bff;
             text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        
-        /* Animations */
-        @keyframes highlight {
-            0% { background: rgba(40, 167, 69, 0.3); border-color: var(--green); }
-            100% { background: var(--card); border-color: #333; }
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         
         /* Responsive */
@@ -761,1716 +372,667 @@
                 font-size: 14px;
             }
             
-            .qr-actions {
+            .card-actions {
                 grid-template-columns: 1fr 1fr;
             }
             
             .header {
                 border-radius: 0;
-                top: 0;
-            }
-            
-            .overlay-content {
-                padding: 20px;
-                border-radius: 16px;
-            }
-            
-            .tab-btn {
-                padding: 12px;
-                font-size: 13px;
+                margin: -10px -10px 15px -10px;
             }
         }
         
-        /* Quick Actions Menu */
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            margin: 0 auto 20px auto;
-            flex-wrap: wrap;
-            max-width: 500px;
-        }
-        
-        .quick-action-btn {
-            flex: 1;
-            min-width: 100px;
-            padding: 12px;
-            background: var(--dark-grey);
-            border: 1px solid #333;
-            border-radius: 10px;
-            color: #ddd;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-        }
-        
-        .quick-action-btn:active {
-            transform: scale(0.98);
-        }
-        
-        .quick-action-btn i {
-            font-size: 24px;
-        }
-        
-        /* PWA Install Button */
+        /* Install Button */
         .install-btn {
             position: fixed;
             bottom: 20px;
             right: 20px;
             width: 56px;
             height: 56px;
-            background: var(--accent);
+            background: #007bff;
             color: white;
             border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
+            border: none;
             font-size: 24px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
             z-index: 100;
-            border: none;
+            display: none;
         }
         
         .install-btn.show {
             display: flex;
-            animation: bounceIn 0.3s ease;
-        }
-        
-        @keyframes bounceIn {
-            from { transform: scale(0); }
-            to { transform: scale(1); }
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
 <body>
 
-    <!-- PWA Install Button -->
+    <!-- Install Button -->
     <button class="install-btn" id="installBtn" title="Install App">📱</button>
 
-    <!-- Install Prompt -->
-    <div id="installPrompt">
-        <h4 style="margin: 0 0 10px 0;">Install QR Actions</h4>
-        <p style="margin: 0 0 15px 0; font-size: 14px; color: #aaa;">Install this app on your home screen for quick access and offline use.</p>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn btn-share" onclick="installPWA()" style="flex: 2;">Install Now</button>
-            <button class="btn" onclick="hideInstallPrompt()" style="background:transparent; flex:1;">Later</button>
+    <!-- Header -->
+    <div class="header">
+        <h1>📋 QR Actions <span class="stats-badge" id="statsBadge">0</span></h1>
+        <button onclick="toggleSettings()" style="background:none; border:none; color:#888; font-size:24px; cursor:pointer;">⚙️</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('scan')">🔍 Scan</button>
+        <button class="tab" onclick="switchTab('history')">📜 History</button>
+        <button class="tab" onclick="switchTab('favorites')">⭐ Favorites</button>
+    </div>
+
+    <!-- Scan Tab -->
+    <div id="scanTab">
+        <div id="reader"></div>
+        
+        <div class="btn-row">
+            <button class="btn btn-scan" onclick="startScan()" id="scanBtn">📷 Scan QR Code</button>
+            <button class="btn btn-upload">
+                📁 Upload
+                <input type="file" accept="image/*" onchange="uploadImage(event)">
+            </button>
+        </div>
+        
+        <button class="btn btn-stop" onclick="stopScan()" id="stopBtn">🛑 Stop Scanning</button>
+        <button class="btn btn-generate" onclick="toggleGenerateQR()">🔄 Generate QR Code</button>
+    </div>
+
+    <!-- History Tab -->
+    <div id="historyTab" style="display:none;">
+        <input type="text" placeholder="Search history..." style="width:100%; padding:12px; background:#222; border:1px solid #333; border-radius:8px; color:white; margin-bottom:15px;" oninput="searchHistory(this.value)">
+        
+        <div id="historyList"></div>
+    </div>
+
+    <!-- Favorites Tab -->
+    <div id="favoritesTab" style="display:none;">
+        <div id="favoritesList"></div>
+    </div>
+
+    <!-- Settings Overlay -->
+    <div class="overlay" id="settingsOverlay">
+        <div class="overlay-content">
+            <h2 style="margin-bottom:20px;">⚙️ Settings</h2>
+            
+            <div class="settings-section">
+                <h3>📷 Camera</h3>
+                <label>Preferred Camera</label>
+                <select id="cameraSelect">
+                    <option value="">Default (Environment)</option>
+                </select>
+            </div>
+            
+            <div class="settings-section">
+                <h3>📜 History</h3>
+                <label>History Limit (0 = Unlimited)</label>
+                <input type="number" id="historyLimit" value="50" min="0">
+                
+                <label>Auto-delete after (days)</label>
+                <input type="number" id="autoDelete" value="30" min="0">
+            </div>
+            
+            <div class="settings-section">
+                <h3>🔒 Security</h3>
+                <label>Transmission PIN (optional)</label>
+                <input type="password" id="pin" placeholder="Enter PIN">
+                
+                <label style="display:flex; align-items:center; gap:10px; margin:15px 0;">
+                    <input type="checkbox" id="maskSensitive" checked>
+                    Mask sensitive data
+                </label>
+                
+                <h4 style="margin:20px 0 10px 0;">URL Allowlist</h4>
+                <p style="color:#888; font-size:13px; margin-bottom:15px;">URLs matching these prefixes will open directly.</p>
+                
+                <div id="allowlistItems" style="margin-bottom:15px;"></div>
+                
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="newAllowlist" placeholder="https://example.com/" style="flex:2;">
+                    <button class="btn btn-small btn-copy" onclick="addAllowlist()" style="flex:1;">Add</button>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <h3>📱 App</h3>
+                <button class="btn btn-share" onclick="installPWA()" style="width:100%; margin-bottom:10px;">
+                    📱 Install App
+                </button>
+                <button class="btn btn-copy" onclick="showAppInfo()" style="width:100%;">
+                    ℹ️ App Info
+                </button>
+            </div>
+            
+            <button class="btn btn-scan" onclick="saveSettings()" style="width:100%; margin-bottom:10px;">
+                💾 Save Settings
+            </button>
+            <button class="btn btn-delete" onclick="clearAllData()" style="width:100%; margin-bottom:10px;">
+                🗑️ Clear All Data
+            </button>
+            <button class="btn" onclick="toggleSettings()" style="width:100%; background:#444;">
+                Close
+            </button>
         </div>
     </div>
 
-    <!-- Main App Container -->
-    <div id="appContainer">
-        <!-- Header -->
-        <div class="header">
-            <h1 class="app-title">📋 QR Actions
-                <span class="stats-badge" id="statsBadge">0</span>
-            </h1>
-            <button class="settings-icon" onclick="toggleSettings()" style="font-size:28px; background:none; border:none; color:#888; padding:5px;">⚙️</button>
-        </div>
-        
-        <!-- Navigation Tabs -->
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('scan')">
-                <span>🔍</span> Scan
-            </button>
-            <button class="tab-btn" onclick="switchTab('history')">
-                <span>📜</span> History
-                <span class="stats-badge" style="background:var(--green); font-size:10px;" id="historyCount">0</span>
-            </button>
-            <button class="tab-btn" onclick="switchTab('favorites')">
-                <span>⭐</span> Favorites
-                <span class="stats-badge" style="background:var(--yellow); color:#212529; font-size:10px;" id="favoritesCount">0</span>
-            </button>
-        </div>
-        
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <button class="quick-action-btn" onclick="copyAllHistory()">
-                <span>📋</span>
-                Copy All
-            </button>
-            <button class="quick-action-btn" onclick="exportHistory()">
-                <span>📤</span>
-                Export
-            </button>
-            <button class="quick-action-btn" onclick="clearOldScans()">
-                <span>🧹</span>
-                Cleanup
-            </button>
-            <button class="quick-action-btn" onclick="toggleGenerateQR()">
-                <span>🔄</span>
-                Generate
-            </button>
-        </div>
-        
-        <!-- Scan Tab Content -->
-        <div id="scanTab" class="tab-content">
-            <div id="reader"></div>
+    <!-- Generate QR Overlay -->
+    <div class="overlay" id="generateOverlay">
+        <div class="overlay-content">
+            <h2 style="margin-bottom:20px;">🔄 Generate QR Code</h2>
             
-            <div class="action-row" id="mainActions">
-                <button id="cameraBtn" class="btn btn-scan" onclick="startScan()">
-                    <span>📷</span> Scan QR Code
-                </button>
-                <div class="btn btn-upload">
-                    <span>📁</span> Upload Image
-                    <input type="file" id="qr-input-file" accept="image/*" onchange="uploadImage(event)">
-                </div>
+            <label>Type</label>
+            <select id="qrType" onchange="changeQRType()" style="margin-bottom:20px;">
+                <option value="text">Text</option>
+                <option value="url">URL</option>
+                <option value="wifi">WiFi</option>
+                <option value="contact">Contact</option>
+                <option value="email">Email</option>
+            </select>
+            
+            <div id="qrFields">
+                <input type="text" id="qrContent" placeholder="Enter content..." style="margin-bottom:20px;">
             </div>
             
-            <button id="abortBtn" class="btn btn-abort" onclick="stopScan()">
-                <span>🛑</span> Stop Scanning
+            <div id="qrCodeDisplay">
+                <canvas id="qrCodeCanvas" width="250" height="250"></canvas>
+            </div>
+            
+            <button class="btn btn-generate" onclick="generateQR()" style="width:100%; margin:20px 0 10px;">
+                Generate QR Code
             </button>
-            
-            <div class="action-row">
-                <button class="btn btn-generate" onclick="toggleGenerateQR()">
-                    <span>🔄</span> Generate QR
-                </button>
-                <button class="btn btn-batch" onclick="startBatchMode()">
-                    <span>📦</span> Batch Scan
-                </button>
-            </div>
-        </div>
-        
-        <!-- History Tab Content -->
-        <div id="historyTab" class="tab-content" style="display:none;">
-            <div class="search-container">
-                <input type="text" class="search-input" id="searchInput" placeholder="Search history..." oninput="filterHistory()">
-                <span class="search-icon">🔍</span>
-            </div>
-            
-            <div class="filter-tabs">
-                <button class="filter-tab active" onclick="setFilter('all')">All</button>
-                <button class="filter-tab" onclick="setFilter('url')">
-                    <span>🌐</span> URLs
-                </button>
-                <button class="filter-tab" onclick="setFilter('wifi')">
-                    <span>📶</span> WiFi
-                </button>
-                <button class="filter-tab" onclick="setFilter('text')">
-                    <span>📝</span> Text
-                </button>
-                <button class="filter-tab" onclick="setFilter('contact')">
-                    <span>👤</span> Contacts
-                </button>
-                <button class="filter-tab" onclick="setFilter('favorites')">
-                    <span>⭐</span> Favorites
-                </button>
-            </div>
-            
-            <div id="history"></div>
-        </div>
-        
-        <!-- Favorites Tab Content -->
-        <div id="favoritesTab" class="tab-content" style="display:none;">
-            <div class="search-container">
-                <input type="text" class="search-input" id="favoritesSearch" placeholder="Search favorites..." oninput="filterFavorites()">
-                <span class="search-icon">🔍</span>
-            </div>
-            
-            <div id="favorites"></div>
-        </div>
-        
-        <!-- Settings Overlay -->
-        <div id="settingsOverlay" class="overlay">
-            <div class="overlay-content">
-                <h3 style="margin-top:0; display:flex; align-items:center; gap:10px;">
-                    <span>⚙️</span> Settings
-                </h3>
-                
-                <div class="settings-section">
-                    <h4><span>📷</span> Camera Settings</h4>
-                    <label>Preferred Camera</label>
-                    <select id="cameraSelect">
-                        <option value="">Default (Environment)</option>
-                    </select>
-                    
-                    <label style="margin-top: 15px;">
-                        <input type="checkbox" id="continuousScan" style="width: auto; margin-right: 10px;">
-                        Continuous Scan Mode
-                    </label>
-                    
-                    <label style="margin-top: 10px;">
-                        <input type="checkbox" id="beepOnScan" style="width: auto; margin-right: 10px;">
-                        Beep on Successful Scan
-                    </label>
-                </div>
-                
-                <div class="settings-section">
-                    <h4><span>📜</span> History Settings</h4>
-                    <label>History Limit (0 = Unlimited)</label>
-                    <input type="number" id="limitInput" min="0" value="50">
-                    
-                    <label style="margin-top: 15px;">Auto-delete after (days, 0 = never)</label>
-                    <input type="number" id="autoDeleteInput" min="0" value="30">
-                </div>
-                
-                <div class="settings-section">
-                    <h4><span>🔒</span> Security & URLs</h4>
-                    <label>Transmission PIN</label>
-                    <input type="password" id="pinInput" placeholder="Optional PIN for sharing">
-                    
-                    <label style="margin-top: 15px;">
-                        <input type="checkbox" id="safeBrowsingCheck" style="width: auto; margin-right: 10px;" checked>
-                        Enable safe browsing warnings
-                    </label>
-                    
-                    <label style="margin-top: 10px;">
-                        <input type="checkbox" id="maskSensitiveData" style="width: auto; margin-right: 10px;" checked>
-                        Mask sensitive data by default
-                    </label>
-                    
-                    <div style="margin-top: 20px;">
-                        <h5 style="margin: 0 0 10px 0; color: #aaa;">URL Allowlist</h5>
-                        <p style="margin: 0 0 15px 0; font-size: 12px; color: #888;">URLs matching these prefixes will open directly without asking.</p>
-                        
-                        <div class="allowlist-manager">
-                            <div id="allowlistItems"></div>
-                            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                                <input type="text" id="newAllowlistPrefix" placeholder="https://example.com/" style="flex: 2;">
-                                <button class="btn btn-small btn-share" onclick="addAllowlistPrefix()" style="flex: 1;">
-                                    Add
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="settings-section">
-                    <h4><span>🎨</span> Appearance</h4>
-                    <label>Theme</label>
-                    <select id="themeSelect">
-                        <option value="dark">Dark</option>
-                        <option value="light">Light</option>
-                        <option value="auto">Auto</option>
-                    </select>
-                    
-                    <label style="margin-top: 15px;">QR Preview Size</label>
-                    <select id="previewSize">
-                        <option value="small">Small</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="large">Large</option>
-                    </select>
-                </div>
-                
-                <div class="settings-section">
-                    <h4><span>📱</span> App</h4>
-                    <button class="btn btn-share" onclick="installPWA()" style="margin-bottom: 10px;">
-                        <span>📱</span> Install App
-                    </button>
-                    <button class="btn btn-copy" onclick="showAppInfo()" style="margin-bottom: 10px;">
-                        <span>ℹ️</span> App Info
-                    </button>
-                </div>
-                
-                <button class="btn btn-share" onclick="saveSettings()" style="margin-top: 20px;">
-                    <span>💾</span> Save Settings
-                </button>
-                
-                <button class="btn btn-danger" onclick="clearAllData()" style="margin-top: 10px;">
-                    <span>⚠️</span> Clear All Data
-                </button>
-                
-                <button class="btn" style="background:transparent; margin-top: 10px;" onclick="toggleSettings()">
-                    Close
-                </button>
-                
-                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; font-size: 12px; color: #666; text-align: center;">
-                    QR Actions v2.5 • PWA • Works offline • By Bram Diederik
-                </div>
-            </div>
-        </div>
-        
-        <!-- Generate QR Overlay -->
-        <div id="generateOverlay" class="overlay">
-            <div class="overlay-content">
-                <h3 style="margin-top:0; display:flex; align-items:center; gap:10px;">
-                    <span>🔄</span> Generate QR Code
-                </h3>
-                
-                <div class="settings-section">
-                    <h4><span>📝</span> Content Type</h4>
-                    <select id="qrTypeSelect" onchange="toggleQrTypeFields()">
-                        <option value="text">Text</option>
-                        <option value="url">URL</option>
-                        <option value="wifi">WiFi</option>
-                        <option value="contact">Contact (vCard)</option>
-                        <option value="email">Email</option>
-                        <option value="sms">SMS</option>
-                        <option value="tel">Phone</option>
-                        <option value="geo">Location</option>
-                    </select>
-                </div>
-                
-                <!-- Text/URL Fields -->
-                <div id="textFields">
-                    <label>Enter text or URL</label>
-                    <textarea id="qrTextInput" placeholder="Enter text or URL here..." rows="3"></textarea>
-                </div>
-                
-                <!-- WiFi Fields -->
-                <div id="wifiFields" style="display: none;">
-                    <label>Network Name (SSID)</label>
-                    <input type="text" id="wifiSsid" placeholder="Your WiFi name">
-                    
-                    <label style="margin-top: 15px;">Password</label>
-                    <input type="text" id="wifiPassword" placeholder="WiFi password">
-                    
-                    <label style="margin-top: 15px;">Security Type</label>
-                    <select id="wifiSecurity">
-                        <option value="WPA">WPA/WPA2</option>
-                        <option value="WEP">WEP</option>
-                        <option value="nopass">No password</option>
-                    </select>
-                </div>
-                
-                <!-- Contact Fields -->
-                <div id="contactFields" style="display: none;">
-                    <label>Full Name</label>
-                    <input type="text" id="contactName" placeholder="John Doe">
-                    
-                    <label style="margin-top: 15px;">Phone Number</label>
-                    <input type="tel" id="contactPhone" placeholder="+1 234 567 8900">
-                    
-                    <label style="margin-top: 15px;">Email</label>
-                    <input type="email" id="contactEmail" placeholder="john@example.com">
-                </div>
-                
-                <!-- Email Fields -->
-                <div id="emailFields" style="display: none;">
-                    <label>Recipient Email</label>
-                    <input type="email" id="emailTo" placeholder="recipient@example.com">
-                    
-                    <label style="margin-top: 15px;">Subject</label>
-                    <input type="text" id="emailSubject" placeholder="Email subject">
-                    
-                    <label style="margin-top: 15px;">Body</label>
-                    <textarea id="emailBody" placeholder="Email body text..." rows="2"></textarea>
-                </div>
-                
-                <!-- SMS Fields -->
-                <div id="smsFields" style="display: none;">
-                    <label>Phone Number</label>
-                    <input type="tel" id="smsNumber" placeholder="+1 234 567 8900">
-                    
-                    <label style="margin-top: 15px;">Message</label>
-                    <textarea id="smsMessage" placeholder="Your message..." rows="2"></textarea>
-                </div>
-                
-                <!-- Phone Fields -->
-                <div id="phoneFields" style="display: none;">
-                    <label>Phone Number</label>
-                    <input type="tel" id="phoneNumber" placeholder="+1 234 567 8900">
-                </div>
-                
-                <!-- Location Fields -->
-                <div id="geoFields" style="display: none;">
-                    <label>Latitude</label>
-                    <input type="number" id="geoLat" placeholder="40.7128" step="any">
-                    
-                    <label style="margin-top: 15px;">Longitude</label>
-                    <input type="number" id="geoLng" placeholder="-74.0060" step="any">
-                    
-                    <label style="margin-top: 15px;">Location Name (Optional)</label>
-                    <input type="text" id="geoName" placeholder="New York City">
-                </div>
-                
-                <!-- QR Code Display -->
-                <div id="qrCodeDisplay" style="display: none;">
-                    <canvas id="qrCodeCanvas" width="250" height="250"></canvas>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div style="display: flex; gap: 10px; margin-top: 25px;">
-                    <button class="btn btn-generate" onclick="generateQRCode()" style="flex: 2;">
-                        <span>🔄</span> Generate QR Code
-                    </button>
-                    <button class="btn btn-share" onclick="downloadQRCode()" style="flex: 1;" id="downloadBtn" disabled>
-                        <span>💾</span> Save
-                    </button>
-                </div>
-                
-                <button class="btn" style="background:transparent; margin-top: 15px;" onclick="toggleGenerateQR()">
-                    Close
-                </button>
-            </div>
-        </div>
-        
-        <!-- URL Confirmation Modal -->
-        <div id="urlModal" class="overlay" style="z-index: 2000;">
-            <div class="overlay-content" style="max-width: 400px;">
-                <h3 style="margin-top:0; display:flex; align-items:center; gap:10px;">
-                    <span>🌐</span> Open URL?
-                </h3>
-                
-                <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin: 15px 0; word-break: break-all;">
-                    <code id="modalUrl"></code>
-                </div>
-                
-                <div id="urlSafetyWarning" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); padding: 12px; border-radius: 8px; margin: 15px 0; display: none;">
-                    <strong style="color: var(--red);">⚠️ Safety Warning</strong>
-                    <p style="margin: 8px 0 0 0; font-size: 13px; color: #aaa;">This URL doesn't match your allowlist. Proceed with caution.</p>
-                </div>
-                
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-share" onclick="confirmOpenUrl()" style="flex: 1;">
-                        <span>🌐</span> Open
-                    </button>
-                    <button class="btn btn-copy" onclick="copyModalUrl()" style="flex: 1;">
-                        <span>📋</span> Copy
-                    </button>
-                    <button class="btn" onclick="closeUrlModal()" style="background:transparent; flex:1;">
-                        Cancel
-                    </button>
-                </div>
-                
-                <div style="margin-top: 20px;">
-                    <label style="font-size: 12px; color: #888;">
-                        <input type="checkbox" id="addToAllowlist">
-                        Add to allowlist and open automatically next time
-                    </label>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Toast Container -->
-        <div id="toastContainer"></div>
-        
-        <!-- Footer -->
-        <div class="footer">
-            <strong>QR Actions - Professional QR Code Scanner</strong>
-            <div class="footer-links">
-                <a href="#" onclick="showAbout()">About</a>
-                <a href="#" onclick="showHelp()">Help</a>
-                <a href="#" onclick="toggleSettings()">Settings</a>
-                <a href="#" onclick="exportAllData()">Export</a>
-                <a href="#" onclick="showPrivacy()">Privacy</a>
-            </div>
-            <div style="margin-top: 15px; font-size: 12px; color: #666;">
-                PWA • Works offline • No tracking • By Bram Diederik
-            </div>
+            <button class="btn btn-share" onclick="downloadQR()" id="downloadBtn" disabled style="width:100%; margin-bottom:10px;">
+                💾 Save Image
+            </button>
+            <button class="btn" onclick="toggleGenerateQR()" style="width:100%; background:#444;">
+                Close
+            </button>
         </div>
     </div>
 
+    <!-- URL Modal -->
+    <div class="overlay" id="urlModal">
+        <div class="overlay-content">
+            <h2 style="margin-bottom:15px;">🌐 Open URL?</h2>
+            
+            <div style="background:#000; padding:15px; border-radius:8px; margin-bottom:15px; word-break:break-all;">
+                <code id="modalUrl"></code>
+            </div>
+            
+            <div class="url-warning" id="urlWarning" style="display:none;">
+                ⚠️ This URL is not in your allowlist
+            </div>
+            
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:20px 0;">
+                <button class="btn btn-open" onclick="openModalUrl()">Open</button>
+                <button class="btn btn-copy" onclick="copyModalUrl()">Copy</button>
+            </div>
+            
+            <label style="display:flex; align-items:center; gap:10px; margin:15px 0;">
+                <input type="checkbox" id="addToAllowlist">
+                Add to allowlist
+            </label>
+            
+            <button class="btn" onclick="closeUrlModal()" style="width:100%; background:#444;">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <strong>QR Actions - Professional QR Scanner</strong>
+        <div class="footer-links">
+            <a href="#" onclick="showAbout()">About</a>
+            <a href="#" onclick="showHelp()">Help</a>
+            <a href="#" onclick="toggleSettings()">Settings</a>
+            <a href="#" onclick="exportData()">Export</a>
+        </div>
+        <div style="margin-top:10px; color:#666;">
+            PWA • Works offline • No tracking
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
-        // ============ CONSTANTS & CONFIG ============
-        const AUTH_KEY = 'qr_actions_pin_v4';
-        const HIST_KEY = 'qr_actions_history_v4';
-        const CAM_KEY = 'qr_actions_camera_id';
-        const LIMIT_KEY = 'qr_actions_limit';
-        const SETTINGS_KEY = 'qr_actions_settings_v3';
-        const FAVORITES_KEY = 'qr_actions_favorites_v3';
-        const ALLOWLIST_KEY = 'qr_actions_allowlist_v1';
-        const INSTALL_PROMPT_KEY = 'qr_actions_install_shown';
-        
-        let html5QrCode = null;
-        let currentTab = 'scan';
-        let currentFilter = 'all';
-        let deferredPrompt = null;
-        let pendingUrl = null;
-        
-        let settings = {
-            continuousScan: false,
-            beepOnScan: true,
-            safeBrowsing: true,
-            maskSensitiveData: true,
-            theme: 'dark',
-            previewSize: 'medium',
-            autoDeleteDays: 30
+        // ============ APP CONFIGURATION ============
+        const CONFIG = {
+            HISTORY_KEY: 'qr_history',
+            SETTINGS_KEY: 'qr_settings',
+            FAVORITES_KEY: 'qr_favorites',
+            ALLOWLIST_KEY: 'qr_allowlist'
         };
         
-        let urlAllowlist = [];
+        let scanner = null;
+        let deferredPrompt = null;
+        let currentUrl = null;
+        let settings = {
+            camera: '',
+            historyLimit: 50,
+            autoDeleteDays: 30,
+            pin: '',
+            maskSensitive: true,
+            allowlist: ['https://github.com/', 'https://stackoverflow.com/']
+        };
         
         // ============ PWA INSTALLATION ============
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            showInstallButton();
-            
-            // Show install prompt if never shown before
-            if (!localStorage.getItem(INSTALL_PROMPT_KEY)) {
-                setTimeout(() => {
-                    showInstallPrompt();
-                    localStorage.setItem(INSTALL_PROMPT_KEY, 'true');
-                }, 3000);
-            }
+            document.getElementById('installBtn').classList.add('show');
         });
         
-        function showInstallButton() {
-            const installBtn = document.getElementById('installBtn');
-            if (installBtn) {
-                installBtn.classList.add('show');
-            }
-        }
-        
-        function showInstallPrompt() {
-            const prompt = document.getElementById('installPrompt');
-            if (prompt) {
-                prompt.style.display = 'block';
-            }
-        }
-        
-        function hideInstallPrompt() {
-            const prompt = document.getElementById('installPrompt');
-            if (prompt) {
-                prompt.style.display = 'none';
-            }
-        }
-        
         async function installPWA() {
-            hideInstallPrompt();
-            const installBtn = document.getElementById('installBtn');
-            if (installBtn) {
-                installBtn.classList.remove('show');
-            }
-            
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
-                
                 if (outcome === 'accepted') {
-                    showToast('App installed successfully!', 'success');
+                    showToast('App installed successfully!');
+                    document.getElementById('installBtn').classList.remove('show');
                 }
-                
                 deferredPrompt = null;
-            } else {
-                showToast('App installation not available', 'warning');
             }
         }
         
-        // ============ SERVICE WORKER REGISTRATION ============
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `
-                    const CACHE_NAME = 'qr-actions-pwa-v6';
-                    const ASSETS = [
-                        './',
-                        'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js',
-                        'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js'
-                    ];
-                    
-                    self.addEventListener('install', (e) => {
-                        e.waitUntil(
-                            caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-                        );
-                        self.skipWaiting();
-                    });
-                    
-                    self.addEventListener('activate', (e) => {
-                        e.waitUntil(
-                            caches.keys().then((keys) => 
-                                Promise.all(
-                                    keys.map((key) => {
-                                        if (key !== CACHE_NAME) return caches.delete(key);
-                                    })
-                                )
-                            )
-                        );
-                        self.clients.claim();
-                    });
-                    
-                    self.addEventListener('fetch', (e) => {
-                        e.respondWith(
-                            caches.match(e.request).then((res) => res || fetch(e.request))
-                        );
-                    });
-                `;
-                
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                navigator.serviceWorker.register(URL.createObjectURL(blob), { scope: './' })
-                    .then(() => console.log('Service Worker registered'))
-                    .catch(err => console.log('Service Worker registration failed:', err));
-            });
-        }
-        
-        // ============ URL ALLOWLIST MANAGEMENT ============
-        function loadAllowlist() {
-            try {
-                const saved = localStorage.getItem(ALLOWLIST_KEY);
-                urlAllowlist = saved ? JSON.parse(saved) : [
-                    'https://github.com/',
-                    'https://stackoverflow.com/',
-                    'https://developer.mozilla.org/'
-                ];
-                renderAllowlist();
-            } catch (e) {
-                urlAllowlist = [];
-                renderAllowlist();
-            }
-        }
-        
-        function saveAllowlist() {
-            localStorage.setItem(ALLOWLIST_KEY, JSON.stringify(urlAllowlist));
-        }
-        
-        function renderAllowlist() {
-            const container = document.getElementById('allowlistItems');
-            if (!container) return;
-            
-            if (urlAllowlist.length === 0) {
-                container.innerHTML = '<p style="color: #888; font-size: 13px; text-align: center;">No allowlist entries yet.</p>';
-                return;
-            }
-            
-            container.innerHTML = urlAllowlist.map((prefix, index) => `
-                <div class="allowlist-item">
-                    <span class="prefix">${prefix}</span>
-                    <button class="btn-delete" onclick="removeAllowlistPrefix(${index})" style="font-size:12px; padding:4px; width:24px; height:24px;">
-                        ✕
-                    </button>
-                </div>
-            `).join('');
-        }
-        
-        function addAllowlistPrefix() {
-            const input = document.getElementById('newAllowlistPrefix');
-            const prefix = input.value.trim();
-            
-            if (!prefix) {
-                showToast('Please enter a URL prefix', 'error');
-                return;
-            }
-            
-            // Validate prefix format
-            if (!prefix.startsWith('http://') && !prefix.startsWith('https://')) {
-                showToast('URL must start with http:// or https://', 'error');
-                return;
-            }
-            
-            // Check if already exists
-            if (urlAllowlist.includes(prefix)) {
-                showToast('Prefix already in allowlist', 'warning');
-                return;
-            }
-            
-            urlAllowlist.push(prefix);
-            saveAllowlist();
-            renderAllowlist();
-            input.value = '';
-            showToast('Added to allowlist', 'success');
-        }
-        
-        function removeAllowlistPrefix(index) {
-            urlAllowlist.splice(index, 1);
-            saveAllowlist();
-            renderAllowlist();
-            showToast('Removed from allowlist', 'warning');
-        }
-        
-        function isUrlAllowed(url) {
-            return urlAllowlist.some(prefix => url.startsWith(prefix));
-        }
-        
-        // ============ URL HANDLING ============
-        function handleUrl(url) {
-            pendingUrl = url;
-            
-            // Check if URL is in allowlist
-            if (isUrlAllowed(url)) {
-                // Open directly if in allowlist
-                window.open(url, '_blank');
-                showToast('Opening URL from allowlist', 'info');
-                return;
-            }
-            
-            // Show confirmation modal for non-allowlisted URLs
-            document.getElementById('modalUrl').textContent = url;
-            document.getElementById('urlSafetyWarning').style.display = settings.safeBrowsing ? 'block' : 'none';
-            document.getElementById('addToAllowlist').checked = false;
-            document.getElementById('urlModal').style.display = 'flex';
-        }
-        
-        function confirmOpenUrl() {
-            const url = pendingUrl;
-            const addToAllowlist = document.getElementById('addToAllowlist').checked;
-            
-            if (addToAllowlist && url) {
-                if (!urlAllowlist.includes(url)) {
-                    urlAllowlist.push(url);
-                    saveAllowlist();
-                    renderAllowlist();
-                    showToast('Added to allowlist', 'success');
-                }
-            }
-            
-            if (url) {
-                window.open(url, '_blank');
-            }
-            
-            closeUrlModal();
-        }
-        
-        function copyModalUrl() {
-            if (pendingUrl) {
-                copyToClipboard(pendingUrl);
-                showToast('URL copied to clipboard', 'success');
-            }
-            closeUrlModal();
-        }
-        
-        function closeUrlModal() {
-            document.getElementById('urlModal').style.display = 'none';
-            pendingUrl = null;
-        }
-        
-        function checkSafety(urlToTest) {
-            const encodedUrl = btoa(urlToTest.trim()).replace(/=/g, "");
-            window.open(`https://www.virustotal.com/gui/url/${encodedUrl}/detection`, '_blank');
-        }
-        
-        // ============ HELPER FUNCTIONS ============
-        function showToast(message, type = 'success', duration = 3000) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `
-                <span>${type === 'success' ? '✓' : type === 'error' ? '✗' : '⚠'}</span>
-                ${message}
-            `;
-            container.appendChild(toast);
-            
-            setTimeout(() => toast.classList.add('show'), 10);
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 400);
-            }, duration);
-        }
-        
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('Copied to clipboard!', 'success');
-            }).catch(err => {
-                // Fallback for older browsers
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                showToast('Copied to clipboard!', 'success');
-            });
-        }
-        
-        function vibrate(pattern = [100]) {
-            if (navigator.vibrate) navigator.vibrate(pattern);
-        }
-        
-        // ============ QR TYPE DETECTION ============
-        function detectQRType(text) {
-            const trimmed = text.trim();
-            
-            if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return 'url';
-            if (trimmed.startsWith('WIFI:')) return 'wifi';
-            if (trimmed.startsWith('mailto:')) return 'email';
-            if (trimmed.startsWith('tel:')) return 'phone';
-            if (trimmed.startsWith('sms:') || trimmed.startsWith('SMSTO:')) return 'sms';
-            if (trimmed.startsWith('BEGIN:VCARD')) return 'vcard';
-            if (trimmed.startsWith('geo:')) return 'geo';
-            
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (emailRegex.test(trimmed)) return 'email';
-            
-            const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-            if (phoneRegex.test(trimmed.replace(/[\s\-\(\)]/g, ''))) return 'phone';
-            
-            const barcodeRegex = /^\d{8,13}$/;
-            if (barcodeRegex.test(trimmed)) return 'barcode';
-            
-            const coordRegex = /^-?\d+\.\d+,\s*-?\d+\.\d+$/;
-            if (coordRegex.test(trimmed)) return 'geo';
-            
-            if (trimmed.includes('FN:') && trimmed.includes('TEL:')) return 'vcard';
-            
-            return 'text';
-        }
-        
-        function parseWifiQR(text) {
-            const result = {
-                ssid: '',
-                password: '',
-                security: 'WPA',
-                hidden: false
-            };
-            
-            const parts = text.replace('WIFI:', '').split(';');
-            parts.forEach(part => {
-                if (part.startsWith('S:')) result.ssid = part.substring(2);
-                if (part.startsWith('P:')) result.password = part.substring(2);
-                if (part.startsWith('T:')) result.security = part.substring(2);
-                if (part.startsWith('H:')) result.hidden = part.substring(2) === 'true';
-            });
-            
-            return result;
-        }
-        
-        function parseVCard(text) {
-            const lines = text.split('\n');
-            const contact = {
-                name: '',
-                phone: '',
-                email: '',
-                company: '',
-                address: '',
-                note: ''
-            };
-            
-            lines.forEach(line => {
-                if (line.startsWith('FN:')) contact.name = line.substring(3);
-                if (line.startsWith('TEL;')) contact.phone = line.split(':')[1];
-                if (line.startsWith('EMAIL;')) contact.email = line.split(':')[1];
-                if (line.startsWith('ORG:')) contact.company = line.substring(4);
-                if (line.startsWith('ADR;')) contact.address = line.split(':')[1];
-                if (line.startsWith('NOTE:')) contact.note = line.substring(5);
-            });
-            
-            return contact;
-        }
-        
-        function parseEmail(text) {
-            if (text.startsWith('mailto:')) {
-                const parts = text.substring(7).split('?');
-                const email = parts[0];
-                const params = new URLSearchParams(parts[1] || '');
-                return {
-                    to: email,
-                    subject: params.get('subject') || '',
-                    body: params.get('body') || ''
-                };
-            }
-            return { to: text, subject: '', body: '' };
-        }
-        
-        function parseSMS(text) {
-            if (text.startsWith('sms:')) {
-                const parts = text.substring(4).split('?');
-                const number = parts[0];
-                const params = new URLSearchParams(parts[1] || '');
-                return {
-                    number: number,
-                    body: params.get('body') || ''
-                };
-            }
-            if (text.startsWith('SMSTO:')) {
-                const parts = text.substring(6).split(':');
-                return {
-                    number: parts[0],
-                    body: parts[1] || ''
-                };
-            }
-            return { number: '', body: '' };
-        }
-        
-        function parseGeo(text) {
-            if (text.startsWith('geo:')) {
-                const coords = text.substring(4).split(',');
-                return {
-                    lat: coords[0],
-                    lng: coords[1],
-                    zoom: coords[2] || '15'
-                };
-            }
-            if (text.match(/^-?\d+\.\d+,\s*-?\d+\.\d+$/)) {
-                const coords = text.split(',');
-                return {
-                    lat: coords[0].trim(),
-                    lng: coords[1].trim(),
-                    zoom: '15'
-                };
-            }
-            return { lat: '', lng: '', zoom: '15' };
-        }
-        
-        // ============ CAMERA MANAGEMENT ============
-        async function getCameras() {
-            try {
-                const devices = await Html5Qrcode.getCameras();
-                const select = document.getElementById('cameraSelect');
-                if (devices && devices.length > 0) {
-                    select.innerHTML = '';
-                    const defaultOption = document.createElement('option');
-                    defaultOption.value = '';
-                    defaultOption.text = 'Default (Environment)';
-                    select.appendChild(defaultOption);
-                    
-                    devices.forEach(device => {
-                        const option = document.createElement('option');
-                        option.value = device.id;
-                        option.text = device.label || `Camera ${select.length}`;
-                        if(localStorage.getItem(CAM_KEY) === device.id) option.selected = true;
-                        select.appendChild(option);
-                    });
-                }
-            } catch (e) {
-                console.error('Camera error:', e);
-            }
-        }
-        
-        // ============ SETTINGS MANAGEMENT ============
-        function loadSettings() {
-            try {
-                const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
-                settings = { ...settings, ...saved };
-                
-                // Apply theme
-                if (settings.theme === 'light') {
-                    document.documentElement.style.setProperty('--bg', '#f8f9fa');
-                    document.documentElement.style.setProperty('--card', '#ffffff');
-                    document.documentElement.style.setProperty('--dark-grey', '#e9ecef');
-                } else if (settings.theme === 'auto') {
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    if (prefersDark) {
-                        document.documentElement.style.setProperty('--bg', '#121212');
-                        document.documentElement.style.setProperty('--card', '#1e1e1e');
-                    } else {
-                        document.documentElement.style.setProperty('--bg', '#f8f9fa');
-                        document.documentElement.style.setProperty('--card', '#ffffff');
-                    }
-                }
-            } catch (e) {
-                console.error('Error loading settings:', e);
-            }
-        }
-        
-        function toggleSettings() {
-            const overlay = document.getElementById('settingsOverlay');
-            if (overlay.style.display === 'flex') {
-                overlay.style.display = 'none';
-            } else {
-                overlay.style.display = 'flex';
-                loadSettingsIntoForm();
-                getCameras();
-                loadAllowlist();
-            }
-        }
-        
-        function loadSettingsIntoForm() {
-            document.getElementById('pinInput').value = localStorage.getItem(AUTH_KEY) || '';
-            document.getElementById('limitInput').value = localStorage.getItem(LIMIT_KEY) || '50';
-            document.getElementById('autoDeleteInput').value = settings.autoDeleteDays || '30';
-            document.getElementById('continuousScan').checked = settings.continuousScan || false;
-            document.getElementById('beepOnScan').checked = settings.beepOnScan !== false;
-            document.getElementById('safeBrowsingCheck').checked = settings.safeBrowsing !== false;
-            document.getElementById('maskSensitiveData').checked = settings.maskSensitiveData !== false;
-            document.getElementById('themeSelect').value = settings.theme || 'dark';
-            document.getElementById('previewSize').value = settings.previewSize || 'medium';
-        }
-        
-        function saveSettings() {
-            localStorage.setItem(AUTH_KEY, document.getElementById('pinInput').value);
-            localStorage.setItem(LIMIT_KEY, document.getElementById('limitInput').value);
-            
-            settings.continuousScan = document.getElementById('continuousScan').checked;
-            settings.beepOnScan = document.getElementById('beepOnScan').checked;
-            settings.safeBrowsing = document.getElementById('safeBrowsingCheck').checked;
-            settings.maskSensitiveData = document.getElementById('maskSensitiveData').checked;
-            settings.theme = document.getElementById('themeSelect').value;
-            settings.previewSize = document.getElementById('previewSize').value;
-            settings.autoDeleteDays = parseInt(document.getElementById('autoDeleteInput').value) || 30;
-            
-            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-            localStorage.setItem(CAM_KEY, document.getElementById('cameraSelect').value);
-            
-            loadSettings();
-            toggleSettings();
-            showToast('Settings saved!', 'success');
-        }
-        
-        function clearAllData() {
-            if (confirm("⚠️ This will permanently delete ALL settings, history, favorites, and allowlist. Are you sure?")) {
-                if (confirm("❌ Final confirmation: This cannot be undone!")) {
-                    localStorage.clear();
-                    showToast('All data cleared!', 'warning');
-                    setTimeout(() => location.reload(), 1500);
-                }
-            }
-        }
-        
-        // ============ SCANNING FUNCTIONS ============
+        // ============ SCANNER FUNCTIONS ============
         async function startScan() {
-            const actions = document.getElementById('mainActions');
-            const abortBtn = document.getElementById('abortBtn');
-            
-            if (html5QrCode) {
-                await stopScan();
-                return;
-            }
-            
-            html5QrCode = new Html5Qrcode("reader");
-            const cameraId = localStorage.getItem(CAM_KEY);
-            const config = cameraId ? { deviceId: { exact: cameraId } } : { facingMode: "environment" };
-            
             try {
-                await html5QrCode.start(
-                    config,
-                    { fps: 20, qrbox: { width: 250, height: 250 } },
-                    (text) => {
-                        if (!settings.continuousScan) {
-                            stopScan();
-                        }
-                        vibrate([100, 50, 100]);
-                        if (settings.beepOnScan) {
-                            try {
-                                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                                const oscillator = audioContext.createOscillator();
-                                const gainNode = audioContext.createGain();
-                                oscillator.connect(gainNode);
-                                gainNode.connect(audioContext.destination);
-                                oscillator.frequency.value = 800;
-                                oscillator.type = 'sine';
-                                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                                oscillator.start(audioContext.currentTime);
-                                oscillator.stop(audioContext.currentTime + 0.1);
-                            } catch (e) {}
-                        }
-                        saveScan(text);
+                scanner = new Html5Qrcode("reader");
+                const cameras = await Html5Qrcode.getCameras();
+                const cameraId = settings.camera || (cameras.length > 0 ? cameras[0].id : 'environment');
+                
+                await scanner.start(
+                    cameraId,
+                    {
+                        fps: 10,
+                        qrbox: { width: 250, height: 250 }
                     },
+                    onScanSuccess,
                     () => {}
-                ).then(() => {
-                    actions.style.display = 'none';
-                    abortBtn.style.display = 'block';
-                });
+                );
+                
+                document.getElementById('scanBtn').style.display = 'none';
+                document.getElementById('stopBtn').style.display = 'block';
             } catch (err) {
-                console.error('Camera error:', err);
-                showToast('Camera access denied or not available', 'error');
-                html5QrCode = null;
+                showToast('Camera error: ' + err.message, true);
             }
         }
         
-        async function stopScan() {
-            if (html5QrCode) {
-                try {
-                    await html5QrCode.stop();
-                } catch (e) {}
-                html5QrCode = null;
+        function stopScan() {
+            if (scanner) {
+                scanner.stop().then(() => {
+                    scanner = null;
+                    document.getElementById('scanBtn').style.display = 'block';
+                    document.getElementById('stopBtn').style.display = 'none';
+                });
             }
-            document.getElementById('mainActions').style.display = 'flex';
-            document.getElementById('abortBtn').style.display = 'none';
+        }
+        
+        function onScanSuccess(decodedText) {
+            stopScan();
+            vibrate();
+            saveScan(decodedText);
+            showToast('QR code scanned!');
         }
         
         function uploadImage(event) {
             const file = event.target.files[0];
             if (!file) return;
             
-            const html5QrCodeFile = new Html5Qrcode("reader");
-            html5QrCodeFile.scanFile(file, true)
-                .then(qrCodeMessage => {
-                    vibrate([100]);
-                    saveScan(qrCodeMessage);
-                    showToast('QR code found!', 'success');
-                    event.target.value = "";
+            const scanner = new Html5Qrcode("reader");
+            scanner.scanFile(file, true)
+                .then(decodedText => {
+                    vibrate();
+                    saveScan(decodedText);
+                    showToast('QR code found!');
                 })
-                .catch(err => {
-                    showToast('No QR code found in image', 'error');
-                    event.target.value = "";
+                .catch(() => {
+                    showToast('No QR code found', true);
                 });
         }
         
-        // ============ SCAN HISTORY MANAGEMENT ============
+        // ============ SCAN HISTORY ============
         function saveScan(text) {
-            let history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            const newItem = {
+            let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
+            
+            history.unshift({
+                id: Date.now(),
                 text: text,
                 date: new Date().toLocaleString(),
-                id: Date.now(),
-                type: detectQRType(text),
-                favorite: false
-            };
+                favorite: false,
+                type: detectType(text)
+            });
             
-            history.unshift(newItem);
-            
-            const limit = parseInt(localStorage.getItem(LIMIT_KEY) || "50");
-            if (limit > 0) {
-                history = history.slice(0, limit);
+            // Apply limit
+            if (settings.historyLimit > 0) {
+                history = history.slice(0, settings.historyLimit);
             }
             
-            localStorage.setItem(HIST_KEY, JSON.stringify(history));
-            render();
+            localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
             updateStats();
             
-            // Handle URL scanning - show modal instead of auto-opening
-            if (newItem.type === 'url') {
+            // Handle URL
+            if (text.startsWith('http')) {
                 handleUrl(text);
             }
         }
         
+        function detectType(text) {
+            if (text.startsWith('http')) return 'url';
+            if (text.startsWith('WIFI:')) return 'wifi';
+            if (text.startsWith('mailto:')) return 'email';
+            if (text.startsWith('tel:')) return 'phone';
+            if (text.includes('@')) return 'email';
+            return 'text';
+        }
+        
         function toggleFavorite(id) {
-            let history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            const itemIndex = history.findIndex(item => item.id === id);
-            if (itemIndex !== -1) {
-                history[itemIndex].favorite = !history[itemIndex].favorite;
-                localStorage.setItem(HIST_KEY, JSON.stringify(history));
-                localStorage.setItem(FAVORITES_KEY, JSON.stringify(
+            let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
+            const index = history.findIndex(item => item.id === id);
+            
+            if (index !== -1) {
+                history[index].favorite = !history[index].favorite;
+                localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
+                localStorage.setItem(CONFIG.FAVORITES_KEY, JSON.stringify(
                     history.filter(item => item.favorite)
                 ));
-                render();
+                
+                renderHistory();
+                renderFavorites();
                 updateStats();
-                showToast(history[itemIndex].favorite ? 'Added to favorites!' : 'Removed from favorites', 'success');
+                showToast(history[index].favorite ? 'Added to favorites' : 'Removed from favorites');
             }
         }
         
-        function deleteItem(id) {
-            let history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+        function deleteScan(id) {
+            let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
             history = history.filter(item => item.id !== id);
-            localStorage.setItem(HIST_KEY, JSON.stringify(history));
-            render();
+            localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
+            
+            renderHistory();
+            renderFavorites();
             updateStats();
-            showToast('Item deleted', 'warning');
+            showToast('Scan deleted', true);
         }
         
-        function clearOldScans() {
-            const days = settings.autoDeleteDays;
-            if (days <= 0) return;
+        function renderHistory(search = '') {
+            const container = document.getElementById('historyList');
+            let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
             
-            let history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            const cutoff = new Date();
-            cutoff.setDate(cutoff.getDate() - days);
-            
-            const oldCount = history.length;
-            history = history.filter(item => {
-                const itemDate = new Date(item.id);
-                return itemDate > cutoff;
-            });
-            
-            if (history.length < oldCount) {
-                localStorage.setItem(HIST_KEY, JSON.stringify(history));
-                render();
-                updateStats();
-                showToast(`Cleaned ${oldCount - history.length} old scans`, 'success');
-            } else {
-                showToast('No old scans to clean', 'info');
-            }
-        }
-        
-        // ============ RENDERING FUNCTIONS ============
-        function getTypeBadge(type) {
-            const badges = {
-                'url': { text: 'URL', icon: '🌐', class: 'badge-url' },
-                'wifi': { text: 'WiFi', icon: '📶', class: 'badge-wifi' },
-                'text': { text: 'Text', icon: '📝', class: 'badge-text' },
-                'email': { text: 'Email', icon: '📧', class: 'badge-email' },
-                'phone': { text: 'Phone', icon: '📞', class: 'badge-tel' },
-                'sms': { text: 'SMS', icon: '💬', class: 'badge-sms' },
-                'vcard': { text: 'Contact', icon: '👤', class: 'badge-vcard' },
-                'geo': { text: 'Location', icon: '📍', class: 'badge-geo' },
-                'barcode': { text: 'Barcode', icon: '📊', class: 'badge-barcode' }
-            };
-            
-            return badges[type] || badges['text'];
-        }
-        
-        function renderQRContent(item) {
-            const type = item.type || detectQRType(item.text);
-            const badge = getTypeBadge(type);
-            
-            let contentHtml = '';
-            
-            switch(type) {
-                case 'url':
-                    contentHtml = `
-                        <div class="qr-preview">
-                            <strong>URL:</strong><br>
-                            <div style="word-break: break-all; color: var(--accent); margin-top: 5px;">
-                                ${item.text}
-                            </div>
-                            <div style="margin-top: 10px; font-size: 12px; color: ${isUrlAllowed(item.text) ? 'var(--green)' : 'var(--yellow)'}">
-                                ${isUrlAllowed(item.text) ? '✓ In allowlist - will open directly' : '⚠ Not in allowlist - requires confirmation'}
-                            </div>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'wifi':
-                    const wifi = parseWifiQR(item.text);
-                    contentHtml = `
-                        <div class="qr-preview">
-                            <strong>WiFi Network:</strong><br>
-                            <div style="margin-top: 10px;">
-                                <strong>SSID:</strong> ${wifi.ssid || 'Unknown'}<br>
-                                <strong>Security:</strong> ${wifi.security}<br>
-                                <strong>Password:</strong> 
-                                <span id="wifi_${item.id}" class="wifi-pass ${settings.maskSensitiveData ? '' : 'show'}" 
-                                      onclick="togglePass('wifi_${item.id}')">
-                                    ${wifi.password || 'No password'}
-                                </span>
-                                ${wifi.hidden ? '<br><strong>Hidden network</strong>' : ''}
-                            </div>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'vcard':
-                    const contact = parseVCard(item.text);
-                    contentHtml = `
-                        <div class="contact-info">
-                            <div class="contact-field">
-                                <span>👤</span>
-                                <strong>${contact.name || 'Unnamed Contact'}</strong>
-                            </div>
-                            ${contact.phone ? `
-                            <div class="contact-field">
-                                <span>📞</span>
-                                ${contact.phone}
-                            </div>` : ''}
-                            ${contact.email ? `
-                            <div class="contact-field">
-                                <span>📧</span>
-                                ${contact.email}
-                            </div>` : ''}
-                        </div>
-                    `;
-                    break;
-                    
-                default:
-                    contentHtml = `
-                        <div class="qr-preview">
-                            <code style="word-break: break-all;">${item.text}</code>
-                        </div>
-                    `;
-            }
-            
-            return { badge, contentHtml };
-        }
-        
-        function getTypeActions(item) {
-            const type = item.type || detectQRType(item.text);
-            let actions = [];
-            
-            // Common actions for all types
-            actions.push({
-                text: '📋 Copy',
-                class: 'btn-copy',
-                onclick: `copyToClipboard('${item.text.replace(/'/g, "\\'")}')`
-            });
-            
-            actions.push({
-                text: item.favorite ? '⭐ Saved' : '⭐ Favorite',
-                class: 'btn-favorite',
-                onclick: `toggleFavorite(${item.id})`
-            });
-            
-            // Type-specific actions
-            switch(type) {
-                case 'url':
-                    actions.push({
-                        text: '🌐 Open',
-                        class: 'btn-share',
-                        onclick: `handleUrl('${item.text}')`
-                    });
-                    actions.push({
-                        text: '🛡 Safety',
-                        class: 'btn-sec',
-                        onclick: `checkSafety('${item.text}')`
-                    });
-                    break;
-                    
-                case 'wifi':
-                    const wifi = parseWifiQR(item.text);
-                    actions.push({
-                        text: '📶 Copy WiFi',
-                        class: 'btn-share',
-                        onclick: `copyToClipboard('WIFI:S:${wifi.ssid};T:${wifi.security};P:${wifi.password};;')`
-                    });
-                    actions.push({
-                        text: '🔑 Copy Pass',
-                        class: 'btn-copy',
-                        onclick: `copyToClipboard('${wifi.password}')`
-                    });
-                    break;
-                    
-                case 'email':
-                    const email = parseEmail(item.text);
-                    actions.push({
-                        text: '📧 Send',
-                        class: 'btn-email',
-                        onclick: `window.location.href = 'mailto:${email.to}?subject=${encodeURIComponent(email.subject)}&body=${encodeURIComponent(email.body)}'`
-                    });
-                    break;
-                    
-                case 'phone':
-                    actions.push({
-                        text: '📞 Call',
-                        class: 'btn-phone',
-                        onclick: `window.location.href = 'tel:${item.text.replace('tel:', '')}'`
-                    });
-                    break;
-                    
-                case 'sms':
-                    const sms = parseSMS(item.text);
-                    actions.push({
-                        text: '💬 SMS',
-                        class: 'btn-sms',
-                        onclick: `window.location.href = 'sms:${sms.number}?body=${encodeURIComponent(sms.body)}'`
-                    });
-                    break;
-                    
-                case 'vcard':
-                    actions.push({
-                        text: '👤 Save',
-                        class: 'btn-share',
-                        onclick: `saveContact('${item.text.replace(/'/g, "\\'")}')`
-                    });
-                    break;
-                    
-                case 'geo':
-                    const geo = parseGeo(item.text);
-                    actions.push({
-                        text: '📍 Maps',
-                        class: 'btn-maps',
-                        onclick: `window.open('https://www.google.com/maps/search/?api=1&query=${geo.lat},${geo.lng}', '_blank')`
-                    });
-                    break;
-            }
-            
-            // Add share action
-            actions.push({
-                text: '📤 Share',
-                class: 'btn-share',
-                onclick: `shareData('${item.text.replace(/'/g, "\\'")}')`
-            });
-            
-            return actions;
-        }
-        
-        function render() {
-            const container = document.getElementById('history');
-            let items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            
-            // Apply filter
-            if (currentFilter !== 'all') {
-                if (currentFilter === 'favorites') {
-                    items = items.filter(item => item.favorite);
-                } else {
-                    items = items.filter(item => item.type === currentFilter);
-                }
-            }
-            
-            // Apply search
-            const searchTerm = document.getElementById('searchInput')?.value.toLowerCase();
-            if (searchTerm) {
-                items = items.filter(item => 
-                    item.text.toLowerCase().includes(searchTerm) ||
-                    item.date.toLowerCase().includes(searchTerm)
+            if (search) {
+                history = history.filter(item => 
+                    item.text.toLowerCase().includes(search.toLowerCase()) ||
+                    item.date.toLowerCase().includes(search.toLowerCase())
                 );
             }
             
-            if (items.length === 0) {
+            if (history.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-state">
+                    <div class="empty">
                         <div class="empty-icon">📭</div>
-                        <h3 style="color:#888;">No scans found</h3>
-                        <p class="empty-text">${searchTerm ? 'Try a different search term' : 'Start by scanning a QR code!'}</p>
+                        <p>No scans yet</p>
                     </div>
                 `;
                 return;
             }
             
-            container.innerHTML = items.map((item, idx) => {
-                const { badge, contentHtml } = renderQRContent(item);
-                const actions = getTypeActions(item);
-                
-                return `
-                    <div class="qr-card" style="animation: slideIn 0.3s ease ${idx * 0.05}s both;">
-                        <button class="delete-btn" onclick="deleteItem(${item.id})" title="Delete">
-                            ✕
+            container.innerHTML = history.map(item => `
+                <div class="card">
+                    <div class="card-header">
+                        <span class="badge badge-${item.type}">${item.type.toUpperCase()}</span>
+                        <button class="favorite-btn ${item.favorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})">
+                            ${item.favorite ? '⭐' : '☆'}
                         </button>
-                        
-                        <div class="qr-card-header">
-                            <span class="qr-type-badge ${badge.class}">
-                                <span>${badge.icon}</span>
-                                ${badge.text}
-                            </span>
-                            <button class="favorite-btn ${item.favorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})" title="${item.favorite ? 'Remove from favorites' : 'Add to favorites'}">
-                                ${item.favorite ? '⭐' : '☆'}
+                    </div>
+                    
+                    <div class="card-content">
+                        ${formatContent(item.text, item.type)}
+                    </div>
+                    
+                    <div class="card-actions">
+                        <button class="btn btn-small btn-copy" onclick="copyText('${escapeText(item.text)}')">
+                            📋 Copy
+                        </button>
+                        ${item.type === 'url' ? `
+                            <button class="btn btn-small btn-open" onclick="handleUrl('${escapeText(item.text)}')">
+                                🌐 Open
                             </button>
-                        </div>
-                        
-                        <div class="qr-date">
-                            <span>📅</span> ${item.date}
-                        </div>
-                        
-                        <div class="qr-content">
-                            ${contentHtml}
-                        </div>
-                        
-                        <div class="qr-actions">
-                            ${actions.map(action => `
-                                <button class="btn btn-small ${action.class}" onclick="${action.onclick}">
-                                    ${action.text}
-                                </button>
-                            `).join('')}
-                        </div>
+                        ` : ''}
+                        <button class="btn btn-small btn-share" onclick="shareScan('${escapeText(item.text)}')">
+                            📤 Share
+                        </button>
+                        <button class="btn btn-small btn-delete" onclick="deleteScan(${item.id})">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                    
+                    <div style="font-size:12px; color:#666; margin-top:10px;">
+                        📅 ${item.date}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function formatContent(text, type) {
+            if (type === 'wifi') {
+                const wifi = parseWifi(text);
+                return `
+                    <div>
+                        <strong>WiFi:</strong> ${wifi.ssid || 'Unknown'}<br>
+                        <strong>Password:</strong> 
+                        <span onclick="this.classList.toggle('show')" style="filter:blur(5px); cursor:pointer; background:#333; padding:2px 6px; border-radius:4px;">
+                            ${wifi.password || 'None'}
+                        </span>
                     </div>
                 `;
-            }).join('');
+            }
+            return `<code style="word-break:break-all; background:#000; padding:8px; border-radius:6px; display:block;">${text}</code>`;
+        }
+        
+        function parseWifi(text) {
+            const result = { ssid: '', password: '' };
+            const parts = text.replace('WIFI:', '').split(';');
+            parts.forEach(part => {
+                if (part.startsWith('S:')) result.ssid = part.substring(2);
+                if (part.startsWith('P:')) result.password = part.substring(2);
+            });
+            return result;
+        }
+        
+        function searchHistory(query) {
+            renderHistory(query);
         }
         
         function renderFavorites() {
-            const container = document.getElementById('favorites');
-            const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]").filter(item => item.favorite);
+            const container = document.getElementById('favoritesList');
+            const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
+            const favorites = history.filter(item => item.favorite);
             
-            const searchTerm = document.getElementById('favoritesSearch')?.value.toLowerCase();
-            let filteredItems = items;
-            if (searchTerm) {
-                filteredItems = items.filter(item => 
-                    item.text.toLowerCase().includes(searchTerm) ||
-                    item.date.toLowerCase().includes(searchTerm)
-                );
-            }
-            
-            if (filteredItems.length === 0) {
+            if (favorites.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-state">
+                    <div class="empty">
                         <div class="empty-icon">⭐</div>
-                        <h3 style="color:#888;">No favorites yet</h3>
-                        <p class="empty-text">Tap the star icon on any scan to add it here</p>
+                        <p>No favorites yet</p>
                     </div>
                 `;
                 return;
             }
             
-            container.innerHTML = filteredItems.map((item, idx) => {
-                const { badge, contentHtml } = renderQRContent(item);
-                const actions = getTypeActions(item);
-                
-                return `
-                    <div class="qr-card" style="animation: slideIn 0.3s ease ${idx * 0.05}s both; border-color: var(--yellow);">
-                        <button class="delete-btn" onclick="deleteItem(${item.id})" title="Delete">
-                            ✕
+            container.innerHTML = favorites.map(item => `
+                <div class="card" style="border-color:#ffc107;">
+                    <div class="card-header">
+                        <span class="badge badge-${item.type}">${item.type.toUpperCase()}</span>
+                        <button class="favorite-btn active" onclick="toggleFavorite(${item.id})">
+                            ⭐
                         </button>
-                        
-                        <div class="qr-card-header">
-                            <span class="qr-type-badge ${badge.class}">
-                                <span>${badge.icon}</span>
-                                ${badge.text}
-                            </span>
-                            <button class="favorite-btn active" onclick="toggleFavorite(${item.id})" title="Remove from favorites">
-                                ⭐
-                            </button>
-                        </div>
-                        
-                        <div class="qr-date">
-                            <span>📅</span> ${item.date}
-                        </div>
-                        
-                        <div class="qr-content">
-                            ${contentHtml}
-                        </div>
-                        
-                        <div class="qr-actions">
-                            ${actions.slice(0, 4).map(action => `
-                                <button class="btn btn-small ${action.class}" onclick="${action.onclick}">
-                                    ${action.text}
-                                </button>
-                            `).join('')}
-                        </div>
                     </div>
-                `;
-            }).join('');
+                    
+                    <div class="card-content">
+                        ${formatContent(item.text, item.type)}
+                    </div>
+                    
+                    <div class="card-actions">
+                        <button class="btn btn-small btn-copy" onclick="copyText('${escapeText(item.text)}')">
+                            📋 Copy
+                        </button>
+                        ${item.type === 'url' ? `
+                            <button class="btn btn-small btn-open" onclick="handleUrl('${escapeText(item.text)}')">
+                                🌐 Open
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-small btn-share" onclick="shareScan('${escapeText(item.text)}')">
+                            📤 Share
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
         
-        // ============ UI FUNCTIONS ============
-        function switchTab(tabName) {
-            currentTab = tabName;
+        // ============ URL HANDLING ============
+        function handleUrl(url) {
+            currentUrl = url;
+            document.getElementById('modalUrl').textContent = url;
             
-            document.getElementById('scanTab').style.display = 'none';
-            document.getElementById('historyTab').style.display = 'none';
-            document.getElementById('favoritesTab').style.display = 'none';
+            // Check if in allowlist
+            const isAllowed = settings.allowlist.some(prefix => url.startsWith(prefix));
+            document.getElementById('urlWarning').style.display = isAllowed ? 'none' : 'block';
             
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById(`${tabName}Tab`).style.display = 'block';
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                if (btn.textContent.includes(tabName.charAt(0).toUpperCase() + tabName.slice(1))) {
-                    btn.classList.add('active');
+            document.getElementById('urlModal').style.display = 'flex';
+        }
+        
+        function openModalUrl() {
+            if (currentUrl) {
+                if (document.getElementById('addToAllowlist').checked) {
+                    addToAllowlist(currentUrl);
                 }
-            });
-            
-            if (tabName === 'history') {
-                render();
-            } else if (tabName === 'favorites') {
-                renderFavorites();
-            }
-            
-            if (tabName !== 'scan' && html5QrCode) {
-                stopScan();
+                window.open(currentUrl, '_blank');
+                closeUrlModal();
             }
         }
         
-        function setFilter(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            render();
-        }
-        
-        function filterHistory() {
-            render();
-        }
-        
-        function filterFavorites() {
-            renderFavorites();
-        }
-        
-        function togglePass(id) {
-            const element = document.getElementById(id);
-            if (element) {
-                element.classList.toggle('show');
+        function copyModalUrl() {
+            if (currentUrl) {
+                copyText(currentUrl);
+                closeUrlModal();
             }
         }
         
-        function updateStats() {
-            const history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            const favorites = history.filter(item => item.favorite).length;
-            const total = history.length;
+        function closeUrlModal() {
+            document.getElementById('urlModal').style.display = 'none';
+            currentUrl = null;
+            document.getElementById('addToAllowlist').checked = false;
+        }
+        
+        // ============ ALLOWLIST MANAGEMENT ============
+        function renderAllowlist() {
+            const container = document.getElementById('allowlistItems');
+            container.innerHTML = settings.allowlist.map((item, index) => `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; background:#333; border-radius:6px; margin-bottom:5px;">
+                    <code style="color:#28a745;">${item}</code>
+                    <button onclick="removeAllowlist(${index})" style="background:none; border:none; color:#dc3545; cursor:pointer;">✕</button>
+                </div>
+            `).join('');
+        }
+        
+        function addAllowlist() {
+            const input = document.getElementById('newAllowlist');
+            const prefix = input.value.trim();
             
-            document.getElementById('statsBadge').textContent = total;
-            document.getElementById('historyCount').textContent = total;
-            document.getElementById('favoritesCount').textContent = favorites;
-        }
-        
-        // ============ ACTION FUNCTIONS ============
-        function openMaps(lat, lng) {
-            window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
-        }
-        
-        function saveContact(vcardData) {
-            const blob = new Blob([vcardData], { type: 'text/vcard' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'contact.vcf';
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('Contact saved as vCard file', 'success');
-        }
-        
-        async function shareData(text) {
-            const pin = localStorage.getItem(AUTH_KEY);
-            const payload = text + (pin ? `\nPIN: ${pin}` : '');
+            if (!prefix.startsWith('http')) {
+                showToast('URL must start with http:// or https://', true);
+                return;
+            }
             
-            if (navigator.share) {
-                try {
-                    const file = new File([payload], `qr_${Date.now()}.txt`, { type: 'text/plain' });
-                    await navigator.share({ files: [file], title: 'QR Data' });
-                    showToast('Shared successfully!', 'success');
-                } catch (e) {
-                    if (e.name !== 'AbortError') {
-                        copyToClipboard(payload);
-                    }
+            if (!settings.allowlist.includes(prefix)) {
+                settings.allowlist.push(prefix);
+                renderAllowlist();
+                input.value = '';
+                showToast('Added to allowlist');
+            }
+        }
+        
+        function addToAllowlist(url) {
+            // Find base URL for allowlist
+            try {
+                const urlObj = new URL(url);
+                const baseUrl = `${urlObj.protocol}//${urlObj.hostname}/`;
+                
+                if (!settings.allowlist.includes(baseUrl)) {
+                    settings.allowlist.push(baseUrl);
+                    renderAllowlist();
+                    showToast('Added to allowlist');
                 }
-            } else {
-                copyToClipboard(payload);
+            } catch (e) {
+                // If not a valid URL, use the string as prefix
+                if (!settings.allowlist.includes(url)) {
+                    settings.allowlist.push(url);
+                    renderAllowlist();
+                    showToast('Added to allowlist');
+                }
             }
         }
         
-        function copyAllHistory() {
-            const history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            const text = history.map(item => `[${item.date}] ${item.text}`).join('\n\n');
-            if (text) {
-                copyToClipboard(text);
-            } else {
-                showToast('No history to copy', 'warning');
-            }
+        function removeAllowlist(index) {
+            settings.allowlist.splice(index, 1);
+            renderAllowlist();
+            showToast('Removed from allowlist', true);
         }
         
-        function exportHistory() {
-            const history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            const csv = history.map(item => `"${item.date}","${item.text.replace(/"/g, '""')}"`).join('\n');
-            const blob = new Blob(['Date,Content\n' + csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `qr_history_${new Date().toISOString().slice(0,10)}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast(`Exported ${history.length} items`, 'success');
-        }
-        
-        function exportAllData() {
-            const history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            const data = {
-                version: '3.0',
-                exportDate: new Date().toISOString(),
-                history: history,
-                settings: settings,
-                allowlist: urlAllowlist,
-                favorites: history.filter(item => item.favorite).map(item => item.id)
-            };
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `qr_actions_backup_${new Date().toISOString().slice(0,10)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('Backup exported!', 'success');
-        }
-        
-        // ============ QR GENERATION FUNCTIONS ============
+        // ============ QR GENERATION ============
         function toggleGenerateQR() {
-            const overlay = document.getElementById('generateOverlay');
-            if (overlay.style.display === 'flex') {
-                overlay.style.display = 'none';
-                document.getElementById('qrCodeDisplay').style.display = 'none';
-                document.getElementById('downloadBtn').disabled = true;
+            document.getElementById('generateOverlay').style.display = 
+                document.getElementById('generateOverlay').style.display === 'flex' ? 'none' : 'flex';
+        }
+        
+        function changeQRType() {
+            const type = document.getElementById('qrType').value;
+            const qrFields = document.getElementById('qrFields');
+            
+            if (type === 'wifi') {
+                qrFields.innerHTML = `
+                    <input type="text" id="wifiSsid" placeholder="Network name (SSID)" style="margin-bottom:10px;">
+                    <input type="text" id="wifiPassword" placeholder="Password" style="margin-bottom:10px;">
+                    <select id="wifiSecurity" style="margin-bottom:20px;">
+                        <option value="WPA">WPA/WPA2</option>
+                        <option value="WEP">WEP</option>
+                        <option value="nopass">No password</option>
+                    </select>
+                `;
+            } else if (type === 'contact') {
+                qrFields.innerHTML = `
+                    <input type="text" id="contactName" placeholder="Full name" style="margin-bottom:10px;">
+                    <input type="tel" id="contactPhone" placeholder="Phone" style="margin-bottom:10px;">
+                    <input type="email" id="contactEmail" placeholder="Email" style="margin-bottom:20px;">
+                `;
+            } else if (type === 'email') {
+                qrFields.innerHTML = `
+                    <input type="email" id="emailTo" placeholder="Recipient email" style="margin-bottom:10px;">
+                    <input type="text" id="emailSubject" placeholder="Subject" style="margin-bottom:10px;">
+                    <textarea id="emailBody" placeholder="Body" style="width:100%; padding:12px; background:#333; border:1px solid #555; border-radius:8px; color:white; margin-bottom:20px;"></textarea>
+                `;
             } else {
-                overlay.style.display = 'flex';
-                document.getElementById('qrTextInput').value = '';
+                qrFields.innerHTML = `
+                    <input type="text" id="qrContent" placeholder="${type === 'url' ? 'Enter URL...' : 'Enter text...'}" style="margin-bottom:20px;">
+                `;
             }
         }
         
-        function toggleQrTypeFields() {
-            const type = document.getElementById('qrTypeSelect').value;
-            
-            document.getElementById('textFields').style.display = 'none';
-            document.getElementById('wifiFields').style.display = 'none';
-            document.getElementById('contactFields').style.display = 'none';
-            document.getElementById('emailFields').style.display = 'none';
-            document.getElementById('smsFields').style.display = 'none';
-            document.getElementById('phoneFields').style.display = 'none';
-            document.getElementById('geoFields').style.display = 'none';
+        async function generateQR() {
+            const type = document.getElementById('qrType').value;
+            let content = '';
             
             switch(type) {
                 case 'text':
                 case 'url':
-                    document.getElementById('textFields').style.display = 'block';
-                    break;
-                case 'wifi':
-                    document.getElementById('wifiFields').style.display = 'block';
-                    break;
-                case 'contact':
-                    document.getElementById('contactFields').style.display = 'block';
-                    break;
-                case 'email':
-                    document.getElementById('emailFields').style.display = 'block';
-                    break;
-                case 'sms':
-                    document.getElementById('smsFields').style.display = 'block';
-                    break;
-                case 'tel':
-                    document.getElementById('phoneFields').style.display = 'block';
-                    break;
-                case 'geo':
-                    document.getElementById('geoFields').style.display = 'block';
-                    break;
-            }
-        }
-        
-        function generateQRCode() {
-            const type = document.getElementById('qrTypeSelect').value;
-            let qrText = '';
-            
-            switch(type) {
-                case 'text':
-                case 'url':
-                    qrText = document.getElementById('qrTextInput').value;
-                    if (!qrText) {
-                        showToast('Please enter text or URL', 'error');
+                    content = document.getElementById('qrContent').value;
+                    if (!content) {
+                        showToast('Please enter content', true);
                         return;
                     }
                     break;
@@ -2480,84 +1042,50 @@
                     const password = document.getElementById('wifiPassword').value;
                     const security = document.getElementById('wifiSecurity').value;
                     if (!ssid) {
-                        showToast('Please enter WiFi name', 'error');
+                        showToast('Please enter WiFi name', true);
                         return;
                     }
-                    qrText = `WIFI:S:${ssid};T:${security};P:${password};;`;
+                    content = `WIFI:S:${ssid};T:${security};P:${password};;`;
                     break;
                     
                 case 'contact':
                     const name = document.getElementById('contactName').value;
                     const phone = document.getElementById('contactPhone').value;
                     const email = document.getElementById('contactEmail').value;
-                    
                     if (!name) {
-                        showToast('Please enter contact name', 'error');
+                        showToast('Please enter name', true);
                         return;
                     }
-                    
-                    qrText = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}`;
-                    if (phone) qrText += `\nTEL:${phone}`;
-                    if (email) qrText += `\nEMAIL:${email}`;
-                    qrText += `\nEND:VCARD`;
+                    content = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}`;
+                    if (phone) content += `\nTEL:${phone}`;
+                    if (email) content += `\nEMAIL:${email}`;
+                    content += `\nEND:VCARD`;
                     break;
                     
                 case 'email':
-                    const emailTo = document.getElementById('emailTo').value;
+                    const to = document.getElementById('emailTo').value;
                     const subject = document.getElementById('emailSubject').value;
                     const body = document.getElementById('emailBody').value;
-                    
-                    if (!emailTo) {
-                        showToast('Please enter recipient email', 'error');
+                    if (!to) {
+                        showToast('Please enter email', true);
                         return;
                     }
-                    
-                    qrText = `mailto:${emailTo}`;
-                    const params = [];
-                    if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
-                    if (body) params.push(`body=${encodeURIComponent(body)}`);
-                    if (params.length > 0) qrText += `?${params.join('&')}`;
-                    break;
-                    
-                case 'sms':
-                    const smsNumber = document.getElementById('smsNumber').value;
-                    const smsMessage = document.getElementById('smsMessage').value;
-                    
-                    if (!smsNumber) {
-                        showToast('Please enter phone number', 'error');
-                        return;
+                    content = `mailto:${to}`;
+                    if (subject || body) {
+                        content += '?';
+                        const params = [];
+                        if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
+                        if (body) params.push(`body=${encodeURIComponent(body)}`);
+                        content += params.join('&');
                     }
-                    
-                    qrText = `sms:${smsNumber}`;
-                    if (smsMessage) qrText += `?body=${encodeURIComponent(smsMessage)}`;
-                    break;
-                    
-                case 'tel':
-                    const phoneNumber = document.getElementById('phoneNumber').value;
-                    if (!phoneNumber) {
-                        showToast('Please enter phone number', 'error');
-                        return;
-                    }
-                    qrText = `tel:${phoneNumber}`;
-                    break;
-                    
-                case 'geo':
-                    const lat = document.getElementById('geoLat').value;
-                    const lng = document.getElementById('geoLng').value;
-                    const geoName = document.getElementById('geoName').value;
-                    
-                    if (!lat || !lng) {
-                        showToast('Please enter coordinates', 'error');
-                        return;
-                    }
-                    
-                    qrText = `geo:${lat},${lng}`;
-                    if (geoName) qrText += `?q=${encodeURIComponent(geoName)}`;
                     break;
             }
             
+            // Generate QR code
+            await loadQRCodeLibrary();
+            
             const qr = qrcode(0, 'M');
-            qr.addData(qrText);
+            qr.addData(content);
             qr.make();
             
             const canvas = document.getElementById('qrCodeCanvas');
@@ -2566,21 +1094,18 @@
             const scale = 10;
             const qrSize = qr.getModuleCount();
             
-            canvas.width = size;
-            canvas.height = size;
-            
+            // Clear and draw
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, size, size);
             
             ctx.fillStyle = '#000000';
-            for (let row = 0; row < qrSize; row++) {
-                for (let col = 0; col < qrSize; col++) {
-                    if (qr.isDark(row, col)) {
+            for (let y = 0; y < qrSize; y++) {
+                for (let x = 0; x < qrSize; x++) {
+                    if (qr.isDark(y, x)) {
                         ctx.fillRect(
-                            col * scale + (size - qrSize * scale) / 2,
-                            row * scale + (size - qrSize * scale) / 2,
-                            scale,
-                            scale
+                            x * scale + (size - qrSize * scale) / 2,
+                            y * scale + (size - qrSize * scale) / 2,
+                            scale, scale
                         );
                     }
                 }
@@ -2588,96 +1113,266 @@
             
             document.getElementById('qrCodeDisplay').style.display = 'block';
             document.getElementById('downloadBtn').disabled = false;
+            canvas.dataset.content = content;
             
-            canvas.dataset.qrText = qrText;
-            
-            showToast('QR code generated!', 'success');
+            showToast('QR code generated!');
         }
         
-        function downloadQRCode() {
+        function downloadQR() {
             const canvas = document.getElementById('qrCodeCanvas');
             const link = document.createElement('a');
-            link.download = `qr_code_${new Date().toISOString().slice(0,10)}.png`;
-            link.href = canvas.toDataURL('image/png');
+            link.download = 'qr-code.png';
+            link.href = canvas.toDataURL();
             link.click();
-            showToast('QR code saved!', 'success');
+            showToast('QR code saved');
         }
         
-        // ============ BATCH SCAN FUNCTIONS ============
-        function startBatchMode() {
-            showToast('Batch scan mode - tap "Stop Scanning" when done', 'info');
-            if (!settings.continuousScan) {
-                document.getElementById('continuousScan').checked = true;
-                settings.continuousScan = true;
-                showToast('Continuous scan enabled for batch mode', 'info');
+        async function loadQRCodeLibrary() {
+            if (typeof qrcode === 'undefined') {
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js';
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
             }
-            startScan();
         }
         
-        // ============ HELPER UI FUNCTIONS ============
+        // ============ SETTINGS ============
+        function loadSettings() {
+            const saved = localStorage.getItem(CONFIG.SETTINGS_KEY);
+            if (saved) {
+                settings = { ...settings, ...JSON.parse(saved) };
+            }
+            
+            // Update UI
+            document.getElementById('historyLimit').value = settings.historyLimit;
+            document.getElementById('autoDelete').value = settings.autoDeleteDays;
+            document.getElementById('pin').value = settings.pin;
+            document.getElementById('maskSensitive').checked = settings.maskSensitive;
+            
+            renderAllowlist();
+        }
+        
+        function saveSettings() {
+            settings.historyLimit = parseInt(document.getElementById('historyLimit').value) || 50;
+            settings.autoDeleteDays = parseInt(document.getElementById('autoDelete').value) || 30;
+            settings.pin = document.getElementById('pin').value;
+            settings.maskSensitive = document.getElementById('maskSensitive').checked;
+            
+            localStorage.setItem(CONFIG.SETTINGS_KEY, JSON.stringify(settings));
+            showToast('Settings saved');
+            toggleSettings();
+            
+            // Clean old scans
+            cleanupOldScans();
+        }
+        
+        function cleanupOldScans() {
+            if (settings.autoDeleteDays <= 0) return;
+            
+            let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
+            const cutoff = Date.now() - (settings.autoDeleteDays * 24 * 60 * 60 * 1000);
+            
+            const originalCount = history.length;
+            history = history.filter(item => item.id > cutoff);
+            
+            if (history.length < originalCount) {
+                localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
+                updateStats();
+                showToast(`Cleaned ${originalCount - history.length} old scans`);
+            }
+        }
+        
+        function toggleSettings() {
+            document.getElementById('settingsOverlay').style.display = 
+                document.getElementById('settingsOverlay').style.display === 'flex' ? 'none' : 'flex';
+            
+            if (document.getElementById('settingsOverlay').style.display === 'flex') {
+                loadSettings();
+                loadCameras();
+            }
+        }
+        
+        async function loadCameras() {
+            try {
+                const cameras = await Html5Qrcode.getCameras();
+                const select = document.getElementById('cameraSelect');
+                select.innerHTML = '<option value="">Default (Environment)</option>';
+                
+                cameras.forEach(camera => {
+                    const option = document.createElement('option');
+                    option.value = camera.id;
+                    option.text = camera.label || `Camera ${select.length}`;
+                    if (camera.id === settings.camera) option.selected = true;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.log('Camera list error:', err);
+            }
+        }
+        
+        function clearAllData() {
+            if (confirm('Delete ALL data including history, favorites, and settings?')) {
+                localStorage.clear();
+                showToast('All data cleared', true);
+                setTimeout(() => location.reload(), 1000);
+            }
+        }
+        
+        // ============ UTILITIES ============
+        function updateStats() {
+            const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
+            const favorites = history.filter(item => item.favorite).length;
+            
+            document.getElementById('statsBadge').textContent = history.length;
+            
+            // Update tab badges
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.textContent.includes('History')) {
+                    tab.innerHTML = `📜 History <span style="font-size:10px; background:#28a745; color:white; padding:2px 6px; border-radius:10px;">${history.length}</span>`;
+                }
+                if (tab.textContent.includes('Favorites')) {
+                    tab.innerHTML = `⭐ Favorites <span style="font-size:10px; background:#ffc107; color:#212529; padding:2px 6px; border-radius:10px;">${favorites}</span>`;
+                }
+            });
+        }
+        
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.getElementById('scanTab').style.display = 'none';
+            document.getElementById('historyTab').style.display = 'none';
+            document.getElementById('favoritesTab').style.display = 'none';
+            
+            // Remove active class
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').style.display = 'block';
+            
+            // Mark button as active
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.textContent.includes(tabName === 'scan' ? 'Scan' : 
+                                           tabName === 'history' ? 'History' : 'Favorites')) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Load content
+            if (tabName === 'history') {
+                renderHistory();
+            } else if (tabName === 'favorites') {
+                renderFavorites();
+            } else if (tabName === 'scan') {
+                stopScan();
+            }
+        }
+        
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copied to clipboard');
+            }).catch(() => {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('Copied to clipboard');
+            });
+        }
+        
+        function shareScan(text) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'QR Code Data',
+                    text: text
+                });
+            } else {
+                copyText(text);
+            }
+        }
+        
+        function vibrate() {
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+        
+        function showToast(message, isError = false) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast' + (isError ? ' error' : '');
+            toast.innerHTML = `${isError ? '❌' : '✓'} ${message}`;
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        function escapeText(text) {
+            return text.replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+        
         function showAbout() {
-            alert(`QR Actions v2.5\n\nA professional Progressive Web App for QR code scanning and generation.\n\nFeatures:\n• PWA - Install on home screen\n• URL allowlist for safe opening\n• Complete offline functionality\n• 10+ QR code types supported\n• Batch scanning mode\n• QR code generation\n• Favorites system\n\nCreated by Bram Diederik\n\n100% offline - no data collection!`);
+            alert('QR Actions v2.0\n\nA professional QR code scanner and generator that works offline.\n\nFeatures:\n• Scan QR codes with camera\n• Upload images to scan\n• Generate QR codes\n• History and favorites\n• URL allowlist for safe opening\n• PWA - Install on home screen\n\n100% offline - no data collection!');
         }
         
         function showHelp() {
-            alert(`📚 QR Actions Help\n\n🔍 SCANNING:\n• Tap "Scan" to use camera\n• Tap "Upload" to scan from image\n• Enable "Continuous Scan" for batch mode\n\n🔒 URL SAFETY:\n• URLs in allowlist open directly\n• Other URLs show confirmation\n• Add URLs to allowlist in Settings\n\n⭐ FAVORITES:\n• Tap star icon to save scans\n• Access in Favorites tab\n\n🔄 GENERATE:\n• Create QR codes for WiFi, contacts, etc.\n• Customize all parameters\n\n⚙️ SETTINGS:\n• Configure camera, security, appearance\n• Manage URL allowlist\n• Set auto-cleanup rules\n\n📱 PWA:\n• Install from browser menu or Settings\n• Works offline after installation`);
-        }
-        
-        function showPrivacy() {
-            alert(`🔒 Privacy Policy\n\nQR Actions:\n• Stores ALL data locally on your device\n• No internet connection required\n• No data sent to any servers\n• No tracking or analytics\n• No ads\n• URL allowlist is stored locally only\n\nYour QR code data never leaves your device!\n\nFor backup/transfer, use the Export feature.`);
+            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n3. Scan results save automatically\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙️ SETTINGS:\n• Set URL allowlist for safe opening\n• Configure history limits\n• Install as PWA\n\n🔄 GENERATE:\nCreate QR codes for WiFi, contacts, URLs, and more\n\nAll data stays on your device!');
         }
         
         function showAppInfo() {
-            alert(`📱 App Information\n\nName: QR Actions\nVersion: 2.5\nType: Progressive Web App (PWA)\nStorage: ${(JSON.stringify(localStorage).length / 1024).toFixed(2)} KB\nOffline: Fully functional\n\nInstallation:\n• Android: Tap ⋮ menu → "Install app"\n• iOS: Tap Share → "Add to Home Screen"\n• Desktop: Click install button\n\nClear app data from Settings if needed.`);
+            const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
+            alert(`App Information:\n\nScans: ${history.length}\nFavorites: ${history.filter(item => item.favorite).length}\nAllowlist: ${settings.allowlist.length} URLs\n\nStorage: ${(JSON.stringify(localStorage).length / 1024).toFixed(2)} KB\n\nInstall from browser menu or Settings page.`);
+        }
+        
+        function exportData() {
+            const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
+            const data = JSON.stringify(history, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'qr-actions-backup.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Data exported');
         }
         
         // ============ INITIALIZATION ============
         document.addEventListener('DOMContentLoaded', function() {
+            // Load settings
             loadSettings();
-            loadAllowlist();
-            render();
-            updateStats();
-            getCameras();
             
+            // Update stats
+            updateStats();
+            
+            // Show scan tab
             switchTab('scan');
             
-            setTimeout(clearOldScans, 1000);
+            // Setup service worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js').catch(console.error);
+            }
             
-            if (!localStorage.getItem('firstVisitShown')) {
+            // Show welcome message
+            if (!localStorage.getItem('welcome_shown')) {
                 setTimeout(() => {
-                    showToast('Welcome to QR Actions! Install for best experience.', 'info', 5000);
-                    localStorage.setItem('firstVisitShown', 'true');
+                    showToast('Welcome to QR Actions! Tap Settings to install as app.');
                 }, 1000);
-            }
-            
-            // Detect if running as PWA
-            if (window.matchMedia('(display-mode: standalone)').matches || 
-                window.navigator.standalone === true) {
-                console.log('Running as PWA');
-                document.getElementById('installBtn').style.display = 'none';
+                localStorage.setItem('welcome_shown', 'true');
             }
         });
         
-        // Handle offline/online status
-        window.addEventListener('online', () => {
-            showToast('You are back online', 'success');
-        });
-        
-        window.addEventListener('offline', () => {
-            showToast('Working offline - all features available', 'info');
-        });
-        
-        // Prevent pinch zoom
-        document.addEventListener('gesturestart', function(e) {
-            e.preventDefault();
-        });
-        
-        // Handle app visibility
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden && html5QrCode) {
-                stopScan();
-            }
-        });
+        // Handle offline/online
+        window.addEventListener('offline', () => showToast('Working offline', true));
+        window.addEventListener('online', () => showToast('Back online'));
     </script>
 </body>
 </html>
