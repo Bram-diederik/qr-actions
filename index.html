@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Static QR Dashboard</title>
+    <style>
+        body { background: #111; color: white; font-family: Arial, sans-serif; padding: 10px; text-align: center; }
+        .menu { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .menu button { padding: 10px 15px; background: #444; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .qr-item { background: #222; margin: 10px auto; padding: 15px; border-radius: 10px; max-width: 400px; text-align: left; position: relative; }
+        .qr-item button { margin-top: 10px; padding: 8px 12px; border-radius: 6px; background: #555; color: white; border: none; cursor: pointer; }
+        .pass { display: none; margin-top: 5px; font-style: italic; color: #ccc; }
+        .timestamp { font-size: 0.8em; color: #888; }
+        input { margin: 10px; padding: 8px; border-radius: 4px; border: none; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<h1>📋 Static QR Dashboard</h1>
+
+<div id="pinSection">
+    <input type="password" id="pinInput" placeholder="Enter PIN">
+    <button onclick="setPin()">Set PIN</button>
+</div>
+
+<div id="mainContent" class="hidden">
+    <div class="menu">
+        <button onclick="simulateScan()">📷 Add Test QR</button>
+        <button onclick="clearHistory()" style="background:#622;">🗑 Clear All</button>
+    </div>
+
+    <div id="qrList"></div>
+</div>
+
+<script>
+/**
+ * Persistence Logic: Uses LocalStorage as a local "JSON DB"
+ */
+let pin = sessionStorage.getItem('qr_pin') || "";
+
+function setPin() {
+    const val = document.getElementById('pinInput').value;
+    if (val) {
+        sessionStorage.setItem('qr_pin', val);
+        pin = val;
+        checkPin();
+    }
+}
+
+function checkPin() {
+    if (pin) {
+        document.getElementById('pinSection').classList.add('hidden');
+        document.getElementById('mainContent').classList.remove('hidden');
+        renderList();
+    }
+}
+
+function saveQr(text) {
+    let history = JSON.parse(localStorage.getItem('qr_history') || "[]");
+    const entry = {
+        id: Date.now(),
+        qr: text,
+        timestamp: new Date().toLocaleString()
+    };
+    history.unshift(entry); // Add to top
+    localStorage.setItem('qr_history', JSON.stringify(history.slice(0, 10))); // Keep last 10
+    renderList();
+}
+
+function renderList() {
+    const container = document.getElementById('qrList');
+    const history = JSON.parse(localStorage.getItem('qr_history') || "[]");
+    container.innerHTML = history.length === 0 ? "<p>No history found.</p>" : "";
+
+    history.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'qr-item';
+        
+        let displayContent = item.qr;
+        let isWifi = item.qr.startsWith('WIFI:');
+        
+        div.innerHTML = `
+            <div class="timestamp">${item.timestamp}</div>
+            <div><strong>Data:</strong> ${displayContent}</div>
+            <button onclick="shareToKde('${item.qr.replace(/'/g, "\\'")}')">📤 Share to KDE</button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+/**
+ * KDE Integration: Sends file formatted for your bash listener
+ */
+async function shareToKde(data) {
+    const now = new Date();
+    const ts = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    const fileName = `qr_share_${ts}.txt`;
+
+    // Data on Line 1, PIN on Line 2 (matching your listener)
+    const fileContent = `${data}\nPIN: ${pin}`;
+
+    if (navigator.share) {
+        try {
+            const blob = new Blob([fileContent], { type: 'text/plain' });
+            const file = new File([blob], fileName, { type: 'text/plain' });
+            await navigator.share({ files: [file], title: 'QR Transfer' });
+        } catch (err) {
+            console.error("Share failed", err);
+        }
+    } else {
+        // Fallback: Download file directly
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileContent));
+        element.setAttribute('download', fileName);
+        element.click();
+    }
+}
+
+function simulateScan() {
+    const test = prompt("Enter URL or WIFI string:", "WIFI:S:MySSID;T:WPA;P:1234;;");
+    if (test) saveQr(test);
+}
+
+function clearHistory() {
+    if(confirm("Delete all history?")) {
+        localStorage.removeItem('qr_history');
+        renderList();
+    }
+}
+
+// Initial check
+checkPin();
+</script>
+
+</body>
+</html>
