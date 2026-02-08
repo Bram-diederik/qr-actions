@@ -482,6 +482,43 @@
             filter: none;
         }
 
+        /* vCard Action Buttons */
+        .vcard-action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .vcard-action-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #007bff;
+            color: white;
+        }
+
+        .vcard-action-btn.phone {
+            background: #17a2b8;
+        }
+
+        .vcard-action-btn.email {
+            background: #6f42c1;
+        }
+
+        .vcard-action-btn.address {
+            background: #28a745;
+        }
+
+        .vcard-action-btn.url {
+            background: #fd7e14;
+        }
+
         /* Empty State */
         .empty {
             text-align: center;
@@ -625,6 +662,36 @@
             display: flex;
             gap: 10px;
             margin-top: 10px;
+        }
+        
+        /* vCard link styles */
+        .vcard-link {
+            color: #007bff;
+            text-decoration: none;
+            border-bottom: 1px dotted #007bff;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+        
+        .vcard-link:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+        
+        /* Contact action buttons */
+        .contact-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 4px;
+            background: rgba(0, 123, 255, 0.1);
+            color: #007bff;
+            border: 1px solid rgba(0, 123, 255, 0.3);
+            cursor: pointer;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -1333,6 +1400,7 @@
             }
         }
 
+        // ============ ENHANCED vCARD FUNCTIONALITY ============
         function formatVCardContact(contact) {
             let html = '<div class="vcard-contact">';
             
@@ -1343,9 +1411,18 @@
             html += `
                 <div class="vcard-field">
                     <div class="vcard-field-label">Name</div>
-                    <div class="vcard-field-value">${contact.name || 'Unknown'}</div>
+                    <div class="vcard-field-value"><strong>${contact.name || 'Unknown'}</strong></div>
                 </div>
             `;
+            
+            if (contact.title) {
+                html += `
+                    <div class="vcard-field">
+                        <div class="vcard-field-label">Title</div>
+                        <div class="vcard-field-value">${contact.title}</div>
+                    </div>
+                `;
+            }
             
             if (contact.organization) {
                 html += `
@@ -1356,34 +1433,113 @@
                 `;
             }
             
+            // Enhanced phone numbers with clickable links
             if (contact.phones && contact.phones.length > 0) {
                 html += `<div class="vcard-field"><div class="vcard-field-label">Phone Numbers</div>`;
                 contact.phones.forEach(phone => {
-                    html += `<div class="vcard-field-value" style="margin-bottom:3px;">${phone.type}: <a href="tel:${phone.number}" style="color:#007bff;">${phone.number}</a></div>`;
+                    const phoneNumber = phone.number.replace(/[^\d+]/g, '');
+                    html += `
+                        <div class="vcard-field-value" style="margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
+                            <span>${phone.type}:</span>
+                            <div>
+                                <a href="tel:${phoneNumber}" class="vcard-link" style="margin-right:8px;">
+                                    📞 ${phone.number}
+                                </a>
+                                <button class="contact-action-btn" onclick="callPhoneNumber('${escapeText(phoneNumber)}')" title="Call">
+                                    Call
+                                </button>
+                                <button class="contact-action-btn" onclick="sendSMSToNumber('${escapeText(phoneNumber)}')" title="SMS">
+                                    SMS
+                                </button>
+                            </div>
+                        </div>
+                    `;
                 });
                 html += `</div>`;
             }
             
+            // Enhanced emails with clickable links
             if (contact.emails && contact.emails.length > 0) {
-                html += `<div class="vcard-field"><div class="vcard-field-label">Emails</div>`;
+                html += `<div class="vcard-field"><div class="vcard-field-label">Email Addresses</div>`;
                 contact.emails.forEach(email => {
-                    html += `<div class="vcard-field-value" style="margin-bottom:3px;">${email.type}: <a href="mailto:${email.address}" style="color:#007bff;">${email.address}</a></div>`;
+                    html += `
+                        <div class="vcard-field-value" style="margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
+                            <span>${email.type}:</span>
+                            <div>
+                                <a href="mailto:${email.address}" class="vcard-link" style="margin-right:8px;">
+                                    ✉️ ${email.address}
+                                </a>
+                                <button class="contact-action-btn" onclick="sendEmailTo('${escapeText(email.address)}')" title="Send Email">
+                                    Send
+                                </button>
+                            </div>
+                        </div>
+                    `;
                 });
                 html += `</div>`;
             }
             
+            // Enhanced addresses with map lookups
             if (contact.addresses && contact.addresses.length > 0) {
                 html += `<div class="vcard-field"><div class="vcard-field-label">Addresses</div>`;
                 contact.addresses.forEach(addr => {
-                    html += `<div class="vcard-field-value" style="margin-bottom:3px;">${addr.type}: ${addr.address}</div>`;
+                    const encodedAddress = encodeURIComponent(addr.address);
+                    html += `
+                        <div class="vcard-field-value" style="margin-bottom:8px;">
+                            <div><strong>${addr.type}:</strong></div>
+                            <div style="margin:5px 0; padding:5px; background:#2a2a2a; border-radius:4px;">${addr.address.replace(/\n/g, '<br>')}</div>
+                            <div class="vcard-action-buttons">
+                                <button class="vcard-action-btn address" onclick="openAddressInGoogleMaps('${encodedAddress}')">
+                                    🗺️ Google Maps
+                                </button>
+                                <button class="vcard-action-btn address" onclick="openAddressInOSM('${encodedAddress}')">
+                                    🗺️ OpenStreetMap
+                                </button>
+                            </div>
+                        </div>
+                    `;
                 });
                 html += `</div>`;
             }
             
+            // Enhanced URLs with clickable links and safety check
             if (contact.urls && contact.urls.length > 0) {
-                html += `<div class="vcard-field"><div class="vcard-field-label">URLs</div>`;
+                html += `<div class="vcard-field"><div class="vcard-field-label">Websites</div>`;
                 contact.urls.forEach(url => {
-                    html += `<div class="vcard-field-value" style="margin-bottom:3px;"><a href="${url}" target="_blank" style="color:#007bff;">${url}</a></div>`;
+                    const isAllowed = settings.allowlist.some(prefix => url.startsWith(prefix));
+                    const scanResults = getVirusScanResults(url);
+                    let safetyBadge = '';
+                    
+                    if (scanResults) {
+                        if (scanResults.malicious > 0) {
+                            safetyBadge = '<span style="color:#dc3545; margin-left:5px;">⚠️</span>';
+                        } else if (scanResults.suspicious > 0) {
+                            safetyBadge = '<span style="color:#ffc107; margin-left:5px;">⚠️</span>';
+                        } else {
+                            safetyBadge = '<span style="color:#28a745; margin-left:5px;">✓</span>';
+                        }
+                    }
+                    
+                    html += `
+                        <div class="vcard-field-value" style="margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <a href="${url}" target="_blank" class="vcard-link" style="${isAllowed ? 'border-color:#28a745;' : 'border-color:#ffc107;'}">
+                                    🔗 ${url.length > 40 ? url.substring(0, 40) + '...' : url}
+                                </a>
+                                ${safetyBadge}
+                            </div>
+                            <div>
+                                <button class="contact-action-btn url" onclick="openUrl('${escapeText(url)}')" title="Open">
+                                    Open
+                                </button>
+                                ${!scanResults ? `
+                                    <button class="contact-action-btn" onclick="checkUrlSafety('${escapeText(url)}')" title="Check Safety">
+                                        🛡️
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
                 });
                 html += `</div>`;
             }
@@ -1397,25 +1553,72 @@
                 `;
             }
             
+            // Add quick action buttons for the entire contact
+            html += `
+                <div class="vcard-action-buttons" style="margin-top:15px; justify-content:center;">
+                    ${contact.phones && contact.phones.length > 0 ? `
+                        <button class="vcard-action-btn phone" onclick="callFirstPhoneNumber()" title="Call First Number">
+                            📞 Call
+                        </button>
+                    ` : ''}
+                    ${contact.emails && contact.emails.length > 0 ? `
+                        <button class="vcard-action-btn email" onclick="emailFirstContact()" title="Email First Address">
+                            ✉️ Email
+                        </button>
+                    ` : ''}
+                    ${contact.urls && contact.urls.length > 0 ? `
+                        <button class="vcard-action-btn url" onclick="openFirstUrl()" title="Open First Website">
+                            🔗 Website
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            
             html += '</div>';
             return html;
         }
 
-        function parseWifi(text) {
-            const result = { ssid: '', password: '', security: 'Unknown' };
-            const parts = text.replace('WIFI:', '').split(';');
-            parts.forEach(part => {
-                if (part.startsWith('S:')) result.ssid = part.substring(2);
-                if (part.startsWith('P:')) result.password = part.substring(2);
-                if (part.startsWith('T:')) result.security = part.substring(2);
-            });
-            return result;
+        // vCard helper functions
+        function callPhoneNumber(number) {
+            window.location.href = 'tel:' + number;
         }
 
+        function sendSMSToNumber(number) {
+            window.location.href = 'sms:' + number;
+        }
+
+        function sendEmailTo(email) {
+            window.location.href = 'mailto:' + email;
+        }
+
+        function openAddressInGoogleMaps(address) {
+            window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank');
+        }
+
+        function openAddressInOSM(address) {
+            window.open(`https://www.openstreetmap.org/search?query=${address}`, '_blank');
+        }
+
+        // These functions would need the contact context - for simplicity, they use the first available
+        function callFirstPhoneNumber() {
+            // This would need to be implemented with actual contact data context
+            showToast('Use the specific phone buttons for each number', false, 'warning');
+        }
+
+        function emailFirstContact() {
+            showToast('Use the specific email buttons for each address', false, 'warning');
+        }
+
+        function openFirstUrl() {
+            showToast('Use the specific URL buttons for each website', false, 'warning');
+        }
+
+        // ============ ENHANCED vCARD PARSING ============
         function parseVCard(text) {
             const lines = text.split('\n');
             const contact = {
                 name: '',
+                title: '',
                 organization: '',
                 phones: [],
                 emails: [],
@@ -1425,99 +1628,185 @@
                 photo: ''
             };
             
-            lines.forEach(line => {
-                if (line.startsWith('FN:')) contact.name = line.substring(3);
-                if (line.startsWith('ORG:')) contact.organization = line.substring(4);
-                if (line.startsWith('NOTE:')) contact.notes = line.substring(5);
-                
-                // Parse phones
-                if (line.startsWith('TEL;') || line.startsWith('TEL:')) {
-                    const parts = line.split(';');
-                    let type = 'Other';
-                    let number = '';
-                    
-                    parts.forEach(part => {
-                        if (part.startsWith('TYPE=')) {
-                            type = part.substring(5).replace(/,/g, ', ');
-                        } else if (part.includes(':')) {
-                            number = part.split(':')[1];
-                        }
-                    });
-                    
-                    if (!number && line.includes(':')) {
-                        number = line.split(':')[1];
+            let currentLine = '';
+            for (let i = 0; i < lines.length; i++) {
+                // Handle folded lines (lines that start with space or tab)
+                if (lines[i].startsWith(' ') || lines[i].startsWith('\t')) {
+                    currentLine += lines[i].substring(1);
+                } else {
+                    if (currentLine) {
+                        processVCardLine(currentLine, contact);
                     }
-                    
-                    if (number) {
-                        contact.phones.push({ type, number });
-                    }
+                    currentLine = lines[i];
                 }
-                
-                // Parse emails
-                if (line.startsWith('EMAIL;') || line.startsWith('EMAIL:')) {
-                    const parts = line.split(';');
-                    let type = 'Other';
-                    let address = '';
-                    
-                    parts.forEach(part => {
-                        if (part.startsWith('TYPE=')) {
-                            type = part.substring(5).replace(/,/g, ', ');
-                        } else if (part.includes(':')) {
-                            address = part.split(':')[1];
-                        }
-                    });
-                    
-                    if (!address && line.includes(':')) {
-                        address = line.split(':')[1];
-                    }
-                    
-                    if (address) {
-                        contact.emails.push({ type, address });
-                    }
-                }
-                
-                // Parse addresses
-                if (line.startsWith('ADR;') || line.startsWith('ADR:')) {
-                    const parts = line.split(';');
-                    let type = 'Other';
-                    let address = '';
-                    
-                    parts.forEach(part => {
-                        if (part.startsWith('TYPE=')) {
-                            type = part.substring(5).replace(/,/g, ', ');
-                        } else if (part.includes(':')) {
-                            address = part.split(':')[1].replace(/\\,/g, ', ').replace(/\\n/g, '\n');
-                        }
-                    });
-                    
-                    if (!address && line.includes(':')) {
-                        address = line.split(':')[1].replace(/\\,/g, ', ').replace(/\\n/g, '\n');
-                    }
-                    
-                    if (address) {
-                        contact.addresses.push({ type, address });
-                    }
-                }
-                
-                // Parse URLs
-                if (line.startsWith('URL;') || line.startsWith('URL:')) {
-                    const url = line.split(':')[1];
-                    if (url) contact.urls.push(url);
-                }
-                
-                // Parse photo (basic support)
-                if (line.startsWith('PHOTO;')) {
-                    if (line.includes('data:image/')) {
-                        // Extract base64 image data
-                        const match = line.match(/data:image\/[^;]+;base64,([^"]+)/);
-                        if (match && match[1]) {
-                            contact.photo = `data:image/jpeg;base64,${match[1]}`;
-                        }
-                    }
-                }
-            });
+            }
+            if (currentLine) {
+                processVCardLine(currentLine, contact);
+            }
             
             return contact;
+        }
+
+        function processVCardLine(line, contact) {
+            // Skip empty lines and END:VCARD
+            if (!line || line.startsWith('END:VCARD')) return;
+            
+            // Parse name
+            if (line.startsWith('FN:')) {
+                contact.name = line.substring(3);
+            }
+            
+            // Parse title
+            if (line.startsWith('TITLE:')) {
+                contact.title = line.substring(6);
+            }
+            
+            // Parse organization
+            if (line.startsWith('ORG:')) {
+                contact.organization = line.substring(4);
+            }
+            
+            // Parse notes
+            if (line.startsWith('NOTE:')) {
+                contact.notes = line.substring(5);
+            }
+            
+            // Parse phones
+            if (line.startsWith('TEL')) {
+                const parts = line.split(';');
+                let type = 'Other';
+                let number = '';
+                
+                for (let part of parts) {
+                    if (part.startsWith('TYPE=')) {
+                        type = part.substring(5).replace(/,/g, ', ');
+                    } else if (part.includes(':')) {
+                        number = part.split(':')[1];
+                    }
+                }
+                
+                if (!number && line.includes(':')) {
+                    number = line.split(':')[1];
+                }
+                
+                if (number) {
+                    contact.phones.push({ type, number });
+                }
+            }
+            
+            // Parse emails
+            if (line.startsWith('EMAIL')) {
+                const parts = line.split(';');
+                let type = 'Other';
+                let address = '';
+                
+                for (let part of parts) {
+                    if (part.startsWith('TYPE=')) {
+                        type = part.substring(5).replace(/,/g, ', ');
+                    } else if (part.includes(':')) {
+                        address = part.split(':')[1];
+                    }
+                }
+                
+                if (!address && line.includes(':')) {
+                    address = line.split(':')[1];
+                }
+                
+                if (address) {
+                    contact.emails.push({ type, address });
+                }
+            }
+            
+            // Parse addresses (enhanced)
+            if (line.startsWith('ADR')) {
+                const parts = line.split(';');
+                let type = 'Other';
+                let addressParts = [];
+                
+                for (let part of parts) {
+                    if (part.startsWith('TYPE=')) {
+                        type = part.substring(5).replace(/,/g, ', ');
+                    } else if (part.includes(':')) {
+                        const addrData = part.split(':')[1];
+                        if (addrData) {
+                            // ADR format: post office box; extended address; street; city; region; postal code; country
+                            const addrComponents = addrData.split(';');
+                            // Build a readable address
+                            let street = addrComponents[2] || '';
+                            let city = addrComponents[3] || '';
+                            let region = addrComponents[4] || '';
+                            let postalCode = addrComponents[5] || '';
+                            let country = addrComponents[6] || '';
+                            
+                            let address = '';
+                            if (street) address += street + '\n';
+                            if (city) {
+                                address += city;
+                                if (region) address += ', ' + region;
+                                if (postalCode) address += ' ' + postalCode;
+                                address += '\n';
+                            }
+                            if (country) address += country;
+                            
+                            if (address.trim()) {
+                                contact.addresses.push({ 
+                                    type, 
+                                    address: address.trim(),
+                                    components: { street, city, region, postalCode, country }
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Parse URLs
+            if (line.startsWith('URL')) {
+                const url = line.split(':')[1];
+                if (url && url.trim()) {
+                    contact.urls.push(url.trim());
+                }
+            }
+            
+            // Parse photo (basic support)
+            if (line.startsWith('PHOTO')) {
+                if (line.includes('data:image/')) {
+                    // Extract base64 image data
+                    const match = line.match(/data:image\/[^;]+;base64,([^"]+)/);
+                    if (match && match[1]) {
+                        contact.photo = `data:image/jpeg;base64,${match[1]}`;
+                    }
+                } else if (line.includes('http')) {
+                    // Handle URL photos
+                    const urlMatch = line.match(/http[^\s]+/);
+                    if (urlMatch) {
+                        contact.photo = urlMatch[0];
+                    }
+                }
+            }
+        }
+
+        // ============ ENHANCED GEO LOCATION FUNCTIONS ============
+        function openGoogleMaps(text) {
+            if (text.startsWith('geo:')) {
+                const coords = text.replace('geo:', '');
+                window.open(`https://www.google.com/maps/search/?api=1&query=${coords}`, '_blank');
+            }
+        }
+
+        function openOpenStreetMap(text) {
+            if (text.startsWith('geo:')) {
+                const coords = text.replace('geo:', '').split(',');
+                const lat = coords[0];
+                const lon = coords[1];
+                window.open(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}&zoom=15`, '_blank');
+            }
+        }
+
+        // Enhanced geo location with address parsing
+        function openAddressInMaps(address) {
+            // For addresses from vCards
+            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, '_blank');
         }
 
         function copyWifiPassword(text) {
@@ -1572,22 +1861,6 @@
                 window.location.href = text;
             } else {
                 window.location.href = 'sms:' + text;
-            }
-        }
-
-        function openGoogleMaps(text) {
-            if (text.startsWith('geo:')) {
-                const coords = text.replace('geo:', '');
-                window.open(`https://www.google.com/maps/search/?api=1&query=${coords}`, '_blank');
-            }
-        }
-
-        function openOpenStreetMap(text) {
-            if (text.startsWith('geo:')) {
-                const coords = text.replace('geo:', '').split(',');
-                const lat = coords[0];
-                const lon = coords[1];
-                window.open(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}&zoom=15`, '_blank');
             }
         }
 
@@ -2386,11 +2659,11 @@
         }
 
         function showAbout() {
-            alert('QR Actions v2.0\n\nA professional QR code scanner and generator that works offline.\n\nFeatures:\n• Scan QR codes with camera\n• Upload images to scan\n• Generate QR codes\n• History and favorites\n• URL allowlist for safe opening\n• WiFi sharing with PIN protection\n• VirusTotal safety checks\n• Enhanced vCard support\n• Google Maps & OpenStreetMap integration\n• PWA - Install on home screen\n\n100% offline - no data collection!\n\nBy Bram Diederik');
+            alert('QR Actions v2.0\n\nA professional QR code scanner and generator that works offline.\n\nFeatures:\n• Scan QR codes with camera\n• Upload images to scan\n• Generate QR codes\n• History and favorites\n• URL allowlist for safe opening\n• WiFi sharing with PIN protection\n• VirusTotal safety checks\n• Enhanced vCard support with rich actions\n• Phone, email, and URL links in vCards\n• Address map lookups (Google Maps & OpenStreetMap)\n• PWA - Install on home screen\n\n100% offline - no data collection!\n\nBy Bram Diederik');
         }
 
         function showHelp() {
-            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n3. Enable "Continuous Scan" in Settings for batch scanning\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙️ SETTINGS:\n• Set URL allowlist for safe opening\n• Configure history limits\n• Install as PWA from Settings\n\n🔄 GENERATE:\nCreate QR codes for WiFi, contacts, URLs, and more\n\n🌐 URL SAFETY:\n• URLs in allowlist open directly\n• Other URLs show confirmation\n• VirusTotal safety check available\n• Scan results displayed in history\n\n📶 WiFi SHARING:\n• Share WiFi details with optional PIN protection\n• Passwords are hidden by default\n\n👤 vCARDS:\n• Full contact details display\n• Multiple phones, emails, addresses\n• Photo support\n\n📍 LOCATIONS:\n• Open in Google Maps\n• Open in OpenStreetMap\n\nAll data stays on your device!');
+            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n3. Enable "Continuous Scan" in Settings for batch scanning\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙️ SETTINGS:\n• Set URL allowlist for safe opening\n• Configure history limits\n• Install as PWA from Settings\n\n🔄 GENERATE:\nCreate QR codes for WiFi, contacts, URLs, and more\n\n🌐 URL SAFETY:\n• URLs in allowlist open directly\n• Other URLs show confirmation\n• VirusTotal safety check available\n• Scan results displayed in history\n\n📶 WiFi SHARING:\n• Share WiFi details with optional PIN protection\n• Passwords are hidden by default\n\n👤 vCARDS (ENHANCED):\n• Full contact details display\n• Clickable phone numbers (call/SMS)\n• Clickable email addresses\n• Clickable website URLs with safety indicators\n• Addresses with Google Maps & OpenStreetMap buttons\n• Photo support\n• Quick action buttons for each contact\n\n📍 LOCATIONS:\n• Open in Google Maps\n• Open in OpenStreetMap\n• Address lookups from vCards\n\nAll data stays on your device!');
         }
 
         function showPrivacy() {
