@@ -113,10 +113,19 @@
             render();
         }
 
-        function checkSafety(url) {
-            // VirusTotal scan URL
-            window.open(`https://www.virustotal.com/gui/search/${encodeURIComponent(url)}`, '_blank');
-        }
+function checkSafety(urlToTest) {
+    // 1. Clean the URL
+    const cleanUrl = urlToTest.trim();
+    
+    // 2. Base64 Encode and remove the '=' padding as per VT API specs
+    const encodedUrl = btoa(cleanUrl).replace(/=/g, "");
+    
+    // 3. Construct the direct report URL
+    const vtUrl = `https://www.virustotal.com/gui/url/${encodedUrl}/detection`;
+    
+    // 4. Open in a new tab
+    window.open(vtUrl, '_blank');
+}
 
         function togglePass(id) {
             document.getElementById(id).classList.toggle('show');
