@@ -4,136 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>QR Production Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/instascan/1.0.0/instascan.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        :root { --bg: #0f0f0f; --card: #1e1e1e; --accent: #007bff; --text: #e0e0e0; }
-        body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 15px; text-align: center; }
-        video { width: 100%; max-width: 500px; border-radius: 12px; background: #000; box-shadow: 0 4px 20px rgba(0,0,0,0.5); margin-bottom: 15px; }
-        .qr-card { background: var(--card); border: 1px solid #333; padding: 15px; margin: 12px auto; max-width: 450px; border-radius: 10px; text-align: left; }
-        .controls { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
-        button { background: var(--accent); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
-        button:active { opacity: 0.7; }
-        input[type="password"] { width: 100%; max-width: 300px; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; }
-        .data-stream { font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.85em; background: #000; padding: 8px; display: block; border-radius: 4px; overflow-x: auto; color: #00ff00; }
+        body { background: #111; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
+        #reader { width: 100%; max-width: 500px; margin: auto; border-radius: 10px; overflow: hidden; }
+        .qr-item { background: #222; border: 1px solid #444; margin: 10px auto; padding: 15px; border-radius: 10px; max-width: 450px; text-align: left; }
+        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-top: 10px; }
+        .btn-share { background: #007bff; }
+        .btn-start { background: #28a745; margin-bottom: 15px; }
+        input[type="password"] { padding: 12px; background: #333; border: 1px solid #555; color: white; border-radius: 8px; width: 90%; margin: 10px 0; }
         .hidden { display: none; }
+        code { background: #000; padding: 4px; color: #0f0; word-break: break-all; }
     </style>
 </head>
 <body>
 
-    <h2 id="title">QR ACTIONS PRO</h2>
+    <h1>📋 QR Dashboard</h1>
 
     <div id="gate">
-        <input type="password" id="pinInput" placeholder="Enter System PIN">
-        <button onclick="lockPin()">Initialize System</button>
+        <input type="password" id="pinInput" placeholder="Voer PIN in (e.g. 2626)">
+        <button class="btn btn-start" onclick="initApp()">Set PIN & Start</button>
     </div>
 
-    <div id="interface" class="hidden">
-        <video id="webcam"></video>
-        
-        <div class="controls">
-            <button onclick="toggleScanner()" id="scanBtn" style="background: #28a745;">Start Scanner</button>
-            <button onclick="resetCache()" style="background: #dc3545;">Clear History</button>
-        </div>
-
-        <div id="feed"></div>
+    <div id="app" class="hidden">
+        <div id="reader"></div>
+        <button id="cameraBtn" class="btn btn-start" onclick="toggleCamera()">📷 Start Scanner</button>
+        <div id="history"></div>
     </div>
 
     <script>
-        const STORE_KEY = 'PROD_QR_HISTORY';
-        const AUTH_KEY = 'PROD_QR_PIN';
-        let activeScanner = null;
+        const AUTH_KEY = 'qr_prod_pin';
+        const HIST_KEY = 'qr_prod_history';
+        let scanner = null;
 
-        // AUTHENTICATION & INITIALIZATION
-        function lockPin() {
+        /**
+         * INITIALIZATION
+         */
+        function initApp() {
             const pin = document.getElementById('pinInput').value;
             if (pin) {
                 localStorage.setItem(AUTH_KEY, pin);
-                startApp();
+                document.getElementById('gate').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                render();
             }
         }
 
-        function startApp() {
-            if (!localStorage.getItem(AUTH_KEY)) return;
-            document.getElementById('gate').classList.add('hidden');
-            document.getElementById('interface').classList.remove('hidden');
-            refreshFeed();
-        }
-
-        // SCANNER ENGINE
-        function toggleScanner() {
-            if (activeScanner) {
-                activeScanner.stop();
-                activeScanner = null;
-                document.getElementById('scanBtn').innerText = "Start Scanner";
+        /**
+         * CAMERA LOGIC (Production Fix)
+         */
+        function toggleCamera() {
+            if (scanner) {
+                scanner.stop().then(() => {
+                    scanner = null;
+                    document.getElementById('cameraBtn').innerText = "📷 Start Scanner";
+                });
                 return;
             }
 
-            activeScanner = new Instascan.Scanner({ video: document.getElementById('webcam'), mirror: false });
-            
-            activeScanner.addListener('scan', (content) => {
-                if (navigator.vibrate) navigator.vibrate(50);
-                saveEntry(content);
+            scanner = new Html5Qrcode("reader");
+            const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+
+            // Request back camera explicitly
+            scanner.start({ facingMode: "environment" }, config, (text) => {
+                if (navigator.vibrate) navigator.vibrate(100);
+                saveScan(text);
+            }).catch(err => {
+                alert("Camera fail: Check HTTPS or Permissions.");
+                console.error(err);
             });
 
-            Instascan.Camera.getCameras().then(cameras => {
-                if (cameras.length > 0) {
-                    activeScanner.start(cameras[cameras.length - 1]); // Primary back camera
-                    document.getElementById('scanBtn').innerText = "Stop Scanner";
-                } else {
-                    alert('Optical hardware not found.');
-                }
-            }).catch(e => console.error("Hardware Error:", e));
+            document.getElementById('cameraBtn').innerText = "🛑 Stop Scanner";
         }
 
-        // DATA PERSISTENCE (LocalStorage Production Cache)
-        function saveEntry(text) {
-            const history = JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
-            const entry = { text, id: Date.now(), time: new Date().toLocaleTimeString() };
-            history.unshift(entry);
-            localStorage.setItem(STORE_KEY, JSON.stringify(history.slice(0, 15)));
-            refreshFeed();
+        /**
+         * DATA MANAGEMENT
+         */
+        function saveScan(text) {
+            let history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+            history.unshift({ text, date: new Date().toLocaleString() });
+            localStorage.setItem(HIST_KEY, JSON.stringify(history.slice(0, 10)));
+            render();
         }
 
-        function refreshFeed() {
-            const container = document.getElementById('feed');
-            const data = JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
-            container.innerHTML = data.length ? "" : "<p>System standby. No data logs.</p>";
+        function render() {
+            const container = document.getElementById('history');
+            const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+            container.innerHTML = items.length ? "" : "<p>Geen QR codes gevonden.</p>";
 
-            data.forEach((item, idx) => {
-                const card = document.createElement('div');
-                card.className = 'qr-card';
-                card.innerHTML = `
-                    <div style="font-size: 0.7em; color: #888; margin-bottom: 5px;">${item.time}</div>
-                    <code class="data-stream">${item.text}</code>
-                    <button onclick="transmit(${idx})" style="width:100%; margin-top:10px; background: #444;">📤 TRANSFER TO KDE</button>
+            items.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'qr-item';
+                div.innerHTML = `
+                    <div><b>Tijd:</b> ${item.date}</div>
+                    <div><b>QR:</b> <code>${item.text}</code></div>
+                    <button class="btn btn-share" onclick="sendToKde(${idx})">📤 Delen naar KDE</button>
                 `;
-                container.appendChild(card);
+                container.appendChild(div);
             });
         }
 
-        // DEBIAN/KDE BRIDGE (Matches Bash Listener: Line 1=Data, Line 2=PIN)
-        async function transmit(idx) {
-            const items = JSON.parse(localStorage.getItem(STORE_KEY));
+        /**
+         * BASH LISTENER BRIDGE
+         * Line 1: Data (URL/WIFI)
+         * Line 2: PIN: XXXX
+         */
+        async function sendToKde(idx) {
+            const items = JSON.parse(localStorage.getItem(HIST_KEY));
             const entry = items[idx];
             const pin = localStorage.getItem(AUTH_KEY);
 
-            // Payload Structure for bash: sed -n '2p' will find the PIN
             const payload = `${entry.text}\nPIN: ${pin}`;
-            const fileName = `transfer_${Date.now()}.txt`;
+            const fileName = `qr_share_${Date.now()}.txt`;
 
             if (navigator.share) {
                 try {
                     const file = new File([payload], fileName, { type: 'text/plain' });
-                    await navigator.share({
-                        files: [file],
-                        title: 'Production Data Transfer',
-                        text: 'STDOUT stream from QR PRO'
-                    });
-                } catch (err) {
-                    console.error("Transfer aborted", err);
-                }
+                    await navigator.share({ files: [file], title: 'QR Data' });
+                } catch (e) { /* Cancelled */ }
             } else {
-                // Production Fallback: Direct Browser Stream
                 const blob = new Blob([payload], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -144,14 +133,12 @@
             }
         }
 
-        function resetCache() {
-            if (confirm("Purge all production logs?")) {
-                localStorage.removeItem(STORE_KEY);
-                refreshFeed();
-            }
+        // Auto-check on load
+        if (localStorage.getItem(AUTH_KEY)) {
+            document.getElementById('gate').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            render();
         }
-
-        window.onload = startApp;
     </script>
 </body>
 </html>
