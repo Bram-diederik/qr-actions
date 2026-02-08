@@ -19,7 +19,7 @@
         .qr-card { background: var(--card); border: 1px solid #333; padding: 15px; margin: 12px auto; max-width: 450px; border-radius: 10px; position: relative; text-align: left; }
         .inspect-box { background: #111; border-left: 3px solid var(--accent); padding: 10px; margin-top: 10px; font-size: 13px; border-radius: 4px; overflow-wrap: break-word; line-height: 1.6; }
         code { background: #000; padding: 8px; color: #0f0; word-break: break-all; border-radius: 4px; display: block; margin: 10px 0; font-family: monospace; font-size: 11px; white-space: pre-wrap; }
-        input, select { padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 8px; }
+        input { padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 8px; }
         .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
         .act-link { color: var(--accent); text-decoration: underline; cursor: pointer; display: block; margin-bottom: 4px; }
         .map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
@@ -43,12 +43,14 @@
         <div id="settingsOverlay">
             <div class="settings-content">
                 <h3 style="margin-top:0;">Settings</h3>
-                <label>VAULT PIN</label>
+                <label>VAULT PIN (8 Digits)</label>
                 <input type="password" id="vPin1" placeholder="New PIN" oninput="validatePins()">
                 <input type="password" id="vPin2" placeholder="Confirm PIN" oninput="validatePins()">
                 <div id="valMsg" style="font-size:12px; height:15px; margin-bottom:10px;"></div>
-                <label>STATION PIN</label>
-                <input type="text" id="bPin" placeholder="Station PIN">
+                <label>STATION PIN (Plain Text)</label>
+                <input type="text" id="bPin" placeholder="Station Script PIN">
+                <label>HISTORY LIMIT (0 = Unlimited, default 15)</label>
+                <input type="number" id="hLimit">
                 <button id="saveBtn" class="btn" style="background:var(--accent);" onclick="saveSettings()">Save & Close</button>
                 <button class="btn" style="background:#600;" onclick="nuke(false)">⚠️ Nuke All Data</button>
                 <button class="btn" style="background:transparent;" onclick="toggleSettings()">Cancel</button>
@@ -67,9 +69,16 @@
     </div>
 
     <script>
+        /**
+         * @context PROMPT_CONTEXT_DO_NOT_REMOVE
+         * @persistence_rule: MUST USE EXACT KEYS: qr_history, qr_auth_pin, qr_bt_pin, qr_hist_limit.
+         * @regression_rule: WiFi MUST have Join option. Phone MUST have Call option.
+         */
+
         const HIST_KEY = 'qr_history';
         const AUTH_KEY = 'qr_auth_pin';
         const BT_KEY = 'qr_bt_pin';
+        const LIM_KEY = 'qr_hist_limit';
 
         let tempPin = "";
         let html5QrCode = null;
@@ -91,50 +100,56 @@
             if (text.includes('BEGIN:VEVENT')) return { type: 'EVENT', icon: '📅' };
             if (text.startsWith('WIFI:')) return { type: 'WIFI', icon: '📶' };
             if (text.startsWith('geo:')) return { type: 'GEO', icon: '📍' };
-            if (text.startsWith('mailto:')) return { type: 'EMAIL', icon: '✉️' };
             if (text.startsWith('tel:')) return { type: 'PHONE', icon: '📞' };
-            if (text.startsWith('sms:')) return { type: 'SMS', icon: '📱' };
+            if (text.startsWith('mailto:')) return { type: 'EMAIL', icon: '✉️' };
             return { type: 'TEXT', icon: '📄' };
         }
 
         function parseActions(text, typeInfo, id) {
             let html = `<span class="tag" style="background:var(--accent)">${typeInfo.icon} ${typeInfo.type}</span><br>`;
             
-            if (typeInfo.type === 'VCARD') {
-                const fn = text.match(/FN:(.*)/)?.[1] || "Contact";
-                const tel = text.match(/TEL.*:(.*)/)?.[1] || "";
-                const em = text.match(/EMAIL.*:(.*)/)?.[1] || "";
-                const adr = text.match(/ADR.*:;;([^;]*);([^;]*);([^;]*);([^;]*);(.*)/) || text.match(/ADR.*:(.*)/);
-                const address = adr ? adr[0].replace(/ADR.*:/, '').replace(/;/g, ' ').trim() : "";
-                
-                html += `<b>${fn}</b><br>`;
-                if (tel) html += `<a class="act-link" href="tel:${tel.trim()}">📞 Call: ${tel}</a>`;
-                if (em) html += `<a class="act-link" href="mailto:${em.trim()}">✉️ Email: ${em}</a>`;
-                if (address) {
-                    html += `🏠 <b>Location:</b> ${address}`;
-                    html += `<div class="map-grid">
-                        <a href="https://www.google.com/maps/search/${encodeURIComponent(address)}" target="_blank" class="btn" style="background:#4285F4; margin:0; font-size:11px;">Google Maps</a>
-                        <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(address)}" target="_blank" class="btn" style="background:#7EBC6F; margin:0; font-size:11px;">OpenStreet</a>
-                    </div>`;
-                }
-            } else if (typeInfo.type === 'GEO') {
-                const loc = text.replace('geo:', '').split('?')[0];
-                const [lat, lon] = loc.split(',');
-                html += `<b>Coordinates:</b> ${loc}`;
-                html += `<div class="map-grid">
-                    <a href="https://www.google.com/maps/search/?api=1&query=${loc}" target="_blank" class="btn" style="background:#4285F4; margin:0; font-size:11px;">Google Maps</a>
-                    <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=15/${lat}/${lon}" target="_blank" class="btn" style="background:#7EBC6F; margin:0; font-size:11px;">OpenStreet</a>
-                </div>`;
+            if (typeInfo.type === 'PHONE') {
+                const num = text.replace('tel:', '');
+                html += `<b>Number:</b> ${num}`;
+                html += `<a href="tel:${num}" class="btn" style="background:var(--green); margin-top:10px;">📞 Call Now</a>`;
+
             } else if (typeInfo.type === 'WIFI') {
                 const ssid = text.match(/S:(.*?);/)?.[1] || "Hidden";
                 const pass = text.match(/P:(.*?);/)?.[1] || "N/A";
                 html += `<b>SSID:</b> ${ssid}<br>`;
                 html += `<b>Pass:</b> <span id="pw-${id}" style="filter:blur(4px); transition: 0.3s;">${pass}</span> `;
                 html += `<button onclick="togglePW('${id}')" style="background:none; border:none; color:var(--accent); cursor:pointer; font-size:11px;">[Show/Hide]</button>`;
+                // OS-level WiFi prompt
+                html += `<a href="${text}" class="btn" style="background:var(--accent); margin-top:10px;">📶 Connect to WiFi</a>`;
+
+            } else if (typeInfo.type === 'VCARD') {
+                const fn = text.match(/FN:(.*)/)?.[1] || "Contact";
+                const tel = text.match(/TEL.*:(.*)/)?.[1] || "";
+                html += `<b>${fn}</b><br>`;
+                if (tel) html += `<a class="act-link" href="tel:${tel.trim()}">📞 Call: ${tel}</a>`;
+                html += `<button class="btn" style="background:var(--green); margin-top:10px;" onclick="downloadFile('${text.replace(/\n/g, '\\n')}', '${fn}.vcf', 'text/vcard')">💾 Save Contact (.vcf)</button>`;
+            
             } else if (typeInfo.type === 'URL') {
                 html += `<a href="${text}" target="_blank" class="act-link">Visit Website</a>`;
+                const vtEncoded = btoa(text).replace(/=/g, "");
+                html += `<a href="https://www.virustotal.com/gui/url/${vtEncoded}" target="_blank" style="color:var(--orange); font-weight:bold; display:block; margin-top:5px;">🛡️ Virus Scan (VT)</a>`;
+            
+            } else if (typeInfo.type === 'GEO') {
+                const loc = text.replace('geo:', '').split('?')[0];
+                html += `<div class="map-grid">
+                    <a href="https://www.google.com/maps/search/?api=1&query=${loc}" target="_blank" class="btn" style="background:#4285F4; margin:0; font-size:11px;">Google Maps</a>
+                    <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(loc)}" target="_blank" class="btn" style="background:#7EBC6F; margin:0; font-size:11px;">OpenStreet</a>
+                </div>`;
             }
             return `<div class="inspect-box">${html}</div>`;
+        }
+
+        function downloadFile(raw, filename, mime) {
+            const blob = new Blob([raw.replace(/\\n/g, '\n')], { type: mime });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename.replace(/\s+/g, '_');
+            a.click(); window.URL.revokeObjectURL(url);
         }
 
         function togglePW(id) {
@@ -200,7 +215,7 @@
                     if (v === 'C') tempPin = "";
                     else if (v === 'OK') {
                         if (tempPin === localStorage.getItem(AUTH_KEY)) unlock();
-                        else { tempPin = ""; alert("Failed"); }
+                        else { tempPin = ""; alert("Denied"); }
                     } else if (tempPin.length < 8) tempPin += v;
                     document.getElementById('pinDisplay').innerText = "*".repeat(tempPin.length);
                 };
@@ -223,32 +238,46 @@
         function upload(e) {
             const file = e.target.files[0]; if (!file) return;
             const fileScanner = new Html5Qrcode("reader");
-            fileScanner.scanFile(file, true).then(t => { save(t); fileScanner.clear(); }).catch(e => alert("Scan Failed"));
+            fileScanner.scanFile(file, true).then(t => { save(t); fileScanner.clear(); }).catch(e => alert("Failed"));
         }
 
         function save(text) {
             let h = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+            let limStr = localStorage.getItem(LIM_KEY);
+            let lim = (limStr === null) ? 15 : parseInt(limStr);
             h.unshift({ text, date: new Date().toLocaleString(), id: Date.now() });
-            localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, 30)));
+            if (lim > 0) h = h.slice(0, lim);
+            localStorage.setItem(HIST_KEY, JSON.stringify(h));
             render();
         }
 
-        function copy(t) { navigator.clipboard.writeText(t); }
         function del(id) {
             const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]").filter(i => i.id !== id);
             localStorage.setItem(HIST_KEY, JSON.stringify(items));
             render();
         }
-        function nuke(f) { if(f || (confirm("Wipe all?") && confirm("Sure?"))) { localStorage.clear(); location.reload(); } }
+
+        function nuke(f) { if(f || confirm("Wipe all data?")) { localStorage.clear(); location.reload(); } }
+        
         function toggleSettings() {
             const o = document.getElementById('settingsOverlay');
             o.style.display = (o.style.display === 'flex') ? 'none' : 'flex';
+            if (o.style.display === 'flex') {
+                document.getElementById('hLimit').value = localStorage.getItem(LIM_KEY) !== null ? localStorage.getItem(LIM_KEY) : 15;
+                document.getElementById('bPin').value = localStorage.getItem(BT_KEY) || "";
+            }
         }
+
         function saveSettings() {
-            localStorage.setItem(AUTH_KEY, document.getElementById('vPin1').value);
+            const v1 = document.getElementById('vPin1').value;
+            if (v1) localStorage.setItem(AUTH_KEY, v1);
             localStorage.setItem(BT_KEY, document.getElementById('bPin').value);
+            localStorage.setItem(LIM_KEY, document.getElementById('hLimit').value);
             toggleSettings(); checkAuth();
         }
+
+        function copy(t) { navigator.clipboard.writeText(t); }
+
         checkAuth();
     </script>
 </body>
