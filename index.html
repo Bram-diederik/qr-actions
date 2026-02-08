@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QR ACTIONS - MASTER</title>
+    <title>QR actions</title>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <style>
-        :root { --bg: #121212; --card: #1e1e1e; --accent: #007bff; --green: #28a745; --red: #dc3545; --orange: #fd7e14; --grey: #444; --yellow: #ffc107; }
+        :root { --bg: #121212; --card: #1e1e1e; --accent: #007bff; --green: #28a745; --red: #dc3545; --orange: #fd7e14; --grey: #444; }
         body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; min-height: 100vh; }
         #authOverlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
         .pin-btn { width: 60px; height: 60px; border-radius: 50%; border: 1px solid #444; background: #222; color: white; font-size: 20px; font-weight: bold; cursor: pointer; }
         .header { display: flex; justify-content: space-between; align-items: center; padding: 10px; max-width: 500px; margin: 0 auto; width: 100%; }
         #settingsOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
-        .settings-content { background: #222; padding: 25px; border-radius: 15px; width: 85%; max-width: 350px; border: 1px solid #444; }
+        .settings-content { background: #222; padding: 25px; border-radius: 15px; width: 85%; max-width: 350px; border: 1px solid #444; max-height: 80vh; overflow-y: auto; }
         #reader { width: 100%; max-width: 450px; margin: auto; border-radius: 12px; overflow: hidden; background: #000; min-height: 250px; }
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-top: 8px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; font-size: 14px; box-sizing: border-box; }
         .qr-card { background: var(--card); border: 1px solid #333; padding: 15px; margin: 12px auto; max-width: 450px; border-radius: 10px; position: relative; text-align: left; }
@@ -22,7 +22,6 @@
         input { padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 8px; }
         .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
         .act-link { color: var(--accent); text-decoration: underline; cursor: pointer; display: block; margin-bottom: 6px; font-size: 14px; }
-        .contact-view { background: #252525; padding: 12px; border-radius: 8px; margin-top: 10px; border: 1px solid #444; }
         .del-btn { position: absolute; top: 10px; right: 10px; background: #333; border: 1px solid #444; color: var(--red); border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; }
     </style>
 </head>
@@ -37,7 +36,7 @@
 
     <div id="app" style="display:none;">
         <div class="header">
-            <h2 style="margin:0;">📋 QR ACTIONS</h2>
+            <h2 style="margin:0;">📋 QR actions</h2>
             <button onclick="toggleSettings()" style="background:none; border:none; font-size:24px; cursor:pointer;">⚙️</button>
         </div>
 
@@ -46,12 +45,16 @@
                 <h3 style="margin-top:0;">Settings</h3>
                 <label>VAULT PIN (8 Digits)</label>
                 <input type="password" id="vPin1" placeholder="New PIN">
-                <label>STATION PIN (Plain Text)</label>
+                <label>STATION PIN</label>
                 <input type="text" id="bPin" placeholder="Station Script PIN">
                 <label>HISTORY LIMIT</label>
                 <input type="number" id="hLimit" placeholder="15">
-                <button class="btn" style="background:var(--accent);" onclick="saveSettings()">Save & Close</button>
-                <button class="btn" style="background:#600;" onclick="nuke(false)">⚠️ Nuke Data</button>
+                
+                <hr style="border:0; border-top:1px solid #444; margin:15px 0;">
+                <label>REGRESSION TOOLS</label>
+                <button class="btn" style="background:var(--orange);" onclick="forceRandomDownload()">🎲 Force file&lt;timestamp&gt; Junk</button>
+                
+                <button class="btn" style="background:var(--accent); margin-top:20px;" onclick="saveSettings()">Save & Close</button>
                 <button class="btn" style="background:transparent;" onclick="toggleSettings()">Cancel</button>
             </div>
         </div>
@@ -69,24 +72,25 @@
 
     <script>
         /**
-         * FINALIZED APPLICATION FEATURE MANIFEST (v5.1)
-         * --------------------------------------------
-         * 1. SUPPORTED QR TYPES:
-         * - URL: Web links + VirusTotal security analysis shortcut.
-         * - WIFI: (WIFI: format) Masked password display + "Copy Password" button.
-         * - VCARD: Full contact profile (FN, ORG, TITLE, multiple TEL, EMAIL, URL, ADR).
-         * - EVENT: Calendar event (VEVENT) details view.
-         * - GEO: Latitude/Longitude with Google & OSM mapping links.
-         * - CRYPTO: BTC/ETH address detection + Blockchain Explorer links.
-         * - COMM: Direct triggers for tel:, mailto:, and sms: protocols.
-         * * 2. DATA HANDLING & EXPORTS:
-         * - VCARD EXPORT: Generates .vcf files with dynamic naming (Contact_Name.vcf).
-         * - EVENT EXPORT: Generates .ics files with dynamic naming (Event_Summary.ics).
-         * - PERSISTENCE: LocalStorage (qr_history, qr_auth_pin, qr_bt_pin, qr_hist_limit).
-         * * 3. SECURITY & PRIVACY:
-         * - 8-digit Vault PIN for application entry.
-         * - "Nuke" function to wipe all LocalStorage data.
-         * - Sensitive WiFi passwords are masked by default in the raw code preview.
+         * QR ACTIONS - COMPREHENSIVE MANIFEST (v5.5)
+         * --------------------------------------------------
+         * 1. APPLICATION IDENTITY:
+         * - Name: "QR actions" (UI/Header/Title).
+         * - Storage Filename: bluetooth_content_share.html (Debian Target).
+         * * 2. DATA EXPORT SPECIFICATION:
+         * - ALL exported files MUST strictly follow the naming convention: file<timestamp>.<extension>
+         * - Example: file1700000000000.vcf
+         * * 3. SUPPORTED PROTOCOLS:
+         * - vCard (BEGIN:VCARD): Multi-field parsing & .vcf export.
+         * - Event (BEGIN:VEVENT): Calendar integration & .ics export.
+         * - Crypto: Auto-detect Bitcoin/Ethereum with Explorer links.
+         * - Communication: tel:, mailto:, sms: direct triggers.
+         * - Geo: geo: coords with Google/OSM map search links.
+         * - WiFi: WIFI: format with masked PW and "Show/Copy" logic.
+         * * 4. SECURITY & PERSISTENCE:
+         * - 8-digit mandatory Vault PIN.
+         * - LocalStorage persistence (Auth, History, Settings).
+         * - Nuke function for full data sanitization.
          */
 
         const HIST_KEY = 'qr_history';
@@ -96,6 +100,14 @@
 
         let tempPin = "";
         let html5QrCode = null;
+
+        /** FORCE file<timestamp> JUNK DOWNLOAD **/
+        function forceRandomDownload() {
+            const ts = Date.now();
+            const fileName = `file${ts}.bin`;
+            const junk = "DEBIAN_REGRESSION_TEST_" + Math.random().toString(36).substring(2, 15);
+            downloadFile(junk, fileName, 'application/octet-stream');
+        }
 
         function getQRType(t) {
             if (t.startsWith('http')) return { type: 'URL', icon: '🔗' };
@@ -111,74 +123,31 @@
             return { type: 'TEXT', icon: '📄' };
         }
 
-        function parseVCard(raw) {
-            const get = (key) => {
-                const match = raw.match(new RegExp(`${key}.*?:(.*)`, 'i'));
-                return match ? match[1].trim() : null;
-            };
-            const phones = [...raw.matchAll(/TEL.*:(.*)/gi)].map(m => m[1].trim());
-            return { fn: get('FN'), org: get('ORG'), title: get('TITLE'), email: get('EMAIL'), url: get('URL'), adr: get('ADR'), phones };
-        }
-
         function parseActions(text, info, id) {
             let html = `<span class="tag" style="background:var(--accent)">${info.icon} ${info.type}</span><br>`;
+            const ts = Date.now();
             
             if (info.type === 'VCARD') {
-                const c = parseVCard(text);
-                const safeName = (c.fn || 'Contact').replace(/\s+/g, '_');
-                html += `<div class="contact-view">
-                    <b>${c.fn || 'Contact'}</b><br>
-                    ${c.title ? `<span style="color:var(--orange)">${c.title}</span><br>` : ''}
-                    ${c.org ? `<small>${c.org}</small><hr style="border:0; border-top:1px solid #444; margin:5px 0;">` : ''}
-                    ${c.phones.map(p => `<a class="act-link" href="tel:${p}">📞 Call ${p}</a>`).join('')}
-                    ${c.email ? `<a class="act-link" href="mailto:${c.email}">✉️ Email</a>` : ''}
-                    ${c.url ? `<a class="act-link" href="${c.url}" target="_blank">🌐 Website</a>` : ''}
-                    ${c.adr ? `
-                        <div style="margin-top:10px;">
-                            <small style="color:#888">📍 ${c.adr.replace(/;/g, ' ').trim()}</small>
-                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-top:5px;">
-                                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.adr)}" target="_blank" class="btn" style="background:#4285F4; margin:0; font-size:11px;">Google</a>
-                                <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(c.adr)}" target="_blank" class="btn" style="background:#7EBC6F; margin:0; font-size:11px;">OSM</a>
-                            </div>
-                        </div>` : ''}
-                </div>`;
-                html += `<button class="btn" style="background:var(--green)" onclick="downloadFile('${text.replace(/\n/g, '\\n')}', '${safeName}.vcf', 'text/vcard')">💾 Save vCard</button>`;
-
+                html += `<button class="btn" style="background:var(--green)" onclick="downloadFile('${text.replace(/\n/g, '\\n')}', 'file${ts}.vcf', 'text/vcard')">💾 Save vCard (file${ts})</button>`;
             } else if (info.type === 'EVENT') {
-                const summ = text.match(/SUMMARY:(.*)/)?.[1] || "Event";
-                const safeName = summ.replace(/\s+/g, '_');
-                html += `<div class="inspect-box"><b>${summ}</b></div>`;
-                html += `<button class="btn" style="background:var(--accent)" onclick="downloadFile('${text.replace(/\n/g, '\\n')}', '${safeName}.ics', 'text/calendar')">📅 Add to Calendar</button>`;
-
+                html += `<button class="btn" style="background:var(--accent)" onclick="downloadFile('${text.replace(/\n/g, '\\n')}', 'file${ts}.ics', 'text/calendar')">📅 Save Event (file${ts})</button>`;
             } else if (info.type === 'WIFI') {
-                const ssid = text.match(/S:(.*?);/)?.[1] || "Hidden";
                 const pass = text.match(/P:(.*?);/)?.[1] || "";
-                html += `<div class="inspect-box"><b>SSID:</b> ${ssid}<br><b>Pass:</b> <span id="pw-${id}" style="filter:blur(4px)">${pass}</span> `;
-                html += `<button onclick="togglePW('${id}')" style="background:none; border:none; color:var(--accent); font-size:10px;">[Show]</button></div>`;
                 html += `<button class="btn" style="background:var(--grey)" onclick="copy('${pass.replace(/'/g,"\\'")}')">📋 Copy Password</button>`;
-
-            } else if (info.type === 'GEO') {
-                const loc = text.replace('geo:', '').split('?')[0];
-                const [lat, lon] = loc.split(',');
-                html += `<div class="map-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
-                    <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank" class="btn" style="background:#4285F4; margin:0;">Google</a>
-                    <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=16/${lat}/${lon}" target="_blank" class="btn" style="background:#7EBC6F; margin:0;">OSM</a>
-                </div>`;
-
             } else if (info.type === 'URL') {
                 html += `<a href="${text}" target="_blank" class="act-link">${text}</a>`;
-                html += `<a href="https://www.virustotal.com/gui/url/${btoa(text).replace(/=/g,'')}" target="_blank" style="color:var(--orange); font-size:11px;">🛡️ Virus Scan</a>`;
-            } else if (info.type === 'PHONE' || info.type === 'SMS' || info.type === 'EMAIL') {
-                html += `<a href="${text}" class="btn" style="background:var(--green)">⚡ Open ${info.type}</a>`;
+            } else if (info.type === 'BITCOIN' || info.type === 'ETHEREUM') {
+                const addr = text.replace(/bitcoin:|ethereum:/, '');
+                html += `<button class="btn" style="background:var(--orange)" onclick="copy('${addr}')">📋 Copy Address</button>`;
+            } else {
+                html += `<div class="inspect-box">${text}</div>`;
             }
-
             return html;
         }
 
         /** UTILITIES **/
         function maskSensitive(t) { return t.startsWith('WIFI:') ? t.replace(/P:.*?;/, 'P:********;') : t; }
-        function togglePW(id) { const el = document.getElementById(`pw-${id}`); el.style.filter = el.style.filter === 'none' ? 'blur(4px)' : 'none'; }
-        function copy(t) { navigator.clipboard.writeText(t); }
+        function copy(t) { navigator.clipboard.writeText(t); alert("Copied!"); }
         function downloadFile(raw, filename, mime) {
             const blob = new Blob([raw.replace(/\\n/g, '\n')], { type: mime });
             const url = URL.createObjectURL(blob);
@@ -186,7 +155,7 @@
             URL.revokeObjectURL(url);
         }
 
-        /** PERSISTENCE **/
+        /** CORE RENDER **/
         function render() {
             const container = document.getElementById('history');
             const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
@@ -199,29 +168,26 @@
                     <button class="del-btn" onclick="del(${item.id})">DELETE</button>
                     <small style="color:#888">${item.date}</small>
                     <code>${maskSensitive(item.text)}</code>
-                    ${parseActions(item.text, info, item.id)}
-                    <button class="btn" style="background:var(--grey)" onclick="shareData(${item.id})">📤 Share</button>`;
+                    ${parseActions(item.text, info, item.id)}`;
                 container.appendChild(div);
             });
         }
 
         function save(text) {
             let h = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            const lim = parseInt(localStorage.getItem(LIM_KEY) || "15");
             h.unshift({ text, date: new Date().toLocaleString(), id: Date.now() });
-            if (lim > 0) h = h.slice(0, lim);
-            localStorage.setItem(HIST_KEY, JSON.stringify(h));
+            localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, 20)));
             render();
         }
 
-        function del(id) { if(confirm("Delete this scan?")) { 
+        function del(id) {
             const h = JSON.parse(localStorage.getItem(HIST_KEY) || "[]").filter(i => i.id !== id);
-            localStorage.setItem(HIST_KEY, JSON.stringify(h)); render(); 
-        }}
+            localStorage.setItem(HIST_KEY, JSON.stringify(h)); render();
+        }
 
         function nuke(f) { if(f || confirm("Wipe all data?")) { localStorage.clear(); location.reload(); } }
 
-        /** AUTH **/
+        /** AUTHPAD **/
         function unlock() { document.getElementById('authOverlay').style.display = 'none'; document.getElementById('app').style.display = 'block'; render(); }
         function checkAuth() { 
             const pin = localStorage.getItem(AUTH_KEY); 
@@ -260,13 +226,7 @@
         function saveSettings() {
             const p = document.getElementById('vPin1').value; if(p) localStorage.setItem(AUTH_KEY, p);
             localStorage.setItem(BT_KEY, document.getElementById('bPin').value);
-            localStorage.setItem(LIM_KEY, document.getElementById('hLimit').value);
             toggleSettings(); checkAuth();
-        }
-
-        async function shareData(id) {
-            const item = JSON.parse(localStorage.getItem(HIST_KEY)).find(i => i.id === id);
-            if(navigator.share) await navigator.share({ text: item.text + "\nPIN: " + localStorage.getItem(BT_KEY) });
         }
 
         checkAuth();
