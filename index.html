@@ -3,67 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QR Actions Offline</title>
+    <title>QR Actions</title>
     <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlFSIEFjdGlvbnMiLAogICJzaG9ydF9uYW1lIjogIlFSIEFjdGlvbnMiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzEyMTIxMiIsCiAgInRoZW1lX2NvbG9yIjogIiMxMjEyMTIiLAogICJpY29ucyI6IFt7ICJzcmMiOiAiaHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsYXRpY29uLmNvbS81MTIvMjQxLzI0MTUyOC5wbmciLCAic2l6ZXMiOiAiNTEyeDUxMiIsICJ0eXBlIjogImltYWdlL3BuZyIgfV0KfQ==">
     
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <style>
         :root { --bg: #121212; --card: #1e1e1e; --accent: #007bff; --green: #28a745; --red: #dc3545; }
-        body { background: var(--bg); color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 10px; text-align: center; }
-        
+        body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; text-align: center; }
         .header { display: flex; justify-content: space-between; align-items: center; padding: 10px; max-width: 500px; margin: 0 auto; }
         .settings-icon { font-size: 24px; cursor: pointer; background: none; border: none; color: #888; padding: 10px; }
-        
-        #settingsOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; justify-content: center; align-items: center; overflow-y: auto; }
+        #settingsOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; justify-content: center; align-items: center; }
         .settings-content { background: #222; padding: 25px; border-radius: 15px; width: 85%; max-width: 320px; border: 1px solid #444; text-align: left; }
-
         #reader { width: 100%; max-width: 450px; margin: auto; border-radius: 12px; overflow: hidden; background: #000; min-height: 250px; }
         .qr-card { background: var(--card); border: 1px solid #333; padding: 15px; margin: 12px auto; max-width: 450px; border-radius: 10px; text-align: left; position: relative; }
-        
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-top: 8px; font-size: 14px; }
-        .btn-share { background: var(--accent); }
         .btn-scan { background: var(--green); margin-bottom: 15px; font-size: 16px; }
         .btn-abort { background: var(--red); margin-bottom: 15px; font-size: 16px; display: none; }
-        .btn-sec { background: #444; font-size: 12px; }
-        .btn-danger { background: #600; border: 1px solid var(--red); margin-top: 20px; }
-        
         .btn-delete { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #666; font-size: 20px; cursor: pointer; }
-        
         input, select { padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; width: 100%; box-sizing: border-box; margin: 5px 0 15px 0; font-size: 16px; }
         code { background: #000; padding: 4px; color: #0f0; word-break: break-all; border-radius: 4px; font-family: monospace; }
-        
-        .wifi-pass { filter: blur(5px); transition: filter 0.3s; cursor: pointer; background: #333; padding: 2px 6px; border-radius: 4px; }
+        .wifi-pass { filter: blur(5px); cursor: pointer; }
         .wifi-pass.show { filter: blur(0); }
-
-        .footer { margin-top: 40px; padding: 20px; border-top: 1px solid #333; font-size: 14px; color: #888; }
-        .footer a { color: var(--accent); text-decoration: none; margin: 0 10px; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h2 style="margin:0;">📋 QR Actions</h2>
-        <button class="settings-icon" onclick="toggleSettings()" aria-label="Settings">⚙️</button>
+        <button class="settings-icon" onclick="toggleSettings()">⚙️</button>
     </div>
 
     <div id="settingsOverlay">
         <div class="settings-content">
             <h3 style="margin-top:0;">Settings</h3>
-            
             <label style="font-size: 11px; color: #aaa;">PREFERRED CAMERA</label>
             <select id="cameraSelect"><option value="">Default (Environment)</option></select>
-
             <label style="font-size: 11px; color: #aaa;">HISTORY LIMIT (0 = UNLIMITED)</label>
             <input type="number" id="limitInput" min="0" value="15">
-
-            <label style="font-size: 11px; color: #aaa;">TRANSMISSION PIN (OPTIONAL)</label>
-            <input type="password" id="pinInput" placeholder="e.g. 2626">
-            
-            <button class="btn btn-share" onclick="saveSettings()">Save & Close</button>
+            <label style="font-size: 11px; color: #aaa;">TRANSMISSION PIN</label>
+            <input type="password" id="pinInput" placeholder="Optional PIN">
+            <button class="btn" style="background:var(--accent);" onclick="saveSettings()">Save & Close</button>
+            <button class="btn" style="background:#600; margin-top:20px;" onclick="clearAllData()">⚠️ Clear All Data</button>
             <button class="btn" style="background:transparent;" onclick="toggleSettings()">Cancel</button>
-            
-            <button class="btn btn-danger" onclick="clearAllData()">⚠️ Clear All Data</button>
         </div>
     </div>
 
@@ -74,12 +56,6 @@
         <div id="history"></div>
     </div>
 
-    <div class="footer">
-        By <strong>Bram Diederik</strong><br><br>
-        <a href="#">About</a> | 
-        <a href="#">Auto Connect Laptop</a>
-    </div>
-
     <script>
         const AUTH_KEY = 'qr_actions_pin_v2';
         const HIST_KEY = 'qr_actions_history_v2';
@@ -87,18 +63,44 @@
         const LIMIT_KEY = 'qr_actions_limit';
         let html5QrCode = null;
 
-        // --- Offline Service Worker Setup ---
+        /**
+         * SERVICE WORKER: THE OFFLINE ENGINE
+         * This script creates a virtual "proxy" that saves the HTML and the QR Library 
+         * into the phone's storage. 
+         */
         if ('serviceWorker' in navigator) {
             const swCode = `
-                const CACHE_NAME = 'qr-offline-v1';
-                const ASSETS = ['./', './index.html', 'https://unpkg.com/html5-qrcode'];
-                self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS))));
-                self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+                const CACHE_NAME = 'qr-actions-v3';
+                const ASSETS = [
+                    './',
+                    './index.html',
+                    'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js'
+                ];
+
+                self.addEventListener('install', (event) => {
+                    event.waitUntil(
+                        caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+                    );
+                    self.skipWaiting();
+                });
+
+                self.addEventListener('activate', (event) => {
+                    event.waitUntil(clients.claim());
+                });
+
+                self.addEventListener('fetch', (event) => {
+                    event.respondWith(
+                        caches.match(event.request).then((response) => {
+                            return response || fetch(event.request);
+                        })
+                    );
+                });
             `;
             const blob = new Blob([swCode], { type: 'application/javascript' });
             navigator.serviceWorker.register(URL.createObjectURL(blob));
         }
 
+        // --- CAMERA & SETTINGS ---
         async function getCameras() {
             try {
                 const devices = await Html5Qrcode.getCameras();
@@ -113,7 +115,7 @@
                         select.appendChild(option);
                     });
                 }
-            } catch (e) { console.error("Camera error", e); }
+            } catch (e) { console.error("Camera listing failed", e); }
         }
 
         function toggleSettings() {
@@ -135,15 +137,16 @@
         }
 
         function clearAllData() {
-            if(confirm("Delete all history and settings?") && confirm("Final confirmation: Clear everything?")) {
+            if(confirm("Permanently delete all data?") && confirm("Are you absolutely sure?")) {
                 localStorage.clear();
                 location.reload();
             }
         }
 
+        // --- SCANNER LOGIC ---
         async function stopScan() {
             if (html5QrCode) {
-                await html5QrCode.stop();
+                try { await html5QrCode.stop(); } catch(e) {}
                 html5QrCode = null;
             }
             document.getElementById('cameraBtn').style.display = 'block';
@@ -152,32 +155,34 @@
             document.getElementById('abortBtn').style.display = 'none';
         }
 
-        function startScan() {
+        async function startScan() {
             const btn = document.getElementById('cameraBtn');
             const abortBtn = document.getElementById('abortBtn');
             const prefCamId = localStorage.getItem(CAM_KEY);
 
             btn.disabled = true;
-            btn.innerText = "Starting...";
+            btn.innerText = "Initializing...";
 
             html5QrCode = new Html5Qrcode("reader");
             const config = prefCamId ? { deviceId: { exact: prefCamId } } : { facingMode: "environment" };
 
-            html5QrCode.start(config, { fps: 15, qrbox: 250 }, (text) => {
-                stopScan().then(() => {
-                    if (navigator.vibrate) navigator.vibrate(100);
-                    saveScan(text);
+            try {
+                await html5QrCode.start(config, { fps: 15, qrbox: 250 }, (text) => {
+                    stopScan().then(() => {
+                        if (navigator.vibrate) navigator.vibrate(100);
+                        saveScan(text);
+                    });
                 });
-            }).then(() => {
                 btn.style.display = 'none';
                 abortBtn.style.display = 'block';
-            }).catch(err => {
+            } catch (err) {
                 btn.disabled = false;
                 btn.innerText = "📷 Retry Scanner";
-                alert("Camera Error: Please ensure you use HTTPS.");
-            });
+                alert("Camera Error: Usually caused by non-HTTPS connection.");
+            }
         }
 
+        // --- DATA MANAGEMENT ---
         function saveScan(text) {
             let history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
             history.unshift({ text, date: new Date().toLocaleString(), id: Date.now() });
@@ -194,11 +199,6 @@
             render();
         }
 
-        function checkSafety(urlToTest) {
-            const encodedUrl = btoa(urlToTest.trim()).replace(/=/g, "");
-            window.open(`https://www.virustotal.com/gui/url/${encodedUrl}/detection`, '_blank');
-        }
-
         function togglePass(id) {
             document.getElementById(id).classList.toggle('show');
         }
@@ -206,9 +206,6 @@
         function render() {
             const container = document.getElementById('history');
             let items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            const limit = parseInt(localStorage.getItem(LIMIT_KEY) || "15");
-            if(limit > 0 && items.length > limit) items = items.slice(0, limit);
-
             container.innerHTML = items.length ? "" : "<p style='color:#666;'>No scan history.</p>";
 
             items.forEach((item, idx) => {
@@ -229,11 +226,8 @@
                     <div style="font-size:0.7em; color:#666; margin-bottom:5px;">${item.date}</div>
                     <div style="margin-bottom:10px; padding-right: 30px;">${contentHtml}</div>
                     <div style="display:flex; flex-wrap:wrap; gap:8px;">
-                        <button class="btn btn-share" onclick="shareData(${idx})">Share</button>
-                        ${isUrl ? `
-                            <button class="btn btn-sec" onclick="checkSafety('${item.text}')">🛡 VirusTotal</button>
-                            <a href="${item.text}" target="_blank" class="btn" style="background:var(--green); text-decoration:none; text-align:center; display:flex; align-items:center; justify-content:center;">🌐 Visit</a>
-                        ` : ''}
+                        <button class="btn btn-share" style="flex:1;" onclick="shareData(${idx})">Share</button>
+                        ${isUrl ? `<a href="${item.text}" target="_blank" class="btn" style="flex:1; background:var(--green); text-decoration:none; text-align:center;">🌐 Visit</a>` : ''}
                     </div>
                 `;
                 container.appendChild(div);
@@ -245,24 +239,13 @@
             const entry = items[idx];
             const pin = localStorage.getItem(AUTH_KEY);
             const payload = entry.text + (pin ? `\nPIN: ${pin}` : "");
-            const fileName = `qr_${Date.now()}.txt`;
-
             if (navigator.share) {
-                try {
-                    const file = new File([payload], fileName, { type: 'text/plain' });
-                    await navigator.share({ files: [file], title: 'QR Actions' });
-                } catch (e) { /* Share cancelled */ }
-            } else {
-                const blob = new Blob([payload], { type: 'text/plain' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = fileName;
-                a.click();
+                const file = new File([payload], `qr_${Date.now()}.txt`, { type: 'text/plain' });
+                try { await navigator.share({ files: [file], title: 'QR Actions' }); } catch (e) {}
             }
         }
 
         render();
-        getCameras();
     </script>
 </body>
 </html>
