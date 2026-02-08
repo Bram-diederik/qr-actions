@@ -1359,7 +1359,7 @@
             if (contact.phones && contact.phones.length > 0) {
                 html += `<div class="vcard-field"><div class="vcard-field-label">Phone Numbers</div>`;
                 contact.phones.forEach(phone => {
-                    html += `<div class="vcard-field-value" style="margin-bottom:3px;">${phone.type}: ${phone.number}</div>`;
+                    html += `<div class="vcard-field-value" style="margin-bottom:3px;">${phone.type}: <a href="tel:${phone.number}" style="color:#007bff;">${phone.number}</a></div>`;
                 });
                 html += `</div>`;
             }
@@ -1367,7 +1367,7 @@
             if (contact.emails && contact.emails.length > 0) {
                 html += `<div class="vcard-field"><div class="vcard-field-label">Emails</div>`;
                 contact.emails.forEach(email => {
-                    html += `<div class="vcard-field-value" style="margin-bottom:3px;">${email.type}: ${email.address}</div>`;
+                    html += `<div class="vcard-field-value" style="margin-bottom:3px;">${email.type}: <a href="mailto:${email.address}" style="color:#007bff;">${email.address}</a></div>`;
                 });
                 html += `</div>`;
             }
@@ -1645,10 +1645,11 @@
             }
         }
 
-        // NEW: Open VirusTotal page directly
+        // NEW: Open VirusTotal page directly - FIXED URL ENCODING
         function openVirusTotalPage(url) {
-            // Open VirusTotal page in new tab
-            window.open(`https://www.virustotal.com/gui/url/${encodeURIComponent(url)}`, '_blank');
+            // Correct VirusTotal URL encoding
+            const encodedUrl = btoa(url).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            window.open(`https://www.virustotal.com/gui/url/${encodedUrl}`, '_blank');
         }
 
         // NEW: Check safety from history (not modal)
