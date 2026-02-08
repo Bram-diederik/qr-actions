@@ -1,0 +1,15 @@
+{
+  "name": "QR Actions",
+  "short_name": "QR Actions",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#007bff",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/241/241521.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
