@@ -22,6 +22,7 @@
         input, select { padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 8px; }
         .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
         .act-link { color: var(--accent); text-decoration: underline; cursor: pointer; display: block; margin-bottom: 4px; }
+        .map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
     </style>
 </head>
 <body>
@@ -42,12 +43,12 @@
         <div id="settingsOverlay">
             <div class="settings-content">
                 <h3 style="margin-top:0;">Settings</h3>
-                <label>VAULT PIN (App Lock)</label>
+                <label>VAULT PIN</label>
                 <input type="password" id="vPin1" placeholder="New PIN" oninput="validatePins()">
                 <input type="password" id="vPin2" placeholder="Confirm PIN" oninput="validatePins()">
                 <div id="valMsg" style="font-size:12px; height:15px; margin-bottom:10px;"></div>
-                <label>STATION PIN (Plain Text)</label>
-                <input type="text" id="bPin" placeholder="Station Script PIN">
+                <label>STATION PIN</label>
+                <input type="text" id="bPin" placeholder="Station PIN">
                 <button id="saveBtn" class="btn" style="background:var(--accent);" onclick="saveSettings()">Save & Close</button>
                 <button class="btn" style="background:#600;" onclick="nuke(false)">⚠️ Nuke All Data</button>
                 <button class="btn" style="background:transparent;" onclick="toggleSettings()">Cancel</button>
@@ -66,12 +67,6 @@
     </div>
 
     <script>
-        /**
-         * PRODUCTION PROTOCOL - QR ACTIONS:
-         * 1. VCARD: Must parse Name, Tel, Email, URL.
-         * 2. SHARING: Filename format QR_YYYYMMDD_HHMMSS.txt + Station PIN on Line 2.
-         * 3. UPLOAD: fileScanner must be cleared after scan.
-         */
         const HIST_KEY = 'qr_history';
         const AUTH_KEY = 'qr_auth_pin';
         const BT_KEY = 'qr_bt_pin';
@@ -99,37 +94,52 @@
             if (text.startsWith('mailto:')) return { type: 'EMAIL', icon: '✉️' };
             if (text.startsWith('tel:')) return { type: 'PHONE', icon: '📞' };
             if (text.startsWith('sms:')) return { type: 'SMS', icon: '📱' };
-            if (text.match(/^(bitcoin:|bc1|[13])[a-zA-HJ-NP-Z0-9]/)) return { type: 'BITCOIN', icon: '₿' };
-            if (text.startsWith('0x')) return { type: 'ETHEREUM', icon: 'Ξ' };
             return { type: 'TEXT', icon: '📄' };
         }
 
-        function parseActions(text, typeInfo) {
+        function parseActions(text, typeInfo, id) {
             let html = `<span class="tag" style="background:var(--accent)">${typeInfo.icon} ${typeInfo.type}</span><br>`;
             
             if (typeInfo.type === 'VCARD') {
                 const fn = text.match(/FN:(.*)/)?.[1] || "Contact";
                 const tel = text.match(/TEL.*:(.*)/)?.[1] || "";
                 const em = text.match(/EMAIL.*:(.*)/)?.[1] || "";
-                const url = text.match(/URL.*:(.*)/)?.[1] || "";
+                const adr = text.match(/ADR.*:;;([^;]*);([^;]*);([^;]*);([^;]*);(.*)/) || text.match(/ADR.*:(.*)/);
+                const address = adr ? adr[0].replace(/ADR.*:/, '').replace(/;/g, ' ').trim() : "";
+                
                 html += `<b>${fn}</b><br>`;
                 if (tel) html += `<a class="act-link" href="tel:${tel.trim()}">📞 Call: ${tel}</a>`;
                 if (em) html += `<a class="act-link" href="mailto:${em.trim()}">✉️ Email: ${em}</a>`;
-                if (url) html += `<a class="act-link" href="${url.trim()}" target="_blank">🌐 Website</a>`;
-            } else if (typeInfo.type === 'URL') {
-                html += `<a href="${text}" target="_blank" class="act-link">Visit Website</a>`;
-                html += `<a href="https://www.virustotal.com/gui/url/${btoa(text).replace(/=/g,"")}" target="_blank" style="color:var(--orange)">🛡️ Virus Scan</a>`;
+                if (address) {
+                    html += `🏠 <b>Location:</b> ${address}`;
+                    html += `<div class="map-grid">
+                        <a href="https://www.google.com/maps/search/${encodeURIComponent(address)}" target="_blank" class="btn" style="background:#4285F4; margin:0; font-size:11px;">Google Maps</a>
+                        <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(address)}" target="_blank" class="btn" style="background:#7EBC6F; margin:0; font-size:11px;">OpenStreet</a>
+                    </div>`;
+                }
             } else if (typeInfo.type === 'GEO') {
-                const clean = text.replace('geo:', '').split('?')[0];
-                html += `<a href="https://www.google.com/maps/search/?api=1&query=${clean}" target="_blank" class="act-link">📍 View on Google Maps</a>`;
+                const loc = text.replace('geo:', '').split('?')[0];
+                const [lat, lon] = loc.split(',');
+                html += `<b>Coordinates:</b> ${loc}`;
+                html += `<div class="map-grid">
+                    <a href="https://www.google.com/maps/search/?api=1&query=${loc}" target="_blank" class="btn" style="background:#4285F4; margin:0; font-size:11px;">Google Maps</a>
+                    <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=15/${lat}/${lon}" target="_blank" class="btn" style="background:#7EBC6F; margin:0; font-size:11px;">OpenStreet</a>
+                </div>`;
             } else if (typeInfo.type === 'WIFI') {
                 const ssid = text.match(/S:(.*?);/)?.[1] || "Hidden";
-                const pass = text.match(/P:(.*?);/)?.[1] || "";
-                html += `<b>SSID:</b> ${ssid}<br><b>Pass:</b> ${pass}`;
-            } else {
-                html += `<i>Raw Data Inspection Available Below</i>`;
+                const pass = text.match(/P:(.*?);/)?.[1] || "N/A";
+                html += `<b>SSID:</b> ${ssid}<br>`;
+                html += `<b>Pass:</b> <span id="pw-${id}" style="filter:blur(4px); transition: 0.3s;">${pass}</span> `;
+                html += `<button onclick="togglePW('${id}')" style="background:none; border:none; color:var(--accent); cursor:pointer; font-size:11px;">[Show/Hide]</button>`;
+            } else if (typeInfo.type === 'URL') {
+                html += `<a href="${text}" target="_blank" class="act-link">Visit Website</a>`;
             }
             return `<div class="inspect-box">${html}</div>`;
+        }
+
+        function togglePW(id) {
+            const el = document.getElementById(`pw-${id}`);
+            el.style.filter = (el.style.filter === 'none') ? 'blur(4px)' : 'none';
         }
 
         async function shareData(id) {
@@ -138,8 +148,7 @@
             const btPin = localStorage.getItem(BT_KEY);
             const payload = item.text + (btPin ? `\nPIN: ${btPin}` : "");
             const now = new Date();
-            const ts = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + "_" + 
-                       String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0') + String(now.getSeconds()).padStart(2,'0');
+            const ts = now.toISOString().replace(/[:\-T]/g, "").split(".")[0];
             if (navigator.share) {
                 const file = new File([payload], `QR_${ts}.txt`, { type: 'text/plain' });
                 try { await navigator.share({ files: [file], title: `Export_${ts}` }); } catch(e) {}
@@ -158,7 +167,7 @@
                     <button style="position:absolute; top:10px; right:10px; background:none; border:none; color:#666;" onclick="del(${item.id})">🗑</button>
                     <small style="color:#888">${item.date}</small>
                     <code>${item.text}</code>
-                    ${parseActions(item.text, typeInfo)}
+                    ${parseActions(item.text, typeInfo, item.id)}
                     <div style="display:flex; gap:8px; margin-top:10px;">
                         <button class="btn" style="background:#444; margin:0;" onclick="copy('${item.text.replace(/'/g,"\\'")}')">Copy</button>
                         <button class="btn" style="background:var(--accent); margin:0;" onclick="shareData(${item.id})">📤 Share</button>
@@ -183,8 +192,7 @@
         }
 
         function renderPinPad() {
-            const pad = document.getElementById('pinPad');
-            pad.innerHTML = "";
+            const pad = document.getElementById('pinPad'); pad.innerHTML = "";
             [1,2,3,4,5,6,7,8,9,'C',0,'OK'].forEach(v => {
                 const b = document.createElement('button');
                 b.className = 'pin-btn'; b.innerText = v;
@@ -192,7 +200,7 @@
                     if (v === 'C') tempPin = "";
                     else if (v === 'OK') {
                         if (tempPin === localStorage.getItem(AUTH_KEY)) unlock();
-                        else { tempPin = ""; document.getElementById('pinDisplay').innerText = ""; alert("Failed"); }
+                        else { tempPin = ""; alert("Failed"); }
                     } else if (tempPin.length < 8) tempPin += v;
                     document.getElementById('pinDisplay').innerText = "*".repeat(tempPin.length);
                 };
