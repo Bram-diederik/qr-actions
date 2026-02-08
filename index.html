@@ -156,16 +156,39 @@
             });
         }
 
-        async function shareData(id) {
-            const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            const item = items.find(i => i.id === id);
-            const btPin = localStorage.getItem(BT_KEY);
-            const payload = item.text + (btPin ? `\nPIN: ${btPin}` : "");
-            if (navigator.share) {
-                const file = new File([payload], `qr_data.txt`, { type: 'text/plain' });
-                try { await navigator.share({ files: [file], title: 'Share' }); } catch(e) {}
-            }
+async function shareData(id) {
+    const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+    const item = items.find(i => i.id === id);
+    const btPin = localStorage.getItem(BT_KEY);
+    
+    // Formatted for station script: Line 1 = Data, Line 2 = Shared PIN
+    const payload = item.text + (btPin ? `\nPIN: ${btPin}` : "");
+
+    // GENERATE UNIQUE FILENAME WITH SECONDS
+    const now = new Date();
+    const ts = now.getFullYear() + 
+               String(now.getMonth() + 1).padStart(2, '0') + 
+               String(now.getDate()).padStart(2, '0') + "_" +
+               String(now.getHours()).padStart(2, '0') + 
+               String(now.getMinutes()).padStart(2, '0') + 
+               String(now.getSeconds()).padStart(2, '0');
+    const fileName = `QR_${ts}.txt`;
+
+    if (navigator.share) {
+        const file = new File([payload], fileName, { type: 'text/plain' });
+        try { 
+            await navigator.share({ 
+                files: [file], 
+                title: 'Share QR Data',
+                text: fileName // Included in metadata for the station script
+            }); 
+        } catch(e) {
+            console.error("Share failed", e);
         }
+    } else {
+        alert("Web Share API not supported on this browser.");
+    }
+}
 
         function render() {
             const container = document.getElementById('history');
