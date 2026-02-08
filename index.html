@@ -5,7 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Actions</title>
 
+    <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.json">
+    
+    <!-- iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="QR Actions">
+    
+    <!-- Android/Chrome Meta Tags -->
+    <meta name="theme-color" content="#121212">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Microsoft Meta Tags -->
+    <meta name="msapplication-TileColor" content="#121212">
 
     <style>
         /* Reset and Base */
@@ -186,6 +199,11 @@
         .badge-url { background: rgba(40, 167, 69, 0.2); color: #28a745; }
         .badge-wifi { background: rgba(108, 117, 125, 0.2); color: #6c757d; }
         .badge-text { background: rgba(0, 123, 255, 0.2); color: #007bff; }
+        .badge-email { background: rgba(111, 66, 193, 0.2); color: #6f42c1; }
+        .badge-tel { background: rgba(23, 162, 184, 0.2); color: #17a2b8; }
+        .badge-geo { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
+        .badge-vcard { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+        .badge-sms { background: rgba(32, 201, 151, 0.2); color: #20c997; }
 
         .favorite-btn {
             background: none;
@@ -197,6 +215,24 @@
 
         .favorite-btn.active {
             color: #ffc107;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .card-content {
@@ -219,6 +255,12 @@
         .btn-open { background: #28a745; }
         .btn-share { background: #007bff; }
         .btn-delete { background: #6c757d; }
+        .btn-email { background: #20c997; }
+        .btn-phone { background: #6610f2; }
+        .btn-maps { background: #dc3545; }
+        .btn-sms { background: #20c997; }
+        .btn-safety { background: #fd7e14; }
+        .btn-wifi-share { background: #6f42c1; }
 
         /* Overlays */
         .overlay {
@@ -268,7 +310,7 @@
             margin-bottom: 5px;
         }
 
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 12px;
             background: #333;
@@ -326,6 +368,51 @@
 
         .toast.error {
             background: #dc3545;
+        }
+
+        .toast.warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        /* WiFi Share Modal */
+        .wifi-share-container {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .wifi-share-field {
+            margin: 10px 0;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+
+        .wifi-share-field label {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .wifi-share-field .value {
+            font-size: 16px;
+            margin-top: 5px;
+            word-break: break-all;
+        }
+
+        /* Password reveal */
+        .password-reveal {
+            filter: blur(5px);
+            cursor: pointer;
+            transition: filter 0.3s;
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .password-reveal.revealed {
+            filter: none;
         }
 
         /* Empty State */
@@ -397,12 +484,12 @@
             box-shadow: 0 4px 12px rgba(0,123,255,0.3);
             z-index: 100;
             display: none;
+            align-items: center;
+            justify-content: center;
         }
 
         .install-btn.show {
             display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         /* Camera Test Buttons */
@@ -411,23 +498,81 @@
             gap: 10px;
             margin-bottom: 15px;
         }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #666;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #28a745;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Checkbox container */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Install Button -->
     <button class="install-btn" id="installBtn" title="Install App">📱</button>
 
+    <!-- Header -->
     <div class="header">
-        <h1>📋 QR Actions <span class="statsBadge">0</span></h1>
+        <h1>📋 QR Actions <span class="stats-badge" id="statsBadge">0</span></h1>
         <button onclick="toggleSettings()" style="background:none; border:none; color:#888; font-size:24px; cursor:pointer;">⚙️</button>
     </div>
 
+    <!-- Tabs -->
     <div class="tabs">
         <button class="tab active" onclick="switchTab('scan')">🔍 Scan</button>
         <button class="tab" onclick="switchTab('history')">📜 History</button>
         <button class="tab" onclick="switchTab('favorites')">⭐ Favorites</button>
     </div>
 
+    <!-- Scan Tab -->
     <div id="scanTab">
         <div id="reader"></div>
 
@@ -443,16 +588,19 @@
         <button class="btn btn-generate" onclick="toggleGenerateQR()">🔄 Generate QR Code</button>
     </div>
 
+    <!-- History Tab -->
     <div id="historyTab" style="display:none;">
         <input type="text" placeholder="Search history..." style="width:100%; padding:12px; background:#222; border:1px solid #333; border-radius:8px; color:white; margin-bottom:15px;" oninput="searchHistory(this.value)">
 
         <div id="historyList"></div>
     </div>
 
+    <!-- Favorites Tab -->
     <div id="favoritesTab" style="display:none;">
         <div id="favoritesList"></div>
     </div>
 
+    <!-- Settings Overlay -->
     <div class="overlay" id="settingsOverlay">
         <div class="overlay-content">
             <h2 style="margin-bottom:20px;">⚙️ Settings</h2>
@@ -472,6 +620,22 @@
                         Reset Camera
                     </button>
                 </div>
+
+                <div class="checkbox-container">
+                    <label style="flex:1;">Continuous Scan Mode</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="continuousScan">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="checkbox-container">
+                    <label style="flex:1;">Beep on Scan</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="beepOnScan" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
 
             <div class="settings-section">
@@ -479,7 +643,7 @@
                 <label>History Limit (0 = Unlimited)</label>
                 <input type="number" id="historyLimit" value="50" min="0">
 
-                <label>Auto-delete after (days)</label>
+                <label>Auto-delete after (days, 0 = never)</label>
                 <input type="number" id="autoDelete" value="30" min="0">
             </div>
 
@@ -488,10 +652,13 @@
                 <label>Transmission PIN (optional)</label>
                 <input type="password" id="pin" placeholder="Enter PIN">
 
-                <label style="display:flex; align-items:center; gap:10px; margin:15px 0;">
-                    <input type="checkbox" id="maskSensitive" checked>
-                    Mask sensitive data
-                </label>
+                <div class="checkbox-container">
+                    <label style="flex:1;">Mask sensitive data</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="maskSensitive" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
 
                 <h4 style="margin:20px 0 10px 0;">URL Allowlist</h4>
                 <p style="color:#888; font-size:13px; margin-bottom:15px;">URLs matching these prefixes will open directly.</p>
@@ -526,6 +693,7 @@
         </div>
     </div>
 
+    <!-- Generate QR Overlay -->
     <div class="overlay" id="generateOverlay">
         <div class="overlay-content">
             <h2 style="margin-bottom:20px;">🔄 Generate QR Code</h2>
@@ -537,6 +705,9 @@
                 <option value="wifi">WiFi</option>
                 <option value="contact">Contact</option>
                 <option value="email">Email</option>
+                <option value="phone">Phone</option>
+                <option value="sms">SMS</option>
+                <option value="geo">Location</option>
             </select>
 
             <div id="qrFields">
@@ -559,6 +730,7 @@
         </div>
     </div>
 
+    <!-- URL Modal -->
     <div class="overlay" id="urlModal">
         <div class="overlay-content">
             <h2 style="margin-bottom:15px;">🌐 Open URL?</h2>
@@ -572,13 +744,16 @@
             </div>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:20px 0;">
-                <button class="btn btn-open" onclick="openModalUrl()">Open</button>
+                <button class="btn btn-open" onclick="openModalUrl()" id="modalOpenBtn">Open</button>
                 <button class="btn btn-copy" onclick="copyModalUrl()">Copy</button>
+                <button class="btn btn-safety" onclick="checkSafety()" style="grid-column:span 2;">
+                    🛡️ Safety Check (VirusTotal)
+                </button>
             </div>
 
             <label style="display:flex; align-items:center; gap:10px; margin:15px 0;">
                 <input type="checkbox" id="addToAllowlist">
-                Add to allowlist
+                Add to allowlist and open automatically next time
             </label>
 
             <button class="btn" onclick="closeUrlModal()" style="width:100%; background:#444;">
@@ -587,44 +762,90 @@
         </div>
     </div>
 
+    <!-- WiFi Share Modal -->
+    <div class="overlay" id="wifiShareModal">
+        <div class="overlay-content">
+            <h2 style="margin-bottom:20px;">📶 Share WiFi</h2>
+
+            <div class="wifi-share-container">
+                <div class="wifi-share-field">
+                    <label>Network Name (SSID)</label>
+                    <div class="value" id="shareSsid"></div>
+                </div>
+
+                <div class="wifi-share-field">
+                    <label>Password</label>
+                    <div class="value">
+                        <span id="sharePassword" class="password-reveal" onclick="togglePasswordReveal()">Click to reveal</span>
+                    </div>
+                </div>
+
+                <div class="wifi-share-field">
+                    <label>Security Type</label>
+                    <div class="value" id="shareSecurity"></div>
+                </div>
+            </div>
+
+            <div style="margin:20px 0;">
+                <label>Protect with PIN (optional)</label>
+                <input type="number" id="sharePin" placeholder="Enter 4-digit PIN" maxlength="4" style="margin-bottom:15px;">
+
+                <button class="btn btn-wifi-share" onclick="shareWiFi()" style="width:100%;">
+                    📤 Share WiFi Details
+                </button>
+            </div>
+
+            <button class="btn" onclick="closeWifiShareModal()" style="width:100%; background:#444;">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
     <div id="toastContainer"></div>
 
+    <!-- Footer -->
     <div class="footer">
-        <strong>QR Actions</strong>
+        <strong>QR Actions - Professional QR Scanner</strong>
         <div class="footer-links">
             <a href="./index.html">Home</a>
-            <a href="./about.html">About</a>
+            <a href="#" onclick="showAbout()">About</a>
             <a href="./autoconnect.html">AutoConnect</a>
             <a href="./cookie.html">Cookie Tool</a>
             <a href="#" onclick="showHelp()">Help</a>
             <a href="#" onclick="toggleSettings()">Settings</a>
             <a href="#" onclick="exportData()">Export</a>
+            <a href="#" onclick="showPrivacy()">Privacy</a>
         </div>
         <div style="margin-top:10px; color:#666;">
             Written by Bram Diederik • PWA • Works offline • No tracking
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
         // ============ APP CONFIGURATION ============
         const CONFIG = {
-            HISTORY_KEY: 'qr_history',
-            SETTINGS_KEY: 'qr_settings',
-            FAVORITES_KEY: 'qr_favorites',
-            ALLOWLIST_KEY: 'qr_allowlist'
+            HISTORY_KEY: 'qr_history_v2',
+            SETTINGS_KEY: 'qr_settings_v2',
+            FAVORITES_KEY: 'qr_favorites_v2',
+            ALLOWLIST_KEY: 'qr_allowlist_v1'
         };
 
         let scanner = null;
         let deferredPrompt = null;
         let currentUrl = null;
+        let currentWifiData = null;
         let settings = {
             camera: '',
             historyLimit: 50,
             autoDeleteDays: 30,
             pin: '',
             maskSensitive: true,
-            allowlist: ['https://github.com/', 'https://stackoverflow.com/']
+            continuousScan: false,
+            beepOnScan: true,
+            allowlist: ['https://github.com/', 'https://stackoverflow.com/', 'https://developer.mozilla.org/']
         };
 
         // ============ PWA INSTALLATION ============
@@ -632,6 +853,7 @@
             e.preventDefault();
             deferredPrompt = e;
             document.getElementById('installBtn').classList.add('show');
+            showToast('Install QR Actions for better experience!', false, 'warning', 4000);
         });
 
         async function installPWA() {
@@ -643,7 +865,18 @@
                     document.getElementById('installBtn').classList.remove('show');
                 }
                 deferredPrompt = null;
+            } else {
+                showToast('Use browser menu to install (⋮ or ⚙️ → "Install App")', true);
             }
+        }
+
+        // ============ SERVICE WORKER ============
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registered:', reg))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
         }
 
         // ============ SCANNER FUNCTIONS ============
@@ -702,10 +935,33 @@
         }
 
         function onScanSuccess(decodedText) {
-            stopScan();
+            if (!settings.continuousScan) {
+                stopScan();
+            }
+
             vibrate();
+            if (settings.beepOnScan) {
+                playBeep();
+            }
+
             saveScan(decodedText);
             showToast('QR code scanned!');
+        }
+
+        function playBeep() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {}
         }
 
         function uploadImage(event) {
@@ -749,11 +1005,14 @@
         }
 
         function detectType(text) {
-            if (text.startsWith('http')) return 'url';
+            if (text.startsWith('http://') || text.startsWith('https://')) return 'url';
             if (text.startsWith('WIFI:')) return 'wifi';
             if (text.startsWith('mailto:')) return 'email';
             if (text.startsWith('tel:')) return 'phone';
-            if (text.includes('@')) return 'email';
+            if (text.startsWith('sms:')) return 'sms';
+            if (text.startsWith('BEGIN:VCARD')) return 'vcard';
+            if (text.startsWith('geo:')) return 'geo';
+            if (text.includes('@') && text.includes('.')) return 'email';
             return 'text';
         }
 
@@ -764,7 +1023,7 @@
             if (index !== -1) {
                 history[index].favorite = !history[index].favorite;
                 localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
-                
+
                 renderHistory();
                 renderFavorites();
                 updateStats();
@@ -798,7 +1057,7 @@
                 container.innerHTML = `
                     <div class="empty">
                         <div class="empty-icon">📭</div>
-                        <p>No scans yet</p>
+                        <p>${search ? 'No matching scans' : 'No scans yet'}</p>
                     </div>
                 `;
                 return;
@@ -806,6 +1065,10 @@
 
             container.innerHTML = history.map(item => `
                 <div class="card">
+                    <button class="delete-btn" onclick="deleteScan(${item.id})" title="Delete">
+                        ✕
+                    </button>
+
                     <div class="card-header">
                         <span class="badge badge-${item.type}">${item.type.toUpperCase()}</span>
                         <button class="favorite-btn ${item.favorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})">
@@ -821,17 +1084,7 @@
                         <button class="btn btn-small btn-copy" onclick="copyText('${escapeText(item.text)}')">
                             📋 Copy
                         </button>
-                        ${item.type === 'url' ? `
-                            <button class="btn btn-small btn-open" onclick="handleUrl('${escapeText(item.text)}')">
-                                🌐 Open
-                            </button>
-                        ` : ''}
-                        <button class="btn btn-small btn-share" onclick="shareScan('${escapeText(item.text)}')">
-                            📤 Share
-                        </button>
-                        <button class="btn btn-small btn-delete" onclick="deleteScan(${item.id})">
-                            🗑️ Delete
-                        </button>
+                        ${getActionButtons(item)}
                     </div>
 
                     <div style="font-size:12px; color:#666; margin-top:10px;">
@@ -841,30 +1094,180 @@
             `).join('');
         }
 
-        function formatContent(text, type) {
-            if (type === 'wifi') {
-                const wifi = parseWifi(text);
-                return `
-                    <div>
-                        <strong>WiFi:</strong> ${wifi.ssid || 'Unknown'}<br>
-                        <strong>Password:</strong>
-                        <span onclick="this.classList.toggle('show')" style="filter:blur(5px); cursor:pointer; background:#333; padding:2px 6px; border-radius:4px;">
-                            ${wifi.password || 'None'}
-                        </span>
-                    </div>
-                `;
+        function getActionButtons(item) {
+            const isAllowed = settings.allowlist.some(prefix => item.text.startsWith(prefix));
+            
+            switch(item.type) {
+                case 'url':
+                    return `
+                        ${isAllowed ? `
+                            <button class="btn btn-small btn-open" onclick="handleUrl('${escapeText(item.text)}')">
+                                🌐 Open
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-small btn-safety" onclick="checkUrlSafety('${escapeText(item.text)}')">
+                            🛡️ Safety
+                        </button>
+                        <button class="btn btn-small btn-share" onclick="shareScan('${escapeText(item.text)}')">
+                            📤 Share
+                        </button>
+                    `;
+                case 'wifi':
+                    return `
+                        <button class="btn btn-small btn-copy" onclick="copyWifiPassword('${escapeText(item.text)}')">
+                            📋 Password
+                        </button>
+                        <button class="btn btn-small btn-wifi-share" onclick="showWifiShare('${escapeText(item.text)}')">
+                            📶 Share
+                        </button>
+                    `;
+                case 'email':
+                    return `
+                        <button class="btn btn-small btn-email" onclick="sendEmail('${escapeText(item.text)}')">
+                            📧 Send
+                        </button>
+                    `;
+                case 'phone':
+                    return `
+                        <button class="btn btn-small btn-phone" onclick="callPhone('${escapeText(item.text)}')">
+                            📞 Call
+                        </button>
+                    `;
+                case 'sms':
+                    return `
+                        <button class="btn btn-small btn-sms" onclick="sendSMS('${escapeText(item.text)}')">
+                            💬 SMS
+                        </button>
+                    `;
+                case 'geo':
+                    return `
+                        <button class="btn btn-small btn-maps" onclick="openMaps('${escapeText(item.text)}')">
+                            📍 Maps
+                        </button>
+                    `;
+                case 'vcard':
+                    return `
+                        <button class="btn btn-small btn-copy" onclick="copyVCard('${escapeText(item.text)}')">
+                            👤 Copy Contact
+                        </button>
+                    `;
+                default:
+                    return `
+                        <button class="btn btn-small btn-share" onclick="shareScan('${escapeText(item.text)}')">
+                            📤 Share
+                        </button>
+                    `;
             }
-            return `<code style="word-break:break-all; background:#000; padding:8px; border-radius:6px; display:block;">${text}</code>`;
+        }
+
+        function formatContent(text, type) {
+            switch(type) {
+                case 'url':
+                    const isAllowed = settings.allowlist.some(prefix => text.startsWith(prefix));
+                    return `
+                        <div>
+                            <code style="word-break:break-all; background:#000; padding:8px; border-radius:6px; display:block; margin-bottom:8px;">
+                                ${text}
+                            </code>
+                            <div style="font-size:12px; color:${isAllowed ? '#28a745' : '#ffc107'}">
+                                ${isAllowed ? '✓ In allowlist' : '⚠ Not in allowlist'}
+                            </div>
+                        </div>
+                    `;
+                case 'wifi':
+                    const wifi = parseWifi(text);
+                    return `
+                        <div>
+                            <strong>WiFi Network:</strong> ${wifi.ssid || 'Unknown'}<br>
+                            <strong>Security:</strong> ${wifi.security || 'Unknown'}<br>
+                            <strong>Password:</strong> 
+                            <span class="password-reveal" onclick="this.classList.toggle('revealed')">
+                                ${wifi.password ? wifi.password.replace(/./g, '•') : 'No password'}
+                            </span>
+                        </div>
+                    `;
+                case 'vcard':
+                    const contact = parseVCard(text);
+                    return `
+                        <div>
+                            <strong>Contact:</strong> ${contact.name || 'Unknown'}<br>
+                            ${contact.phone ? `<strong>Phone:</strong> ${contact.phone}<br>` : ''}
+                            ${contact.email ? `<strong>Email:</strong> ${contact.email}` : ''}
+                        </div>
+                    `;
+                case 'geo':
+                    const coords = text.replace('geo:', '').split(',');
+                    return `
+                        <div>
+                            <strong>Location:</strong><br>
+                            Latitude: ${coords[0]}<br>
+                            Longitude: ${coords[1]}
+                        </div>
+                    `;
+                default:
+                    return `<code style="word-break:break-all; background:#000; padding:8px; border-radius:6px; display:block;">${text}</code>`;
+            }
         }
 
         function parseWifi(text) {
-            const result = { ssid: '', password: '' };
+            const result = { ssid: '', password: '', security: 'Unknown' };
             const parts = text.replace('WIFI:', '').split(';');
             parts.forEach(part => {
                 if (part.startsWith('S:')) result.ssid = part.substring(2);
                 if (part.startsWith('P:')) result.password = part.substring(2);
+                if (part.startsWith('T:')) result.security = part.substring(2);
             });
             return result;
+        }
+
+        function parseVCard(text) {
+            const lines = text.split('\n');
+            const contact = { name: '', phone: '', email: '' };
+            lines.forEach(line => {
+                if (line.startsWith('FN:')) contact.name = line.substring(3);
+                if (line.startsWith('TEL;')) contact.phone = line.split(':')[1];
+                if (line.startsWith('EMAIL;')) contact.email = line.split(':')[1];
+            });
+            return contact;
+        }
+
+        function copyWifiPassword(text) {
+            const wifi = parseWifi(text);
+            copyText(wifi.password || '');
+            showToast('Password copied to clipboard');
+        }
+
+        function copyVCard(text) {
+            copyText(text);
+            showToast('Contact copied to clipboard');
+        }
+
+        function sendEmail(text) {
+            if (text.startsWith('mailto:')) {
+                window.location.href = text;
+            } else {
+                window.location.href = 'mailto:' + text;
+            }
+        }
+
+        function callPhone(text) {
+            const number = text.replace('tel:', '');
+            window.location.href = 'tel:' + number;
+        }
+
+        function sendSMS(text) {
+            if (text.startsWith('sms:')) {
+                window.location.href = text;
+            } else {
+                window.location.href = 'sms:' + text;
+            }
+        }
+
+        function openMaps(text) {
+            if (text.startsWith('geo:')) {
+                const coords = text.replace('geo:', '');
+                window.open('https://www.google.com/maps/search/?api=1&query=' + coords, '_blank');
+            }
         }
 
         function searchHistory(query) {
@@ -903,14 +1306,7 @@
                         <button class="btn btn-small btn-copy" onclick="copyText('${escapeText(item.text)}')">
                             📋 Copy
                         </button>
-                        ${item.type === 'url' ? `
-                            <button class="btn btn-small btn-open" onclick="handleUrl('${escapeText(item.text)}')">
-                                🌐 Open
-                            </button>
-                        ` : ''}
-                        <button class="btn btn-small btn-share" onclick="shareScan('${escapeText(item.text)}')">
-                            📤 Share
-                        </button>
+                        ${getActionButtons(item)}
                     </div>
                 </div>
             `).join('');
@@ -921,7 +1317,13 @@
             currentUrl = url;
             document.getElementById('modalUrl').textContent = url;
 
+            // Check if in allowlist
             const isAllowed = settings.allowlist.some(prefix => url.startsWith(prefix));
+            
+            // Only show Open button if in allowlist
+            const openBtn = document.getElementById('modalOpenBtn');
+            openBtn.style.display = isAllowed ? 'block' : 'none';
+            
             document.getElementById('urlWarning').style.display = isAllowed ? 'none' : 'block';
 
             document.getElementById('urlModal').style.display = 'flex';
@@ -944,19 +1346,103 @@
             }
         }
 
+        function checkSafety() {
+            if (currentUrl) {
+                checkUrlSafety(currentUrl);
+            }
+        }
+
+        function checkUrlSafety(url) {
+            try {
+                // Encode URL for VirusTotal
+                const encodedUrl = btoa(url).replace(/=/g, '');
+                const vtUrl = `https://www.virustotal.com/gui/url/${encodedUrl}/detection`;
+                window.open(vtUrl, '_blank');
+                showToast('Opening VirusTotal for safety check');
+            } catch (e) {
+                showToast('Could not check URL safety', true);
+            }
+        }
+
         function closeUrlModal() {
             document.getElementById('urlModal').style.display = 'none';
             currentUrl = null;
             document.getElementById('addToAllowlist').checked = false;
         }
 
+        // ============ WiFi SHARING ============
+        function showWifiShare(wifiText) {
+            currentWifiData = parseWifi(wifiText);
+            
+            document.getElementById('shareSsid').textContent = currentWifiData.ssid || 'Unknown';
+            document.getElementById('shareSecurity').textContent = currentWifiData.security || 'Unknown';
+            
+            // Reset password display
+            const passwordElement = document.getElementById('sharePassword');
+            passwordElement.textContent = 'Click to reveal';
+            passwordElement.classList.remove('revealed');
+            
+            document.getElementById('wifiShareModal').style.display = 'flex';
+        }
+
+        function togglePasswordReveal() {
+            const element = document.getElementById('sharePassword');
+            if (element.classList.contains('revealed')) {
+                element.textContent = 'Click to reveal';
+                element.classList.remove('revealed');
+            } else {
+                element.textContent = currentWifiData.password || 'No password';
+                element.classList.add('revealed');
+            }
+        }
+
+        function shareWiFi() {
+            if (!currentWifiData) return;
+
+            const pin = document.getElementById('sharePin').value;
+            let shareText = `WiFi Network: ${currentWifiData.ssid}\n`;
+            shareText += `Security: ${currentWifiData.security}\n`;
+            
+            if (pin) {
+                shareText += `PIN: ${pin}\n`;
+                shareText += `Password: ${currentWifiData.password || 'No password'}`;
+            } else {
+                shareText += `Password: ${currentWifiData.password || 'No password'}`;
+            }
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'WiFi Network Details',
+                    text: shareText
+                }).then(() => {
+                    showToast('WiFi details shared');
+                    closeWifiShareModal();
+                });
+            } else {
+                copyText(shareText);
+                showToast('WiFi details copied to clipboard');
+                closeWifiShareModal();
+            }
+        }
+
+        function closeWifiShareModal() {
+            document.getElementById('wifiShareModal').style.display = 'none';
+            currentWifiData = null;
+            document.getElementById('sharePin').value = '';
+        }
+
         // ============ ALLOWLIST MANAGEMENT ============
         function renderAllowlist() {
             const container = document.getElementById('allowlistItems');
+            if (settings.allowlist.length === 0) {
+                container.innerHTML = '<p style="color:#888; text-align:center;">No allowlist entries</p>';
+                return;
+            }
+
             container.innerHTML = settings.allowlist.map((item, index) => `
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; background:#333; border-radius:6px; margin-bottom:5px;">
-                    <code style="color:#28a745;">${item}</code>
-                    <button onclick="removeAllowlist(${index})" style="background:none; border:none; color:#dc3545; cursor:pointer;">✕</button>
+                    <code style="color:#28a745; font-size:12px;">${item}</code>
+                    <button onclick="removeAllowlist(${index})" style="background:none; border:none; color:#dc3545; cursor:pointer; padding:4px;">✕</button>
                 </div>
             `).join('');
         }
@@ -1013,32 +1499,53 @@
             const type = document.getElementById('qrType').value;
             const qrFields = document.getElementById('qrFields');
 
-            if (type === 'wifi') {
-                qrFields.innerHTML = `
-                    <input type="text" id="wifiSsid" placeholder="Network name (SSID)" style="margin-bottom:10px;">
-                    <input type="text" id="wifiPassword" placeholder="Password" style="margin-bottom:10px;">
-                    <select id="wifiSecurity" style="margin-bottom:20px;">
-                        <option value="WPA">WPA/WPA2</option>
-                        <option value="WEP">WEP</option>
-                        <option value="nopass">No password</option>
-                    </select>
-                `;
-            } else if (type === 'contact') {
-                qrFields.innerHTML = `
-                    <input type="text" id="contactName" placeholder="Full name" style="margin-bottom:10px;">
-                    <input type="tel" id="contactPhone" placeholder="Phone" style="margin-bottom:10px;">
-                    <input type="email" id="contactEmail" placeholder="Email" style="margin-bottom:20px;">
-                `;
-            } else if (type === 'email') {
-                qrFields.innerHTML = `
-                    <input type="email" id="emailTo" placeholder="Recipient email" style="margin-bottom:10px;">
-                    <input type="text" id="emailSubject" placeholder="Subject" style="margin-bottom:10px;">
-                    <textarea id="emailBody" placeholder="Body" style="width:100%; padding:12px; background:#333; border:1px solid #555; border-radius:8px; color:white; margin-bottom:20px;"></textarea>
-                `;
-            } else {
-                qrFields.innerHTML = `
-                    <input type="text" id="qrContent" placeholder="${type === 'url' ? 'Enter URL...' : 'Enter text...'}" style="margin-bottom:20px;">
-                `;
+            switch(type) {
+                case 'wifi':
+                    qrFields.innerHTML = `
+                        <input type="text" id="wifiSsid" placeholder="Network name (SSID)" style="margin-bottom:10px;">
+                        <input type="text" id="wifiPassword" placeholder="Password" style="margin-bottom:10px;">
+                        <select id="wifiSecurity" style="margin-bottom:20px;">
+                            <option value="WPA">WPA/WPA2</option>
+                            <option value="WEP">WEP</option>
+                            <option value="nopass">No password</option>
+                        </select>
+                    `;
+                    break;
+                case 'contact':
+                    qrFields.innerHTML = `
+                        <input type="text" id="contactName" placeholder="Full name" style="margin-bottom:10px;">
+                        <input type="tel" id="contactPhone" placeholder="Phone" style="margin-bottom:10px;">
+                        <input type="email" id="contactEmail" placeholder="Email" style="margin-bottom:20px;">
+                    `;
+                    break;
+                case 'email':
+                    qrFields.innerHTML = `
+                        <input type="email" id="emailTo" placeholder="Recipient email" style="margin-bottom:10px;">
+                        <input type="text" id="emailSubject" placeholder="Subject" style="margin-bottom:10px;">
+                        <textarea id="emailBody" placeholder="Body" style="width:100%; padding:12px; background:#333; border:1px solid #555; border-radius:8px; color:white; margin-bottom:20px;"></textarea>
+                    `;
+                    break;
+                case 'phone':
+                    qrFields.innerHTML = `
+                        <input type="tel" id="phoneNumber" placeholder="Phone number" style="margin-bottom:20px;">
+                    `;
+                    break;
+                case 'sms':
+                    qrFields.innerHTML = `
+                        <input type="tel" id="smsNumber" placeholder="Phone number" style="margin-bottom:10px;">
+                        <textarea id="smsMessage" placeholder="Message" style="width:100%; padding:12px; background:#333; border:1px solid #555; border-radius:8px; color:white; margin-bottom:20px;"></textarea>
+                    `;
+                    break;
+                case 'geo':
+                    qrFields.innerHTML = `
+                        <input type="number" id="geoLat" placeholder="Latitude" step="any" style="margin-bottom:10px;">
+                        <input type="number" id="geoLng" placeholder="Longitude" step="any" style="margin-bottom:20px;">
+                    `;
+                    break;
+                default:
+                    qrFields.innerHTML = `
+                        <input type="text" id="qrContent" placeholder="${type === 'url' ? 'Enter URL...' : 'Enter text...'}" style="margin-bottom:20px;">
+                    `;
             }
         }
 
@@ -1055,7 +1562,6 @@
                         return;
                     }
                     break;
-
                 case 'wifi':
                     const ssid = document.getElementById('wifiSsid').value;
                     const password = document.getElementById('wifiPassword').value;
@@ -1066,7 +1572,6 @@
                     }
                     content = `WIFI:S:${ssid};T:${security};P:${password};;`;
                     break;
-
                 case 'contact':
                     const name = document.getElementById('contactName').value;
                     const phone = document.getElementById('contactPhone').value;
@@ -1080,7 +1585,6 @@
                     if (email) content += `\nEMAIL:${email}`;
                     content += `\nEND:VCARD`;
                     break;
-
                 case 'email':
                     const to = document.getElementById('emailTo').value;
                     const subject = document.getElementById('emailSubject').value;
@@ -1097,6 +1601,33 @@
                         if (body) params.push(`body=${encodeURIComponent(body)}`);
                         content += params.join('&');
                     }
+                    break;
+                case 'phone':
+                    const phoneNumber = document.getElementById('phoneNumber').value;
+                    if (!phoneNumber) {
+                        showToast('Please enter phone number', true);
+                        return;
+                    }
+                    content = `tel:${phoneNumber}`;
+                    break;
+                case 'sms':
+                    const smsNumber = document.getElementById('smsNumber').value;
+                    const smsMessage = document.getElementById('smsMessage').value;
+                    if (!smsNumber) {
+                        showToast('Please enter phone number', true);
+                        return;
+                    }
+                    content = `sms:${smsNumber}`;
+                    if (smsMessage) content += `?body=${encodeURIComponent(smsMessage)}`;
+                    break;
+                case 'geo':
+                    const lat = document.getElementById('geoLat').value;
+                    const lng = document.getElementById('geoLng').value;
+                    if (!lat || !lng) {
+                        showToast('Please enter coordinates', true);
+                        return;
+                    }
+                    content = `geo:${lat},${lng}`;
                     break;
             }
 
@@ -1160,18 +1691,17 @@
         function loadSettings() {
             const saved = localStorage.getItem(CONFIG.SETTINGS_KEY);
             if (saved) {
-                settings = { ...settings, ...JSON.parse(saved) };
+                Object.assign(settings, JSON.parse(saved));
             }
 
             document.getElementById('historyLimit').value = settings.historyLimit;
             document.getElementById('autoDelete').value = settings.autoDeleteDays;
             document.getElementById('pin').value = settings.pin;
             document.getElementById('maskSensitive').checked = settings.maskSensitive;
+            document.getElementById('continuousScan').checked = settings.continuousScan;
+            document.getElementById('beepOnScan').checked = settings.beepOnScan;
 
             renderAllowlist();
-
-            // Setup camera select list and pre-select saved ID
-            loadCameras();
         }
 
         function saveSettings() {
@@ -1182,6 +1712,8 @@
             settings.autoDeleteDays = parseInt(document.getElementById('autoDelete').value) || 30;
             settings.pin = document.getElementById('pin').value;
             settings.maskSensitive = document.getElementById('maskSensitive').checked;
+            settings.continuousScan = document.getElementById('continuousScan').checked;
+            settings.beepOnScan = document.getElementById('beepOnScan').checked;
 
             localStorage.setItem(CONFIG.SETTINGS_KEY, JSON.stringify(settings));
             showToast('Settings saved');
@@ -1233,7 +1765,7 @@
             startScan().then(() => {
                 setTimeout(() => {
                     if (scanner) stopScan();
-                }, 3000); 
+                }, 3000);
             });
         }
 
@@ -1266,14 +1798,17 @@
 
             if (overlay.style.display === 'flex') {
                 loadSettings();
+                loadCameras();
             }
         }
 
         function clearAllData() {
             if (confirm('Delete ALL data including history, favorites, and settings?')) {
-                localStorage.clear();
-                showToast('All data cleared', true);
-                setTimeout(() => location.reload(), 1000);
+                if (confirm('❌ This cannot be undone! Are you sure?')) {
+                    localStorage.clear();
+                    showToast('All data cleared', true);
+                    setTimeout(() => location.reload(), 1000);
+                }
             }
         }
 
@@ -1282,7 +1817,7 @@
             const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
             const favorites = history.filter(item => item.favorite).length;
 
-            document.querySelector('.statsBadge').textContent = history.length;
+            document.getElementById('statsBadge').textContent = history.length;
 
             document.querySelectorAll('.tab').forEach(tab => {
                 if (tab.textContent.includes('History')) {
@@ -1350,36 +1885,52 @@
             }
         }
 
-        function showToast(message, isError = false) {
+        function showToast(message, isError = false, type = '', duration = 3000) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            toast.className = 'toast' + (isError ? ' error' : '');
-            toast.innerHTML = `${isError ? '❌' : '✓'} ${message}`;
+            toast.className = 'toast' + (isError ? ' error' : type === 'warning' ? ' warning' : '');
+            toast.innerHTML = `${isError ? '❌' : type === 'warning' ? '⚠️' : '✓'} ${message}`;
             container.appendChild(toast);
 
             setTimeout(() => toast.classList.add('show'), 10);
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            }, duration);
         }
 
         function escapeText(text) {
             return text.replace(/'/g, "\\'").replace(/"/g, '\\"');
         }
 
+        function showAbout() {
+            alert('QR Actions v2.0\n\nA professional QR code scanner and generator that works offline.\n\nFeatures:\n• Scan QR codes with camera\n• Upload images to scan\n• Generate QR codes\n• History and favorites\n• URL allowlist for safe opening\n• WiFi sharing with PIN protection\n• VirusTotal safety checks\n• PWA - Install on home screen\n\n100% offline - no data collection!\n\nBy Bram Diederik');
+        }
+
         function showHelp() {
-            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙️ SETTINGS:\n• Set and save preferred camera\n• Configure history limits\n\nAll data stays on your device!');
+            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n3. Enable "Continuous Scan" in Settings for batch scanning\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙️ SETTINGS:\n• Set URL allowlist for safe opening\n• Configure history limits\n• Install as PWA from Settings\n\n🔄 GENERATE:\nCreate QR codes for WiFi, contacts, URLs, and more\n\n🌐 URL SAFETY:\n• URLs in allowlist open directly\n• Other URLs show confirmation\n• VirusTotal safety check available\n\n📶 WiFi SHARING:\n• Share WiFi details with optional PIN protection\n• Passwords are hidden by default\n\nAll data stays on your device!');
+        }
+
+        function showPrivacy() {
+            alert('🔒 Privacy Policy\n\nQR Actions:\n• Stores ALL data locally on your device\n• No internet connection required\n• No data sent to any servers\n• No tracking or analytics\n• No ads\n\nYour QR code data never leaves your device!\n\nFor backup/transfer, use the Export feature.');
         }
 
         function showAppInfo() {
             const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
-            alert(`App Information:\n\nScans: ${history.length}\nFavorites: ${history.filter(item => item.favorite).length}\nStorage: ${(JSON.stringify(localStorage).length / 1024).toFixed(2)} KB`);
+            const storage = (JSON.stringify(localStorage).length / 1024).toFixed(2);
+            alert(`App Information:\n\nVersion: 2.0\nType: Progressive Web App (PWA)\nScans: ${history.length}\nFavorites: ${history.filter(item => item.favorite).length}\nAllowlist: ${settings.allowlist.length} URLs\nStorage: ${storage} KB\n\nInstallation:\n• Android: Tap ⋮ menu → "Install app"\n• iOS: Tap Share → "Add to Home Screen"\n• Desktop: Click install button\n\nClear app data from Settings if needed.`);
         }
 
         function exportData() {
             const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
-            const data = JSON.stringify(history, null, 2);
+            const data = JSON.stringify({
+                version: '2.0',
+                exportDate: new Date().toISOString(),
+                history: history,
+                settings: settings,
+                allowlist: settings.allowlist
+            }, null, 2);
+
             const blob = new Blob([data], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1392,24 +1943,32 @@
 
         // ============ INITIALIZATION ============
         document.addEventListener('DOMContentLoaded', function() {
+            // Load settings
             loadSettings();
+
+            // Update stats
             updateStats();
+
+            // Show scan tab
             switchTab('scan');
 
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js').catch(console.error);
-            }
-
+            // Show welcome message
             if (!localStorage.getItem('welcome_shown')) {
                 setTimeout(() => {
-                    showToast('Welcome to QR Actions!');
+                    showToast('Welcome to QR Actions! Install for best experience.', false, 'warning', 5000);
                 }, 1000);
                 localStorage.setItem('welcome_shown', 'true');
             }
+
+            // Handle offline/online
+            window.addEventListener('offline', () => showToast('Working offline', false, '', 2000));
+            window.addEventListener('online', () => showToast('Back online', false, '', 2000));
         });
 
-        window.addEventListener('offline', () => showToast('Working offline', true));
-        window.addEventListener('online', () => showToast('Back online'));
+        // Prevent pinch zoom
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
     </script>
 </body>
 </html>
