@@ -405,6 +405,13 @@
             align-items: center;
             justify-content: center;
         }
+        
+        /* Camera Test Buttons */
+        .camera-test-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -414,7 +421,7 @@
 
     <!-- Header -->
     <div class="header">
-        <h1>📋 QR Actions <span class="stats-badge" id="statsBadge">0</span></h1>
+        <h1>📋 QR Actions <span class="statsBadge">0</span></h1>
         <button onclick="toggleSettings()" style="background:none; border:none; color:#888; font-size:24px; cursor:pointer;">⚙️</button>
     </div>
 
@@ -464,6 +471,15 @@
                 <select id="cameraSelect">
                     <option value="">Default (Environment)</option>
                 </select>
+                
+                <div class="camera-test-buttons">
+                    <button class="btn btn-small btn-copy" onclick="testCamera()" style="flex:1;">
+                        Test Camera
+                    </button>
+                    <button class="btn btn-small btn-delete" onclick="resetCamera()" style="flex:1;">
+                        Reset Camera
+                    </button>
+                </div>
             </div>
             
             <div class="settings-section">
@@ -588,13 +604,16 @@
     <div class="footer">
         <strong>QR Actions - Professional QR Scanner</strong>
         <div class="footer-links">
+            <a href="./autoconnect.html">AutoConnect</a>
+            <a href="./cookie.html">Cookie Tool</a>
+            <a href="./index.html">Home</a>
             <a href="#" onclick="showAbout()">About</a>
             <a href="#" onclick="showHelp()">Help</a>
             <a href="#" onclick="toggleSettings()">Settings</a>
             <a href="#" onclick="exportData()">Export</a>
         </div>
         <div style="margin-top:10px; color:#666;">
-            PWA • Works offline • No tracking
+            Made by Bram Diederik • PWA • Works offline • No tracking
         </div>
     </div>
 
@@ -645,13 +664,32 @@
             try {
                 scanner = new Html5Qrcode("reader");
                 const cameras = await Html5Qrcode.getCameras();
-                const cameraId = settings.camera || (cameras.length > 0 ? cameras[0].id : 'environment');
+                
+                let cameraId = 'environment'; // Default
+                
+                if (settings.camera && settings.camera !== '') {
+                    // Use saved camera if it exists
+                    const savedCameraExists = cameras.some(cam => cam.id === settings.camera);
+                    if (savedCameraExists) {
+                        cameraId = settings.camera;
+                    }
+                } else if (cameras.length > 0) {
+                    // Try to find back camera first
+                    const backCamera = cameras.find(cam => 
+                        cam.label.toLowerCase().includes('back') || 
+                        cam.label.toLowerCase().includes('rear')
+                    );
+                    cameraId = backCamera ? backCamera.id : cameras[0].id;
+                }
                 
                 await scanner.start(
                     cameraId,
                     {
                         fps: 10,
-                        qrbox: { width: 250, height: 250 }
+                        qrbox: { width: 250, height: 250 },
+                        aspectRatio: 1.0,
+                        showTorchButtonIfSupported: true,
+                        showZoomSliderIfSupported: true
                     },
                     onScanSuccess,
                     () => {}
@@ -659,8 +697,11 @@
                 
                 document.getElementById('scanBtn').style.display = 'none';
                 document.getElementById('stopBtn').style.display = 'block';
+                
+                showToast('Camera started');
             } catch (err) {
                 showToast('Camera error: ' + err.message, true);
+                console.error('Camera error:', err);
             }
         }
         
@@ -1153,20 +1194,95 @@
             document.getElementById('maskSensitive').checked = settings.maskSensitive;
             
             renderAllowlist();
+            
+            // Load cameras and set selection
+            loadCameras().then(() => {
+                // Set camera selection after cameras are loaded
+                const cameraSelect = document.getElementById('cameraSelect');
+                if (settings.camera && cameraSelect) {
+                    cameraSelect.value = settings.camera;
+                }
+            });
         }
         
         function saveSettings() {
+            // Get camera selection
+            const cameraSelect = document.getElementById('cameraSelect');
+            settings.camera = cameraSelect.value || '';
+            
+            // Get other settings
             settings.historyLimit = parseInt(document.getElementById('historyLimit').value) || 50;
             settings.autoDeleteDays = parseInt(document.getElementById('autoDelete').value) || 30;
             settings.pin = document.getElementById('pin').value;
             settings.maskSensitive = document.getElementById('maskSensitive').checked;
             
+            // Save to localStorage
             localStorage.setItem(CONFIG.SETTINGS_KEY, JSON.stringify(settings));
             showToast('Settings saved');
             toggleSettings();
             
             // Clean old scans
             cleanupOldScans();
+        }
+        
+        async function loadCameras() {
+            try {
+                const cameras = await Html5Qrcode.getCameras();
+                const select = document.getElementById('cameraSelect');
+                select.innerHTML = '<option value="">Default (Environment)</option>';
+                
+                cameras.forEach(camera => {
+                    const option = document.createElement('option');
+                    option.value = camera.id;
+                    // Extract camera name from label (remove device IDs etc.)
+                    let label = camera.label;
+                    if (label) {
+                        // Remove device IDs for cleaner display
+                        label = label.split('(')[0].trim();
+                        label = label.split('id=')[0].trim();
+                        if (label.length > 30) label = label.substring(0, 30) + '...';
+                    }
+                    option.text = label || `Camera ${select.length}`;
+                    select.appendChild(option);
+                });
+                
+                // Set the selected camera if it exists
+                if (settings.camera) {
+                    // Check if the saved camera still exists
+                    const cameraExists = cameras.some(cam => cam.id === settings.camera);
+                    if (cameraExists) {
+                        select.value = settings.camera;
+                    } else {
+                        // Camera not found, clear the setting
+                        settings.camera = '';
+                        select.value = '';
+                    }
+                }
+            } catch (err) {
+                console.log('Camera list error:', err);
+                showToast('Could not load camera list', true);
+            }
+        }
+        
+        function testCamera() {
+            // Show a preview without scanning
+            const previewDiv = document.getElementById('reader');
+            if (scanner) {
+                showToast('Camera already active');
+                return;
+            }
+            
+            startScan().then(() => {
+                setTimeout(() => {
+                    if (scanner) stopScan();
+                }, 3000); // Auto-stop after 3 seconds
+            });
+        }
+        
+        function resetCamera() {
+            settings.camera = '';
+            document.getElementById('cameraSelect').value = '';
+            showToast('Camera preference reset');
         }
         
         function cleanupOldScans() {
@@ -1191,25 +1307,6 @@
             
             if (document.getElementById('settingsOverlay').style.display === 'flex') {
                 loadSettings();
-                loadCameras();
-            }
-        }
-        
-        async function loadCameras() {
-            try {
-                const cameras = await Html5Qrcode.getCameras();
-                const select = document.getElementById('cameraSelect');
-                select.innerHTML = '<option value="">Default (Environment)</option>';
-                
-                cameras.forEach(camera => {
-                    const option = document.createElement('option');
-                    option.value = camera.id;
-                    option.text = camera.label || `Camera ${select.length}`;
-                    if (camera.id === settings.camera) option.selected = true;
-                    select.appendChild(option);
-                });
-            } catch (err) {
-                console.log('Camera list error:', err);
             }
         }
         
@@ -1226,7 +1323,7 @@
             const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
             const favorites = history.filter(item => item.favorite).length;
             
-            document.getElementById('statsBadge').textContent = history.length;
+            document.querySelector('.statsBadge').textContent = history.length;
             
             // Update tab badges
             document.querySelectorAll('.tab').forEach(tab => {
@@ -1320,11 +1417,11 @@
         }
         
         function showAbout() {
-            alert('QR Actions v2.0\n\nA professional QR code scanner and generator that works offline.\n\nFeatures:\n• Scan QR codes with camera\n• Upload images to scan\n• Generate QR codes\n• History and favorites\n• URL allowlist for safe opening\n• PWA - Install on home screen\n\n100% offline - no data collection!');
+            alert('QR Actions v2.0\n\nA professional QR code scanner and generator that works offline.\n\nFeatures:\n• Scan QR codes with camera\n• Upload images to scan\n• Generate QR codes\n• History and favorites\n• URL allowlist for safe opening\n• PWA - Install on home screen\n• Camera preferences saved\n\n100% offline - no data collection!');
         }
         
         function showHelp() {
-            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n3. Scan results save automatically\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙️ SETTINGS:\n• Set URL allowlist for safe opening\n• Configure history limits\n• Install as PWA\n\n🔄 GENERATE:\nCreate QR codes for WiFi, contacts, URLs, and more\n\nAll data stays on your device!');
+            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n3. Scan results save automatically\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙️ SETTINGS:\n• Set preferred camera (saved automatically)\n• Set URL allowlist for safe opening\n• Configure history limits\n• Install as PWA\n\n🔄 GENERATE:\nCreate QR codes for WiFi, contacts, URLs, and more\n\nAll data stays on your device!');
         }
         
         function showAppInfo() {
