@@ -6,32 +6,51 @@
     <title>QR Actions</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        :root { --bg: #121212; --card: #1e1e1e; --accent: #007bff; --green: #28a745; --red: #dc3545; }
+        :root { --bg: #121212; --card: #1e1e1e; --accent: #007bff; --green: #28a745; }
         body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; text-align: center; }
+        
+        /* Header & Settings Icon */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px; max-width: 500px; margin: 0 auto; }
+        .settings-icon { font-size: 24px; cursor: pointer; background: none; border: none; color: #888; }
+        
+        /* Settings Overlay */
+        #settingsOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; justify-content: center; align-items: center; }
+        .settings-content { background: #222; padding: 30px; border-radius: 15px; width: 80%; max-width: 300px; border: 1px solid #444; }
+
         #reader { width: 100%; max-width: 450px; margin: auto; border-radius: 12px; overflow: hidden; background: #000; }
         .qr-card { background: var(--card); border: 1px solid #333; padding: 15px; margin: 12px auto; max-width: 450px; border-radius: 10px; text-align: left; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-top: 8px; font-size: 14px; }
+        
+        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-top: 8px; }
         .btn-share { background: var(--accent); }
-        .btn-scan { background: var(--green); margin-bottom: 15px; }
-        .btn-sec { background: #555; font-size: 12px; }
-        input { padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; width: 90%; margin: 10px 0; }
-        .hidden { display: none; }
+        .btn-scan { background: var(--green); margin-bottom: 15px; font-size: 16px; }
+        .btn-sec { background: #444; font-size: 12px; }
+        
+        input { padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; width: 100%; box-sizing: border-box; margin: 10px 0; }
         code { background: #000; padding: 4px; color: #0f0; word-break: break-all; border-radius: 4px; }
-        .footer { margin-top: 30px; padding: 20px; border-top: 1px solid #333; font-size: 14px; }
-        .footer a { color: var(--accent); text-decoration: none; margin: 0 10px; }
-        .settings-panel { background: #252525; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-        .wifi-pass { filter: blur(5px); transition: filter 0.3s; cursor: pointer; }
+        
+        /* WiFi Masking */
+        .wifi-pass { filter: blur(5px); transition: filter 0.3s; cursor: pointer; background: #333; padding: 2px 6px; border-radius: 4px; }
         .wifi-pass.show { filter: blur(0); }
+
+        .footer { margin-top: 40px; padding: 20px; border-top: 1px solid #333; font-size: 14px; color: #888; }
+        .footer a { color: var(--accent); text-decoration: none; margin: 0 10px; }
     </style>
 </head>
 <body>
 
-    <h1>📋 QR Actions</h1>
+    <div class="header">
+        <h2 style="margin:0;">📋 QR Actions</h2>
+        <button class="settings-icon" onclick="toggleSettings()">⚙️</button>
+    </div>
 
-    <div id="settings" class="settings-panel">
-        <div id="pinStatus">PIN: <span id="currentPinStatus">None</span></div>
-        <input type="password" id="pinInput" placeholder="Set PIN (Leave empty to disable)">
-        <button class="btn btn-sec" onclick="updateSettings()">Update Settings</button>
+    <div id="settingsOverlay">
+        <div class="settings-content">
+            <h3>Settings</h3>
+            <label style="font-size: 12px;">Transmission PIN (Optional)</label>
+            <input type="password" id="pinInput" placeholder="e.g. 2626">
+            <button class="btn btn-share" onclick="saveSettings()">Save & Close</button>
+            <button class="btn" style="background:transparent;" onclick="toggleSettings()">Cancel</button>
+        </div>
     </div>
 
     <div id="app">
@@ -41,42 +60,38 @@
     </div>
 
     <div class="footer">
-        By <strong>Bram Diederik</strong><br>
+        By <strong>Bram Diederik</strong><br><br>
         <a href="about.html">About</a> | 
         <a href="autoconnect.html">Auto Connect Laptop</a>
     </div>
 
     <script>
-        const AUTH_KEY = 'qr_actions_pin';
-        const HIST_KEY = 'qr_actions_history';
+        const AUTH_KEY = 'qr_actions_pin_v2';
+        const HIST_KEY = 'qr_actions_history_v2';
         let html5QrCode = null;
 
-        /** * Settings & PIN Logic
-         * PIN is now optional. If set, it's appended to Line 2 of shared files.
-         */
-        function updateSettings() {
+        function toggleSettings() {
+            const overlay = document.getElementById('settingsOverlay');
+            overlay.style.display = (overlay.style.display === 'flex') ? 'none' : 'flex';
+            if(localStorage.getItem(AUTH_KEY)) {
+                document.getElementById('pinInput').value = localStorage.getItem(AUTH_KEY);
+            }
+        }
+
+        function saveSettings() {
             const val = document.getElementById('pinInput').value;
             localStorage.setItem(AUTH_KEY, val);
-            loadSettings();
-            alert("Settings updated.");
+            toggleSettings();
         }
 
-        function loadSettings() {
-            const pin = localStorage.getItem(AUTH_KEY);
-            document.getElementById('currentPinStatus').innerText = pin ? "Active" : "Disabled";
-            document.getElementById('pinInput').value = pin || "";
-        }
-
-        /**
-         * One-Shot Scan Logic
-         */
         function startScan() {
             const btn = document.getElementById('cameraBtn');
             btn.disabled = true;
-            btn.innerText = "Camera Opening...";
+            btn.innerText = "Initializing Camera...";
 
             html5QrCode = new Html5Qrcode("reader");
             html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, (text) => {
+                // One-shot scan: stop immediately
                 html5QrCode.stop().then(() => {
                     html5QrCode = null;
                     btn.disabled = false;
@@ -87,7 +102,7 @@
             }).catch(err => {
                 btn.disabled = false;
                 btn.innerText = "📷 Retry Scanner";
-                console.error(err);
+                alert("Camera Access Denied or HTTP used.");
             });
         }
 
@@ -98,17 +113,11 @@
             render();
         }
 
-        /**
-         * Security Check (VirusTotal Integration)
-         */
         function checkSafety(url) {
-            const vtUrl = `https://www.virustotal.com/gui/search/${encodeURIComponent(url)}`;
-            window.open(vtUrl, '_blank');
+            // VirusTotal scan URL
+            window.open(`https://www.virustotal.com/gui/search/${encodeURIComponent(url)}`, '_blank');
         }
 
-        /**
-         * Wifi Password Masking Toggle
-         */
         function togglePass(id) {
             document.getElementById(id).classList.toggle('show');
         }
@@ -116,48 +125,46 @@
         function render() {
             const container = document.getElementById('history');
             const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-            container.innerHTML = items.length ? "" : "<p>No history available.</p>";
+            container.innerHTML = items.length ? "" : "<p style='color:#666;'>No scan history.</p>";
 
             items.forEach((item, idx) => {
                 const isUrl = item.text.startsWith('http');
                 const isWifi = item.text.startsWith('WIFI:');
-                let displayText = `<code>${item.text}</code>`;
+                let contentHtml = `<code>${item.text}</code>`;
                 
                 if (isWifi) {
-                    // Pre-parse WiFi for the "Show" option
-                    const ssid = item.text.match(/S:([^;]+)/)?.[1] || "Unknown";
+                    const ssid = item.text.match(/S:([^;]+)/)?.[1] || "SSID";
                     const pass = item.text.match(/P:([^;]+)/)?.[1] || "";
-                    displayText = `SSID: <b>${ssid}</b><br>Pass: <span id="wifi_${item.id}" class="wifi-pass" onclick="togglePass('wifi_${item.id}')">${pass || 'None'}</span> (Tap to show)`;
+                    contentHtml = `SSID: <b>${ssid}</b><br>Pass: <span id="wifi_${item.id}" class="wifi-pass" onclick="togglePass('wifi_${item.id}')">${pass}</span>`;
                 }
 
                 const div = document.createElement('div');
                 div.className = 'qr-card';
                 div.innerHTML = `
-                    <div style="font-size:0.75em; color:#888;">${item.date}</div>
-                    <div style="margin:8px 0;">${displayText}</div>
-                    ${isUrl ? `<button class="btn btn-sec" onclick="checkSafety('${item.text}')">🛡️ Check Security</button>` : ''}
-                    <button class="btn btn-share" onclick="shareData(${idx})">📤 Share</button>
+                    <div style="font-size:0.7em; color:#666; margin-bottom:5px;">${item.date}</div>
+                    <div style="margin-bottom:10px;">${contentHtml}</div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn btn-share" onclick="shareData(${idx})">Share</button>
+                        ${isUrl ? `<button class="btn btn-sec" onclick="checkSafety('${item.text}')">🛡️ Security Check</button>` : ''}
+                    </div>
                 `;
                 container.appendChild(div);
             });
         }
 
-        /**
-         * Generic Share (Legacy KDE compatibility)
-         */
         async function shareData(idx) {
             const items = JSON.parse(localStorage.getItem(HIST_KEY));
             const entry = items[idx];
             const pin = localStorage.getItem(AUTH_KEY);
 
-            // Format: Line 1 = Data, Line 2 = PIN (if exists)
+            // Correct format for your Debian listener (Line 1: Data, Line 2: PIN)
             const payload = entry.text + (pin ? `\nPIN: ${pin}` : "");
             const fileName = `qr_actions_${Date.now()}.txt`;
 
             if (navigator.share) {
                 try {
                     const file = new File([payload], fileName, { type: 'text/plain' });
-                    await navigator.share({ files: [file], title: 'QR Actions Share' });
+                    await navigator.share({ files: [file], title: 'QR Actions' });
                 } catch (e) {}
             } else {
                 const blob = new Blob([payload], { type: 'text/plain' });
@@ -168,7 +175,6 @@
             }
         }
 
-        loadSettings();
         render();
     </script>
 </body>
