@@ -69,21 +69,24 @@
 
     <script>
         /**
-         * FULL APPLICATION MANIFEST (v5.0 Stable)
-         * --------------------------------------
-         * 1. TYPES SUPPORTED:
-         * - URL (http), WIFI (WIFI:), VCARD (BEGIN:VCARD), EVENT (BEGIN:VEVENT)
-         * - GEO (geo:), PHONE (tel:), EMAIL (mailto:), SMS (sms:)
-         * - CRYPTO (BTC/ETH via Regex), TEXT (Fallback)
-         * * 2. CORE FEATURES:
-         * - SECURITY: 8-digit Vault PIN, Masked WiFi PW in code view.
+         * FINALIZED APPLICATION FEATURE MANIFEST (v5.1)
+         * --------------------------------------------
+         * 1. SUPPORTED QR TYPES:
+         * - URL: Web links + VirusTotal security analysis shortcut.
+         * - WIFI: (WIFI: format) Masked password display + "Copy Password" button.
+         * - VCARD: Full contact profile (FN, ORG, TITLE, multiple TEL, EMAIL, URL, ADR).
+         * - EVENT: Calendar event (VEVENT) details view.
+         * - GEO: Latitude/Longitude with Google & OSM mapping links.
+         * - CRYPTO: BTC/ETH address detection + Blockchain Explorer links.
+         * - COMM: Direct triggers for tel:, mailto:, and sms: protocols.
+         * * 2. DATA HANDLING & EXPORTS:
+         * - VCARD EXPORT: Generates .vcf files with dynamic naming (Contact_Name.vcf).
+         * - EVENT EXPORT: Generates .ics files with dynamic naming (Event_Summary.ics).
          * - PERSISTENCE: LocalStorage (qr_history, qr_auth_pin, qr_bt_pin, qr_hist_limit).
-         * - HISTORY: List with individual "DELETE" confirm and global "Nuke".
-         * * 3. TYPE-SPECIFIC ACTIONS:
-         * - WIFI: SSID, Blurrable PW, Copy PW button.
-         * - VCARD: Profile view (Name, Org, Title, multi-Tel, Email, Web) + .vcf export + Address Map links.
-         * - MAPS: Fixed Google/OSM markers for both GEO codes and vCard addresses.
-         * - CRYPTO: Copy address + Blockchain Explorer links.
+         * * 3. SECURITY & PRIVACY:
+         * - 8-digit Vault PIN for application entry.
+         * - "Nuke" function to wipe all LocalStorage data.
+         * - Sensitive WiFi passwords are masked by default in the raw code preview.
          */
 
         const HIST_KEY = 'qr_history';
@@ -122,6 +125,7 @@
             
             if (info.type === 'VCARD') {
                 const c = parseVCard(text);
+                const safeName = (c.fn || 'Contact').replace(/\s+/g, '_');
                 html += `<div class="contact-view">
                     <b>${c.fn || 'Contact'}</b><br>
                     ${c.title ? `<span style="color:var(--orange)">${c.title}</span><br>` : ''}
@@ -138,7 +142,13 @@
                             </div>
                         </div>` : ''}
                 </div>`;
-                html += `<button class="btn" style="background:var(--green)" onclick="downloadFile('${text.replace(/\n/g, '\\n')}', 'contact.vcf', 'text/vcard')">💾 Save vCard</button>`;
+                html += `<button class="btn" style="background:var(--green)" onclick="downloadFile('${text.replace(/\n/g, '\\n')}', '${safeName}.vcf', 'text/vcard')">💾 Save vCard</button>`;
+
+            } else if (info.type === 'EVENT') {
+                const summ = text.match(/SUMMARY:(.*)/)?.[1] || "Event";
+                const safeName = summ.replace(/\s+/g, '_');
+                html += `<div class="inspect-box"><b>${summ}</b></div>`;
+                html += `<button class="btn" style="background:var(--accent)" onclick="downloadFile('${text.replace(/\n/g, '\\n')}', '${safeName}.ics', 'text/calendar')">📅 Add to Calendar</button>`;
 
             } else if (info.type === 'WIFI') {
                 const ssid = text.match(/S:(.*?);/)?.[1] || "Hidden";
@@ -153,15 +163,6 @@
                 html += `<div class="map-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
                     <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank" class="btn" style="background:#4285F4; margin:0;">Google</a>
                     <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=16/${lat}/${lon}" target="_blank" class="btn" style="background:#7EBC6F; margin:0;">OSM</a>
-                </div>`;
-
-            } else if (info.type === 'BITCOIN' || info.type === 'ETHEREUM') {
-                const addr = text.replace(/bitcoin:|ethereum:/, '');
-                const url = info.type === 'BITCOIN' ? `https://www.blockchain.com/btc/address/${addr}` : `https://etherscan.io/address/${addr}`;
-                html += `<div class="inspect-box"><small>${addr}</small></div>`;
-                html += `<div class="map-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
-                    <button class="btn" style="background:var(--orange); margin:0;" onclick="copy('${addr}')">📋 Copy</button>
-                    <a href="${url}" target="_blank" class="btn" style="background:var(--grey); margin:0;">🔍 Explore</a>
                 </div>`;
 
             } else if (info.type === 'URL') {
@@ -182,6 +183,7 @@
             const blob = new Blob([raw.replace(/\\n/g, '\n')], { type: mime });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+            URL.revokeObjectURL(url);
         }
 
         /** PERSISTENCE **/
