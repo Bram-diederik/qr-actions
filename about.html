@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Bram Diederik</title>
+    <style>
+        :root { --bg: #0d0d0d; --card: #1a1a1a; --acc: #007bff; --text: #e0e0e0; }
+        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; }
+        
+        .container { display: flex; height: 100vh; flex-wrap: wrap; }
+        
+        .panel { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 40px; 
+            text-align: center; 
+            transition: background 0.3s;
+            text-decoration: none;
+            color: inherit;
+            min-width: 300px;
+        }
+
+        /* Left Panel: GitHub */
+        .github-panel { border-right: 1px solid #333; }
+        .github-panel:hover { background: #151515; }
+
+        /* Right Panel: YAP2STW */
+        .project-panel:hover { background: #151515; }
+
+        h1 { color: var(--acc); font-size: 2.5rem; margin-bottom: 20px; }
+        p { line-height: 1.6; max-width: 400px; font-size: 1.1rem; }
+        .tag { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; }
+        
+        .back-link { 
+            position: absolute; 
+            bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            color: #666; 
+            text-decoration: none; 
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+        .back-link:hover { color: var(--acc); }
+
+        @media (max-width: 768px) {
+            .github-panel { border-right: none; border-bottom: 1px solid #333; }
+            .back-link { position: relative; bottom: 10px; padding: 20px; display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-link">← Return to QR Actions</a>
+
+    <div class="container">
+        <a href="https://github.com/Bram-diederik" target="_blank" class="panel github-panel">
+            <span class="tag">Code & Development</span>
+            <h1>GitHub</h1>
+            <p>
+                Software test engineer by day, rogue coder by night. 
+                Focusing on Debian, Home Assistant, and building "sexy test automatons." 
+                I don't write boring code; I build things beyond the creative capabilities 
+                of regular programmers.
+            </p>
+        </a>
+
+        <a href="http://www.yetanotherprojecttosavetheworld.org" target="_blank" class="panel project-panel">
+            <span class="tag">The Mission</span>
+            <h1>YAP2STW</h1>
+            <p>
+                Home of <strong>Project Chimera</strong>. 
+                Integrating Nextcloud, WordPress, and Home Assistant into a single stack 
+                to empower and liberate groups. We believe in world peace through 
+                accessible, open-source digital town squares.
+            </p>
+        </a>
+    </div>
+
+</body>
+</html>

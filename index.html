@@ -131,7 +131,7 @@ function checkSafety(urlToTest) {
             document.getElementById(id).classList.toggle('show');
         }
 
-        function render() {
+function render() {
             const container = document.getElementById('history');
             const items = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
             container.innerHTML = items.length ? "" : "<p style='color:#666;'>No scan history.</p>";
@@ -152,9 +152,12 @@ function checkSafety(urlToTest) {
                 div.innerHTML = `
                     <div style="font-size:0.7em; color:#666; margin-bottom:5px;">${item.date}</div>
                     <div style="margin-bottom:10px;">${contentHtml}</div>
-                    <div style="display:flex; gap:8px;">
-                        <button class="btn btn-share" onclick="shareData(${idx})">Share</button>
-                        ${isUrl ? `<button class="btn btn-sec" onclick="checkSafety('${item.text}')">🛡️ Security Check</button>` : ''}
+                    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                        <button class="btn btn-share" style="flex:1; min-width:80px;" onclick="shareData(${idx})">Share</button>
+                        ${isUrl ? `
+                            <button class="btn btn-sec" style="flex:1; min-width:120px;" onclick="checkSafety('${item.text}')">🛡 Security Check</button>
+                            <a href="${item.text}" target="_blank" class="btn" style="flex:1; min-width:80px; background:var(--green); text-decoration:none; text-align:center; display:flex; align-items:center; justify-content:center;">🌐 Visit</a>
+                        ` : ''}
                     </div>
                 `;
                 container.appendChild(div);

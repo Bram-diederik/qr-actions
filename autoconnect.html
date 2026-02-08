@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Actions - Setup</title>
+    <style>
+        :root { --bg: #0d0d0d; --card: #1a1a1a; --acc: #007bff; --green: #28a745; --code: #000; }
+        body { background: var(--bg); color: #e0e0e0; font-family: 'Segoe UI', Tahoma, sans-serif; line-height: 1.6; padding: 20px; max-width: 900px; margin: auto; }
+        .section { background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid #333; margin-bottom: 30px; }
+        h1, h2 { color: var(--acc); border-bottom: 1px solid #333; padding-bottom: 10px; }
+        h3 { color: var(--green); margin-bottom: 5px; }
+        pre { background: var(--code); color: #0f0; padding: 15px; border-radius: 8px; overflow-x: auto; border: 1px solid #444; position: relative; }
+        .copy-hint { color: #666; font-size: 0.8em; margin-top: -10px; margin-bottom: 10px; display: block; }
+        .btn { display: inline-block; background: var(--green); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-bottom: 20px; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>💻 Laptop Auto-Connect Setup</h1>
+    <p>Follow these steps to turn your Debian laptop into a QR-actioned workstation.</p>
+
+    <div class="section">
+        <h2>1. Install Dependencies</h2>
+        <p>Your laptop needs these tools to watch for files</p>
+        <pre>sudo apt update && sudo apt install -y inotify-tools wget</pre>
+    </div>
+
+    <div class="section">
+        <h2>2. Script Deployment</h2>
+        <p>First, download the script using the button below, then move it to the project folder.</p>
+        <a href="bluetooth-listener.sh" download class="btn">💾 Download Script</a>
+        
+        <pre>mkdir -p ~/qr-actions
+mv ~/Downloads/bluetooth-listener.sh ~/qr-actions/
+chmod +x ~/qr-actions/bluetooth-listener.sh</pre>
+    </div>
+
+    <div class="section">
+        <h2>3. Manual Systemd Configuration</h2>
+        <p>Instead of a script, we will create the service file manually to ensure no errors.</p>
+        
+        <h3>A. Create the Directory</h3>
+        <pre>mkdir -p ~/.config/systemd/user/</pre>
+
+        <h3>B. Create the File</h3>
+        <p>Run <code>nano ~/.config/systemd/user/qr-listener.service</code> and paste the following:</p>
+        <pre>
+[Unit]
+Description=QR Actions Bluetooth Listener
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=%h/qr-actions/bluetooth-listener.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target</pre>
+
+        <h3>C. Enable Service</h3>
+        <pre>
+systemctl --user daemon-reload
+systemctl --user enable qr-listener.service
+systemctl --user start qr-listener.service</pre>
+    </div>
+
+    
+    <div class="section">
+        <h2>🔍 How the Script Works</h2>
+        <p>The <code>bluetooth-listener.sh</code> is a lightweight daemon that utilizes <strong>inotify</strong> to watch for filesystem events.</p>
+        <ul>
+            <li><strong>The Trigger:</strong> It waits for a <code>close_write</code> event in <code>~/BluetoothDownloads</code>. This happens exactly when a file transfer from your phone completes.</li>
+            <li><strong>PIN Verification:</strong> The script reads the second line of the received file. If a PIN is set on your laptop in <code>~/.config/bluetoothpin.txt</code>, the file's PIN must match, or the script deletes the file immediately.</li>
+            <li><strong>WiFi Automation:</strong> If the data starts with <code>WIFI:</code>, it parses the SSID and Password, then uses <code>nmcli</code> to delete any existing old profiles and reconnect to the new network.</li>
+            <li><strong>URL Security:</strong> If a URL is detected, it uses <code>wget</code> to download the page as an HTML file into your <code>~/Downloads</code> folder for offline viewing.</li>
+        </ul>
+    </div>
+
+    <div style="text-align: center; color: #555;">
+        <a href="index.html" style="color: var(--acc);">← Back to QR Actions App</a> | By Bram Diederik
+    </div>
+
+</body>
+</html>
