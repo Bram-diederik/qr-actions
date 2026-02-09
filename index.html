@@ -172,7 +172,7 @@
             display: none;
         }
 
-        /* History Cards */
+        /* History Cards - Swipe to delete */
         .card {
             background: #1e1e1e;
             border: 1px solid #333;
@@ -180,6 +180,18 @@
             padding: 15px;
             margin-bottom: 15px;
             position: relative;
+            transition: transform 0.3s ease;
+            touch-action: pan-y;
+            user-select: none;
+        }
+
+        .card.swiped {
+            transform: translateX(100px);
+        }
+
+        .card.swipe-delete {
+            transform: translateX(100%);
+            opacity: 0;
         }
 
         .card-header {
@@ -211,39 +223,58 @@
             color: #666;
             font-size: 20px;
             cursor: pointer;
+            position: relative;
+            z-index: 2;
         }
 
         .favorite-btn.active {
             color: #ffc107;
         }
 
-        .delete-btn {
+        .delete-swipe-overlay {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(220, 53, 69, 0.1);
-            border: 1px solid rgba(220, 53, 69, 0.3);
-            color: #666;
-            font-size: 14px;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: rgba(220, 53, 69, 0.9);
+            border-radius: 12px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-end;
+            padding-right: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .delete-swipe-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .delete-swipe-text {
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .card-content {
             margin-bottom: 15px;
             padding-right: 40px;
+            position: relative;
+            z-index: 1;
         }
 
         .card-actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             gap: 8px;
+            position: relative;
+            z-index: 1;
         }
 
         .btn-small {
@@ -345,7 +376,7 @@
             margin: 15px 0;
         }
 
-        /* Virus Scan Results */
+        /* Virus Scan Link */
         .virus-scan-results {
             background: rgba(23, 162, 184, 0.1);
             border: 1px solid rgba(23, 162, 184, 0.3);
@@ -468,6 +499,76 @@
             background: #333;
         }
 
+        /* vCard Action Buttons */
+        .contact-action-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .contact-action-btn:hover {
+            background: #0056b3;
+        }
+
+        .vcard-action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .vcard-action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .vcard-action-btn.phone {
+            background: #28a745;
+            color: white;
+        }
+
+        .vcard-action-btn.email {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .vcard-action-btn.url {
+            background: #6f42c1;
+            color: white;
+        }
+
+        .vcard-action-btn.address {
+            background: #fd7e14;
+            color: white;
+            font-size: 11px;
+            padding: 4px 8px;
+        }
+
+        .vcard-link {
+            color: #007bff;
+            text-decoration: none;
+            border: 1px solid #007bff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .vcard-link:hover {
+            background: rgba(0, 123, 255, 0.1);
+        }
+
         /* Password reveal */
         .password-reveal {
             filter: blur(5px);
@@ -480,43 +581,6 @@
 
         .password-reveal.revealed {
             filter: none;
-        }
-
-        /* vCard Action Buttons */
-        .vcard-action-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .vcard-action-btn {
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background: #007bff;
-            color: white;
-        }
-
-        .vcard-action-btn.phone {
-            background: #17a2b8;
-        }
-
-        .vcard-action-btn.email {
-            background: #6f42c1;
-        }
-
-        .vcard-action-btn.address {
-            background: #28a745;
-        }
-
-        .vcard-action-btn.url {
-            background: #fd7e14;
         }
 
         /* Empty State */
@@ -663,35 +727,13 @@
             gap: 10px;
             margin-top: 10px;
         }
-        
-        /* vCard link styles */
-        .vcard-link {
-            color: #007bff;
-            text-decoration: none;
-            border-bottom: 1px dotted #007bff;
-            cursor: pointer;
-            padding: 2px 4px;
-            border-radius: 3px;
-            transition: background-color 0.2s;
-        }
-        
-        .vcard-link:hover {
-            background-color: rgba(0, 123, 255, 0.1);
-        }
-        
-        /* Contact action buttons */
-        .contact-action-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 8px;
-            margin: 2px;
-            border-radius: 4px;
-            background: rgba(0, 123, 255, 0.1);
-            color: #007bff;
-            border: 1px solid rgba(0, 123, 255, 0.3);
-            cursor: pointer;
-            font-size: 12px;
+
+        /* Type-specific modals */
+        .action-modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
         }
     </style>
 </head>
@@ -880,36 +922,169 @@
                 <code id="modalUrl"></code>
             </div>
 
-            <!-- Virus Scan Results -->
-            <div class="virus-scan-results" id="virusScanResults" style="display:none;">
-                <h4 style="margin-bottom:10px;">🛡️ VirusTotal Scan Results</h4>
-                <div class="scan-status" id="scanStatus"></div>
-                <div class="scan-stats" id="scanStats"></div>
-                <button class="btn btn-safety" onclick="refreshVirusScan()" style="width:100%; margin-top:10px;">
-                    🔄 Refresh Scan
-                </button>
+            <!-- VirusTotal Link -->
+            <div class="virus-scan-results">
+                <h4 style="margin-bottom:10px;">🛡️ Check URL Safety</h4>
+                <p style="margin-bottom:10px; font-size:14px; color:#aaa;">Check this URL on VirusTotal for safety analysis:</p>
+                <a href="#" id="virusTotalLink" target="_blank" style="display:block; padding:10px; background:#17a2b8; color:white; text-align:center; border-radius:8px; text-decoration:none; margin-bottom:10px;">
+                    🔗 Open in VirusTotal
+                </a>
+                <p style="font-size:12px; color:#888;">VirusTotal analyzes URLs with 70+ antivirus engines</p>
             </div>
 
             <div class="url-warning" id="urlWarning" style="display:none;">
                 ⚠️ This URL is not in your allowlist
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:20px 0;">
+            <div class="action-modal-buttons">
                 <button class="btn btn-open" onclick="openModalUrl()" id="modalOpenBtn">Open</button>
                 <button class="btn btn-copy" onclick="copyModalUrl()">Copy</button>
-                <button class="btn btn-safety" onclick="checkSafety()" style="grid-column:span 2;" id="safetyCheckBtn">
-                    🛡️ Check Safety (VirusTotal)
-                </button>
+                <button class="btn btn-share" onclick="shareModalContent()">Share</button>
+                <button class="btn" onclick="closeUrlModal()" style="background:#444;">Cancel</button>
             </div>
 
             <label style="display:flex; align-items:center; gap:10px; margin:15px 0;">
                 <input type="checkbox" id="addToAllowlist">
                 Add to allowlist and open automatically next time
             </label>
+        </div>
+    </div>
 
-            <button class="btn" onclick="closeUrlModal()" style="width:100%; background:#444;">
-                Cancel
-            </button>
+    <!-- WiFi Modal -->
+    <div class="overlay" id="wifiModal">
+        <div class="overlay-content">
+            <h2 style="margin-bottom:15px;">📶 WiFi Network</h2>
+
+            <div style="background:#000; padding:15px; border-radius:8px; margin-bottom:15px;">
+                <div class="wifi-share-field">
+                    <label>Network Name (SSID)</label>
+                    <div class="value" id="modalWifiSsid"></div>
+                </div>
+                <div class="wifi-share-field">
+                    <label>Security Type</label>
+                    <div class="value" id="modalWifiSecurity"></div>
+                </div>
+                <div class="wifi-share-field">
+                    <label>Password</label>
+                    <div class="value">
+                        <span id="modalWifiPassword" class="password-reveal" onclick="toggleModalPasswordReveal()">Click to reveal</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-modal-buttons">
+                <button class="btn btn-copy" onclick="copyModalWifiPassword()">Copy Password</button>
+                <button class="btn btn-wifi-share" onclick="shareModalWifi()">Share WiFi</button>
+                <button class="btn btn-open" onclick="connectToWifi()">Connect</button>
+                <button class="btn" onclick="closeWifiModal()" style="background:#444;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Text Modal -->
+    <div class="overlay" id="textModal">
+        <div class="overlay-content">
+            <h2 style="margin-bottom:15px;">📝 Text Content</h2>
+
+            <div style="background:#000; padding:15px; border-radius:8px; margin-bottom:15px; word-break:break-all; max-height:200px; overflow-y:auto;">
+                <code id="modalText"></code>
+            </div>
+
+            <div class="action-modal-buttons">
+                <button class="btn btn-copy" onclick="copyModalText()">Copy</button>
+                <button class="btn btn-share" onclick="shareModalContent()">Share</button>
+                <button class="btn" onclick="closeTextModal()" style="background:#444;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="overlay" id="contactModal">
+        <div class="overlay-content">
+            <h2 style="margin-bottom:15px;">👤 Contact</h2>
+
+            <div id="modalContactContent" style="margin-bottom:15px;"></div>
+
+            <div class="action-modal-buttons">
+                <button class="btn btn-copy" onclick="copyModalContact()">Copy vCard</button>
+                <button class="btn btn-share" onclick="shareModalContact()">Share</button>
+                <button class="btn" onclick="closeContactModal()" style="background:#444;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Modal -->
+    <div class="overlay" id="emailModal">
+        <div class="overlay-content">
+            <h2 style="margin-bottom:15px;">📧 Email</h2>
+
+            <div style="background:#000; padding:15px; border-radius:8px; margin-bottom:15px; word-break:break-all;">
+                <div><strong>To:</strong> <span id="modalEmailTo"></span></div>
+                <div><strong>Subject:</strong> <span id="modalEmailSubject"></span></div>
+                <div><strong>Body:</strong> <span id="modalEmailBody"></span></div>
+            </div>
+
+            <div class="action-modal-buttons">
+                <button class="btn btn-email" onclick="sendModalEmail()">Send Email</button>
+                <button class="btn btn-copy" onclick="copyModalEmail()">Copy</button>
+                <button class="btn" onclick="closeEmailModal()" style="background:#444;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phone Modal -->
+    <div class="overlay" id="phoneModal">
+        <div class="overlay-content">
+            <h2 style="margin-bottom:15px;">📞 Phone</h2>
+
+            <div style="background:#000; padding:15px; border-radius:8px; margin-bottom:15px; word-break:break-all; text-align:center; font-size:24px;">
+                <span id="modalPhoneNumber"></span>
+            </div>
+
+            <div class="action-modal-buttons">
+                <button class="btn btn-phone" onclick="callModalPhone()">Call</button>
+                <button class="btn btn-copy" onclick="copyModalPhone()">Copy</button>
+                <button class="btn btn-sms" onclick="smsModalPhone()">SMS</button>
+                <button class="btn" onclick="closePhoneModal()" style="background:#444;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SMS Modal -->
+    <div class="overlay" id="smsModal">
+        <div class="overlay-content">
+            <h2 style="margin-bottom:15px;">💬 SMS</h2>
+
+            <div style="background:#000; padding:15px; border-radius:8px; margin-bottom:15px; word-break:break-all;">
+                <div><strong>To:</strong> <span id="modalSmsNumber"></span></div>
+                <div><strong>Message:</strong> <span id="modalSmsMessage"></span></div>
+            </div>
+
+            <div class="action-modal-buttons">
+                <button class="btn btn-sms" onclick="sendModalSms()">Send SMS</button>
+                <button class="btn btn-copy" onclick="copyModalSms()">Copy</button>
+                <button class="btn" onclick="closeSmsModal()" style="background:#444;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Modal -->
+    <div class="overlay" id="locationModal">
+        <div class="overlay-content">
+            <h2 style="margin-bottom:15px;">📍 Location</h2>
+
+            <div style="background:#000; padding:15px; border-radius:8px; margin-bottom:15px; word-break:break-all;">
+                <div><strong>Coordinates:</strong> <span id="modalLocationCoords"></span></div>
+                <div><strong>Latitude:</strong> <span id="modalLocationLat"></span></div>
+                <div><strong>Longitude:</strong> <span id="modalLocationLng"></span></div>
+            </div>
+
+            <div class="action-modal-buttons">
+                <button class="btn btn-google-maps" onclick="openModalGoogleMaps()">Google Maps</button>
+                <button class="btn btn-osm" onclick="openModalOpenStreetMap()">OpenStreetMap</button>
+                <button class="btn btn-copy" onclick="copyModalLocation()">Copy</button>
+                <button class="btn" onclick="closeLocationModal()" style="background:#444;">Close</button>
+            </div>
         </div>
     </div>
 
@@ -989,6 +1164,12 @@
         let deferredPrompt = null;
         let currentUrl = null;
         let currentWifiData = null;
+        let currentText = null;
+        let currentContact = null;
+        let currentEmail = null;
+        let currentPhone = null;
+        let currentSms = null;
+        let currentLocation = null;
         let settings = {
             camera: '',
             historyLimit: 50,
@@ -999,6 +1180,11 @@
             beepOnScan: true,
             allowlist: ['https://github.com/', 'https://stackoverflow.com/', 'https://developer.mozilla.org/']
         };
+
+        // Swipe to delete variables
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let currentSwipeCard = null;
 
         // ============ PWA INSTALLATION ============
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -1098,6 +1284,9 @@
 
             saveScan(decodedText);
             showToast('QR code scanned!');
+            
+            // Show appropriate modal based on content type
+            showContentModal(decodedText);
         }
 
         function playBeep() {
@@ -1126,75 +1315,411 @@
                     vibrate();
                     saveScan(decodedText);
                     showToast('QR code found!');
+                    showContentModal(decodedText);
                 })
                 .catch(() => {
                     showToast('No QR code found', true);
                 });
         }
 
-        // ============ WIFI PARSING FUNCTION ============
-        function parseWifi(text) {
-            if (!text.startsWith('WIFI:')) {
-                return { ssid: 'Unknown', password: '', security: 'Unknown' };
+        // ============ CONTENT MODAL SYSTEM ============
+        function showContentModal(text) {
+            const type = detectType(text);
+            
+            switch(type) {
+                case 'url':
+                    showUrlModal(text);
+                    break;
+                case 'wifi':
+                    showWifiModal(text);
+                    break;
+                case 'text':
+                    showTextModal(text);
+                    break;
+                case 'vcard':
+                    showContactModal(text);
+                    break;
+                case 'email':
+                    showEmailModal(text);
+                    break;
+                case 'phone':
+                    showPhoneModal(text);
+                    break;
+                case 'sms':
+                    showSmsModal(text);
+                    break;
+                case 'geo':
+                    showLocationModal(text);
+                    break;
+                default:
+                    showTextModal(text);
             }
+        }
+
+        function showUrlModal(url) {
+            currentUrl = url;
+            document.getElementById('modalUrl').textContent = url;
             
-            // Remove WIFI: prefix
-            let wifiString = text.substring(5);
+            // Create VirusTotal link (proper base64 encoding)
+            const encodedUrl = btoa(url).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            const virusTotalLink = `https://www.virustotal.com/gui/url/${encodedUrl}`;
+            document.getElementById('virusTotalLink').href = virusTotalLink;
             
-            // Parse the parameters
-            let ssid = '';
-            let password = '';
-            let security = 'nopass';
-            let hidden = false;
+            // Check if in allowlist
+            const isAllowed = settings.allowlist.some(prefix => url.startsWith(prefix));
             
-            // Handle different WiFi QR code formats
-            const params = wifiString.split(';');
+            // Only show Open button if in allowlist
+            const openBtn = document.getElementById('modalOpenBtn');
+            openBtn.style.display = isAllowed ? 'block' : 'none';
             
-            for (let param of params) {
-                if (param.startsWith('S:')) {
-                    ssid = param.substring(2);
-                } else if (param.startsWith('T:')) {
-                    security = param.substring(2);
-                } else if (param.startsWith('P:')) {
-                    password = param.substring(2);
-                } else if (param.startsWith('H:')) {
-                    hidden = param.substring(2) === 'true';
+            document.getElementById('urlWarning').style.display = isAllowed ? 'none' : 'block';
+            
+            document.getElementById('urlModal').style.display = 'flex';
+        }
+
+        function showWifiModal(wifiText) {
+            currentWifiData = parseWifi(wifiText);
+            
+            document.getElementById('modalWifiSsid').textContent = currentWifiData.ssid || 'Unknown';
+            document.getElementById('modalWifiSecurity').textContent = currentWifiData.security || 'Unknown';
+            
+            // Reset password display
+            const passwordElement = document.getElementById('modalWifiPassword');
+            passwordElement.textContent = 'Click to reveal';
+            passwordElement.classList.remove('revealed');
+            
+            document.getElementById('wifiModal').style.display = 'flex';
+        }
+
+        function showTextModal(text) {
+            currentText = text;
+            document.getElementById('modalText').textContent = text;
+            document.getElementById('textModal').style.display = 'flex';
+        }
+
+        function showContactModal(vcardText) {
+            currentContact = parseVCard(vcardText);
+            const container = document.getElementById('modalContactContent');
+            container.innerHTML = formatVCardContact(currentContact);
+            document.getElementById('contactModal').style.display = 'flex';
+        }
+
+        function showEmailModal(emailText) {
+            currentEmail = parseEmail(emailText);
+            document.getElementById('modalEmailTo').textContent = currentEmail.to || '';
+            document.getElementById('modalEmailSubject').textContent = currentEmail.subject || '(No subject)';
+            document.getElementById('modalEmailBody').textContent = currentEmail.body || '(No body)';
+            document.getElementById('emailModal').style.display = 'flex';
+        }
+
+        function showPhoneModal(phoneText) {
+            currentPhone = parsePhone(phoneText);
+            document.getElementById('modalPhoneNumber').textContent = currentPhone.number || '';
+            document.getElementById('phoneModal').style.display = 'flex';
+        }
+
+        function showSmsModal(smsText) {
+            currentSms = parseSms(smsText);
+            document.getElementById('modalSmsNumber').textContent = currentSms.number || '';
+            document.getElementById('modalSmsMessage').textContent = currentSms.message || '(No message)';
+            document.getElementById('smsModal').style.display = 'flex';
+        }
+
+        function showLocationModal(geoText) {
+            currentLocation = parseGeo(geoText);
+            document.getElementById('modalLocationCoords').textContent = `${currentLocation.lat}, ${currentLocation.lng}`;
+            document.getElementById('modalLocationLat').textContent = currentLocation.lat;
+            document.getElementById('modalLocationLng').textContent = currentLocation.lng;
+            document.getElementById('locationModal').style.display = 'flex';
+        }
+
+        // Modal close functions
+        function closeUrlModal() {
+            document.getElementById('urlModal').style.display = 'none';
+            currentUrl = null;
+            document.getElementById('addToAllowlist').checked = false;
+        }
+
+        function closeWifiModal() {
+            document.getElementById('wifiModal').style.display = 'none';
+            currentWifiData = null;
+        }
+
+        function closeTextModal() {
+            document.getElementById('textModal').style.display = 'none';
+            currentText = null;
+        }
+
+        function closeContactModal() {
+            document.getElementById('contactModal').style.display = 'none';
+            currentContact = null;
+        }
+
+        function closeEmailModal() {
+            document.getElementById('emailModal').style.display = 'none';
+            currentEmail = null;
+        }
+
+        function closePhoneModal() {
+            document.getElementById('phoneModal').style.display = 'none';
+            currentPhone = null;
+        }
+
+        function closeSmsModal() {
+            document.getElementById('smsModal').style.display = 'none';
+            currentSms = null;
+        }
+
+        function closeLocationModal() {
+            document.getElementById('locationModal').style.display = 'none';
+            currentLocation = null;
+        }
+
+        // Modal action functions
+        function openModalUrl() {
+            if (currentUrl) {
+                if (document.getElementById('addToAllowlist').checked) {
+                    addToAllowlist(currentUrl);
+                }
+                window.open(currentUrl, '_blank');
+                closeUrlModal();
+            }
+        }
+
+        function copyModalUrl() {
+            if (currentUrl) {
+                copyText(currentUrl);
+                closeUrlModal();
+            }
+        }
+
+        function shareModalContent() {
+            const content = currentUrl || currentText || '';
+            if (content && navigator.share) {
+                navigator.share({
+                    title: 'QR Code Content',
+                    text: content
+                });
+            } else if (content) {
+                copyText(content);
+                showToast('Copied to clipboard');
+            }
+        }
+
+        function toggleModalPasswordReveal() {
+            const element = document.getElementById('modalWifiPassword');
+            if (element.classList.contains('revealed')) {
+                element.textContent = 'Click to reveal';
+                element.classList.remove('revealed');
+            } else {
+                element.textContent = currentWifiData.password || 'No password';
+                element.classList.add('revealed');
+            }
+        }
+
+        function copyModalWifiPassword() {
+            if (currentWifiData) {
+                copyText(currentWifiData.password || '');
+                showToast('Password copied to clipboard');
+            }
+        }
+
+        function shareModalWifi() {
+            if (currentWifiData) {
+                showWifiShare(currentWifiData);
+            }
+        }
+
+        function connectToWifi() {
+            showToast('WiFi connection initiated');
+            // Note: Actual WiFi connection requires platform-specific APIs
+        }
+
+        function copyModalText() {
+            if (currentText) {
+                copyText(currentText);
+                showToast('Text copied to clipboard');
+                closeTextModal();
+            }
+        }
+
+        function copyModalContact() {
+            // Reconstruct vCard from parsed contact
+            let vcard = `BEGIN:VCARD\nVERSION:3.0\n`;
+            if (currentContact.name) vcard += `FN:${currentContact.name}\n`;
+            if (currentContact.organization) vcard += `ORG:${currentContact.organization}\n`;
+            if (currentContact.phones && currentContact.phones.length > 0) {
+                currentContact.phones.forEach(phone => {
+                    vcard += `TEL;TYPE=${phone.type}:${phone.number}\n`;
+                });
+            }
+            if (currentContact.emails && currentContact.emails.length > 0) {
+                currentContact.emails.forEach(email => {
+                    vcard += `EMAIL;TYPE=${email.type}:${email.address}\n`;
+                });
+            }
+            if (currentContact.notes) vcard += `NOTE:${currentContact.notes}\n`;
+            vcard += `END:VCARD`;
+            
+            copyText(vcard);
+            showToast('Contact copied to clipboard');
+        }
+
+        function shareModalContact() {
+            if (currentContact) {
+                let shareText = `Contact: ${currentContact.name}\n`;
+                if (currentContact.organization) shareText += `Organization: ${currentContact.organization}\n`;
+                if (currentContact.phones && currentContact.phones.length > 0) {
+                    shareText += 'Phones:\n';
+                    currentContact.phones.forEach(phone => {
+                        shareText += `  ${phone.type}: ${phone.number}\n`;
+                    });
+                }
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Contact',
+                        text: shareText
+                    });
+                } else {
+                    copyText(shareText);
+                    showToast('Contact details copied to clipboard');
                 }
             }
-            
-            // Handle escaped characters in SSID
-            if (ssid.includes('\\')) {
-                ssid = ssid.replace(/\\;/g, ';')
-                          .replace(/\\:/g, ':')
-                          .replace(/\\,/g, ',')
-                          .replace(/\\\\/g, '\\');
+        }
+
+        function sendModalEmail() {
+            if (currentEmail && currentEmail.to) {
+                let mailto = `mailto:${currentEmail.to}`;
+                const params = [];
+                if (currentEmail.subject) params.push(`subject=${encodeURIComponent(currentEmail.subject)}`);
+                if (currentEmail.body) params.push(`body=${encodeURIComponent(currentEmail.body)}`);
+                if (params.length > 0) {
+                    mailto += '?' + params.join('&');
+                }
+                window.location.href = mailto;
             }
-            
-            // Handle escaped characters in password
-            if (password.includes('\\')) {
-                password = password.replace(/\\;/g, ';')
-                                  .replace(/\\:/g, ':')
-                                  .replace(/\\,/g, ',')
-                                  .replace(/\\\\/g, '\\');
+        }
+
+        function copyModalEmail() {
+            if (currentEmail) {
+                let text = `To: ${currentEmail.to}`;
+                if (currentEmail.subject) text += `\nSubject: ${currentEmail.subject}`;
+                if (currentEmail.body) text += `\nBody: ${currentEmail.body}`;
+                copyText(text);
+                showToast('Email details copied to clipboard');
             }
-            
-            // Standardize security type
-            if (security === 'WPA' || security === 'WPA2' || security === 'WPA2E') {
-                security = 'WPA/WPA2';
-            } else if (security === 'WEP') {
-                security = 'WEP';
-            } else if (security === 'nopass' || !password) {
-                security = 'No password';
-                password = '';
+        }
+
+        function callModalPhone() {
+            if (currentPhone && currentPhone.number) {
+                window.location.href = `tel:${currentPhone.number}`;
             }
-            
-            return {
-                ssid: ssid || 'Unknown',
-                password: password,
-                security: security,
-                hidden: hidden,
-                raw: text
-            };
+        }
+
+        function copyModalPhone() {
+            if (currentPhone && currentPhone.number) {
+                copyText(currentPhone.number);
+                showToast('Phone number copied to clipboard');
+            }
+        }
+
+        function smsModalPhone() {
+            if (currentPhone && currentPhone.number) {
+                window.location.href = `sms:${currentPhone.number}`;
+            }
+        }
+
+        function sendModalSms() {
+            if (currentSms && currentSms.number) {
+                let smsUrl = `sms:${currentSms.number}`;
+                if (currentSms.message) {
+                    smsUrl += `?body=${encodeURIComponent(currentSms.message)}`;
+                }
+                window.location.href = smsUrl;
+            }
+        }
+
+        function copyModalSms() {
+            if (currentSms) {
+                let text = `To: ${currentSms.number}`;
+                if (currentSms.message) text += `\nMessage: ${currentSms.message}`;
+                copyText(text);
+                showToast('SMS details copied to clipboard');
+            }
+        }
+
+        function openModalGoogleMaps() {
+            if (currentLocation) {
+                window.open(`https://www.google.com/maps/search/?api=1&query=${currentLocation.lat},${currentLocation.lng}`, '_blank');
+            }
+        }
+
+        function openModalOpenStreetMap() {
+            if (currentLocation) {
+                window.open(`https://www.openstreetmap.org/?mlat=${currentLocation.lat}&mlon=${currentLocation.lng}&zoom=15`, '_blank');
+            }
+        }
+
+        function copyModalLocation() {
+            if (currentLocation) {
+                copyText(`${currentLocation.lat}, ${currentLocation.lng}`);
+                showToast('Coordinates copied to clipboard');
+            }
+        }
+
+        // Parser functions for different types
+        function parseEmail(text) {
+            if (text.startsWith('mailto:')) {
+                const parts = text.substring(7).split('?');
+                const to = parts[0];
+                let subject = '';
+                let body = '';
+                
+                if (parts[1]) {
+                    const params = parts[1].split('&');
+                    params.forEach(param => {
+                        const [key, value] = param.split('=');
+                        if (key === 'subject') subject = decodeURIComponent(value);
+                        if (key === 'body') body = decodeURIComponent(value);
+                    });
+                }
+                
+                return { to, subject, body };
+            }
+            return { to: text, subject: '', body: '' };
+        }
+
+        function parsePhone(text) {
+            const number = text.replace('tel:', '');
+            return { number };
+        }
+
+        function parseSms(text) {
+            if (text.startsWith('sms:')) {
+                const parts = text.substring(4).split('?');
+                const number = parts[0];
+                let message = '';
+                
+                if (parts[1]) {
+                    const params = parts[1].split('&');
+                    params.forEach(param => {
+                        const [key, value] = param.split('=');
+                        if (key === 'body') message = decodeURIComponent(value);
+                    });
+                }
+                
+                return { number, message };
+            }
+            return { number: text, message: '' };
+        }
+
+        function parseGeo(text) {
+            if (text.startsWith('geo:')) {
+                const coords = text.substring(4).split(',');
+                return { lat: coords[0], lng: coords[1] };
+            }
+            return { lat: '', lng: '' };
         }
 
         // ============ SCAN HISTORY ============
@@ -1215,18 +1740,6 @@
 
             localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
             updateStats();
-
-            // Only auto-open URLs in allowlist
-            if (text.startsWith('http')) {
-                const isAllowed = settings.allowlist.some(prefix => text.startsWith(prefix));
-                if (isAllowed) {
-                    window.open(text, '_blank');
-                    showToast('URL opened (allowlist)');
-                } else {
-                    // Show modal for non-allowlist URLs
-                    handleUrl(text);
-                }
-            }
         }
 
         function detectType(text) {
@@ -1267,6 +1780,88 @@
             showToast('Scan deleted', true);
         }
 
+        // ============ SWIPE TO DELETE ============
+        function setupSwipeToDelete() {
+            const cards = document.querySelectorAll('.card');
+            
+            cards.forEach(card => {
+                // Remove existing listeners
+                card.removeEventListener('touchstart', handleTouchStart);
+                card.removeEventListener('touchmove', handleTouchMove);
+                card.removeEventListener('touchend', handleTouchEnd);
+                
+                // Add new listeners
+                card.addEventListener('touchstart', handleTouchStart);
+                card.addEventListener('touchmove', handleTouchMove);
+                card.addEventListener('touchend', handleTouchEnd);
+            });
+        }
+
+        function handleTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+            currentSwipeCard = e.currentTarget;
+        }
+
+        function handleTouchMove(e) {
+            if (!currentSwipeCard) return;
+            
+            touchEndX = e.touches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            
+            // Only allow right swipe (positive diff)
+            if (diff > 0) {
+                e.preventDefault();
+                const swipeDistance = Math.min(diff, 100);
+                currentSwipeCard.style.transform = `translateX(${swipeDistance}px)`;
+                
+                // Show delete overlay when swiped enough
+                const deleteOverlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
+                if (deleteOverlay) {
+                    deleteOverlay.style.opacity = Math.min(swipeDistance / 100, 1);
+                }
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (!currentSwipeCard) return;
+            
+            const diff = touchStartX - touchEndX;
+            
+            if (diff > 50) {
+                // Swipe completed - show delete confirmation
+                currentSwipeCard.classList.add('swiped');
+                const deleteOverlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
+                if (deleteOverlay) {
+                    deleteOverlay.classList.add('show');
+                    
+                    // Add click listener to delete button
+                    const deleteBtn = deleteOverlay.querySelector('.delete-swipe-text');
+                    if (deleteBtn) {
+                        deleteBtn.onclick = function() {
+                            const id = parseInt(currentSwipeCard.dataset.id);
+                            if (id) {
+                                currentSwipeCard.classList.add('swipe-delete');
+                                setTimeout(() => deleteScan(id), 300);
+                            }
+                        };
+                    }
+                }
+            } else {
+                // Reset swipe
+                currentSwipeCard.style.transform = 'translateX(0)';
+                const deleteOverlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
+                if (deleteOverlay) {
+                    deleteOverlay.style.opacity = '0';
+                    deleteOverlay.classList.remove('show');
+                }
+            }
+            
+            // Reset touch variables
+            touchStartX = 0;
+            touchEndX = 0;
+            currentSwipeCard = null;
+        }
+
         function renderHistory(search = '') {
             const container = document.getElementById('historyList');
             let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
@@ -1289,10 +1884,13 @@
             }
 
             container.innerHTML = history.map(item => `
-                <div class="card">
-                    <button class="delete-btn" onclick="deleteScan(${item.id})" title="Delete">
-                        ✕
-                    </button>
+                <div class="card" data-id="${item.id}">
+                    <!-- Swipe to delete overlay -->
+                    <div class="delete-swipe-overlay">
+                        <div class="delete-swipe-text">
+                            🗑️ Delete
+                        </div>
+                    </div>
 
                     <div class="card-header">
                         <span class="badge badge-${item.type}">${item.type.toUpperCase()}</span>
@@ -1317,62 +1915,55 @@
                     </div>
                 </div>
             `).join('');
+
+            // Setup swipe to delete after rendering
+            setTimeout(setupSwipeToDelete, 100);
         }
 
         function getActionButtons(item) {
             const isAllowed = settings.allowlist.some(prefix => item.text.startsWith(prefix));
-            const scanResults = getVirusScanResults(item.text);
             
             switch(item.type) {
                 case 'url':
                     return `
-                        <button class="btn btn-small btn-open" onclick="openUrl('${escapeText(item.text)}')">
-                            🌐 ${isAllowed ? 'Open' : 'Review'}
+                        <button class="btn btn-small btn-open" onclick="showUrlModal('${escapeText(item.text)}')">
+                            🌐 Open
                         </button>
-                        ${scanResults ? `
-                            <button class="btn btn-small btn-safety" onclick="openVirusTotalPage('${escapeText(item.text)}')">
-                                🛡️ ${scanResults.malicious > 0 ? '⚠️ ' : '✓ '}VT
-                            </button>
-                        ` : `
-                            <button class="btn btn-small btn-safety" onclick="checkUrlSafety('${escapeText(item.text)}')">
-                                🛡️ Check
-                            </button>
-                        `}
+                        <button class="btn btn-small btn-share" onclick="shareScan('${escapeText(item.text)}')">
+                            📤 Share
+                        </button>
                     `;
                 case 'wifi':
                     return `
                         <button class="btn btn-small btn-copy" onclick="copyWifiPassword('${escapeText(item.text)}')">
                             📋 Password
                         </button>
-                        <button class="btn btn-small btn-wifi-share" onclick="showWifiShare('${escapeText(item.text)}')">
-                            📶 Share
+                        <button class="btn btn-small btn-wifi-share" onclick="showWifiModal('${escapeText(item.text)}')">
+                            📶 WiFi
                         </button>
                     `;
                 case 'email':
                     return `
-                        <button class="btn btn-small btn-email" onclick="sendEmail('${escapeText(item.text)}')">
-                            📧 Send
+                        <button class="btn btn-small btn-email" onclick="showEmailModal('${escapeText(item.text)}')">
+                            📧 Email
                         </button>
                     `;
                 case 'phone':
                     return `
-                        <button class="btn btn-small btn-phone" onclick="callPhone('${escapeText(item.text)}')">
+                        <button class="btn btn-small btn-phone" onclick="showPhoneModal('${escapeText(item.text)}')">
                             📞 Call
                         </button>
                     `;
                 case 'sms':
                     return `
-                        <button class="btn btn-small btn-sms" onclick="sendSMS('${escapeText(item.text)}')">
+                        <button class="btn btn-small btn-sms" onclick="showSmsModal('${escapeText(item.text)}')">
                             💬 SMS
                         </button>
                     `;
                 case 'geo':
                     return `
-                        <button class="btn btn-small btn-google-maps" onclick="openGoogleMaps('${escapeText(item.text)}')">
-                            🗺️ Google
-                        </button>
-                        <button class="btn btn-small btn-osm" onclick="openOpenStreetMap('${escapeText(item.text)}')">
-                            🗺️ OSM
+                        <button class="btn btn-small btn-google-maps" onclick="showLocationModal('${escapeText(item.text)}')">
+                            🗺️ Maps
                         </button>
                     `;
                 case 'vcard':
@@ -1380,14 +1971,14 @@
                         <button class="btn btn-small btn-copy" onclick="copyVCard('${escapeText(item.text)}')">
                             👤 Copy
                         </button>
-                        <button class="btn btn-small btn-share" onclick="shareContact('${escapeText(item.text)}')">
-                            📤 Share
+                        <button class="btn btn-small btn-share" onclick="showContactModal('${escapeText(item.text)}')">
+                            👤 Contact
                         </button>
                     `;
                 default:
                     return `
-                        <button class="btn btn-small btn-share" onclick="shareScan('${escapeText(item.text)}')">
-                            📤 Share
+                        <button class="btn btn-small btn-share" onclick="showTextModal('${escapeText(item.text)}')">
+                            📝 View
                         </button>
                     `;
             }
@@ -1397,25 +1988,6 @@
             switch(type) {
                 case 'url':
                     const isAllowed = settings.allowlist.some(prefix => text.startsWith(prefix));
-                    // Get scan results if available
-                    const scanResults = getVirusScanResults(text);
-                    
-                    let scanDisplay = '';
-                    if (scanResults) {
-                        const statusClass = scanResults.malicious > 0 ? 'dangerous' : 
-                                           scanResults.suspicious > 0 ? 'suspicious' : 'safe';
-                        const statusIcon = scanResults.malicious > 0 ? '🔴' : 
-                                          scanResults.suspicious > 0 ? '🟡' : '🟢';
-                        
-                        scanDisplay = `
-                            <div style="margin-top:10px; padding:8px; background:#222; border-radius:6px;">
-                                <div style="font-size:12px; display:flex; align-items:center; gap:5px; color:${scanResults.malicious > 0 ? '#dc3545' : scanResults.suspicious > 0 ? '#ffc107' : '#28a745'}">
-                                    ${statusIcon} VirusTotal: ${scanResults.malicious > 0 ? scanResults.malicious + ' malicious' : scanResults.suspicious > 0 ? scanResults.suspicious + ' suspicious' : 'Clean'}
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
                     return `
                         <div>
                             <code style="word-break:break-all; background:#000; padding:8px; border-radius:6px; display:block; margin-bottom:8px;">
@@ -1424,7 +1996,6 @@
                             <div style="font-size:12px; color:${isAllowed ? '#28a745' : '#ffc107'}">
                                 ${isAllowed ? '✓ In allowlist' : '⚠ Not in allowlist'}
                             </div>
-                            ${scanDisplay}
                         </div>
                     `;
                 case 'wifi':
@@ -1450,11 +2021,8 @@
                             Latitude: ${coords[0]}<br>
                             Longitude: ${coords[1]}
                             <div class="location-actions">
-                                <button class="btn btn-small btn-google-maps" onclick="openGoogleMaps('${escapeText(text)}')" style="padding:8px; font-size:12px;">
-                                    🗺️ Google Maps
-                                </button>
-                                <button class="btn btn-small btn-osm" onclick="openOpenStreetMap('${escapeText(text)}')" style="padding:8px; font-size:12px;">
-                                    🗺️ OpenStreetMap
+                                <button class="btn btn-small btn-google-maps" onclick="showLocationModal('${escapeText(text)}')" style="padding:8px; font-size:12px;">
+                                    🗺️ Maps
                                 </button>
                             </div>
                         </div>
@@ -1464,7 +2032,6 @@
             }
         }
 
-        // ============ ENHANCED vCARD FUNCTIONALITY ============
         function formatVCardContact(contact) {
             let html = '<div class="vcard-contact">';
             
@@ -1497,7 +2064,6 @@
                 `;
             }
             
-            // Enhanced phone numbers with clickable links
             if (contact.phones && contact.phones.length > 0) {
                 html += `<div class="vcard-field"><div class="vcard-field-label">Phone Numbers</div>`;
                 contact.phones.forEach(phone => {
@@ -1522,7 +2088,6 @@
                 html += `</div>`;
             }
             
-            // Enhanced emails with clickable links
             if (contact.emails && contact.emails.length > 0) {
                 html += `<div class="vcard-field"><div class="vcard-field-label">Email Addresses</div>`;
                 contact.emails.forEach(email => {
@@ -1531,7 +2096,7 @@
                             <span>${email.type}:</span>
                             <div>
                                 <a href="mailto:${email.address}" class="vcard-link" style="margin-right:8px;">
-                                    ✉️ ${email.address}
+                                    ✉ ${email.address}
                                 </a>
                                 <button class="contact-action-btn" onclick="sendEmailTo('${escapeText(email.address)}')" title="Send Email">
                                     Send
@@ -1543,7 +2108,6 @@
                 html += `</div>`;
             }
             
-            // Enhanced addresses with map lookups
             if (contact.addresses && contact.addresses.length > 0) {
                 html += `<div class="vcard-field"><div class="vcard-field-label">Addresses</div>`;
                 contact.addresses.forEach(addr => {
@@ -1554,10 +2118,10 @@
                             <div style="margin:5px 0; padding:5px; background:#2a2a2a; border-radius:4px;">${addr.address.replace(/\n/g, '<br>')}</div>
                             <div class="vcard-action-buttons">
                                 <button class="vcard-action-btn address" onclick="openAddressInGoogleMaps('${encodedAddress}')">
-                                    🗺️ Google Maps
+                                    🗺 Google Maps
                                 </button>
                                 <button class="vcard-action-btn address" onclick="openAddressInOSM('${encodedAddress}')">
-                                    🗺️ OpenStreetMap
+                                    🗺 OpenStreetMap
                                 </button>
                             </div>
                         </div>
@@ -1566,23 +2130,10 @@
                 html += `</div>`;
             }
             
-            // Enhanced URLs with clickable links and safety check
             if (contact.urls && contact.urls.length > 0) {
                 html += `<div class="vcard-field"><div class="vcard-field-label">Websites</div>`;
                 contact.urls.forEach(url => {
                     const isAllowed = settings.allowlist.some(prefix => url.startsWith(prefix));
-                    const scanResults = getVirusScanResults(url);
-                    let safetyBadge = '';
-                    
-                    if (scanResults) {
-                        if (scanResults.malicious > 0) {
-                            safetyBadge = '<span style="color:#dc3545; margin-left:5px;">⚠️</span>';
-                        } else if (scanResults.suspicious > 0) {
-                            safetyBadge = '<span style="color:#ffc107; margin-left:5px;">⚠️</span>';
-                        } else {
-                            safetyBadge = '<span style="color:#28a745; margin-left:5px;">✓</span>';
-                        }
-                    }
                     
                     html += `
                         <div class="vcard-field-value" style="margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
@@ -1590,17 +2141,11 @@
                                 <a href="${url}" target="_blank" class="vcard-link" style="${isAllowed ? 'border-color:#28a745;' : 'border-color:#ffc107;'}">
                                     🔗 ${url.length > 40 ? url.substring(0, 40) + '...' : url}
                                 </a>
-                                ${safetyBadge}
                             </div>
                             <div>
-                                <button class="contact-action-btn url" onclick="openUrl('${escapeText(url)}')" title="Open">
+                                <button class="contact-action-btn url" onclick="showUrlModal('${escapeText(url)}')" title="Open">
                                     Open
                                 </button>
-                                ${!scanResults ? `
-                                    <button class="contact-action-btn" onclick="checkUrlSafety('${escapeText(url)}')" title="Check Safety">
-                                        🛡️
-                                    </button>
-                                ` : ''}
                             </div>
                         </div>
                     `;
@@ -1627,7 +2172,7 @@
                     ` : ''}
                     ${contact.emails && contact.emails.length > 0 ? `
                         <button class="vcard-action-btn email" onclick="emailFirstContact()" title="Email First Address">
-                            ✉️ Email
+                            ✉ Email
                         </button>
                     ` : ''}
                     ${contact.urls && contact.urls.length > 0 ? `
@@ -1642,42 +2187,17 @@
             return html;
         }
 
-        // vCard helper functions
-        function callPhoneNumber(number) {
-            window.location.href = 'tel:' + number;
+        function parseWifi(text) {
+            const result = { ssid: '', password: '', security: 'Unknown' };
+            const parts = text.replace('WIFI:', '').split(';');
+            parts.forEach(part => {
+                if (part.startsWith('S:')) result.ssid = part.substring(2);
+                if (part.startsWith('P:')) result.password = part.substring(2);
+                if (part.startsWith('T:')) result.security = part.substring(2);
+            });
+            return result;
         }
 
-        function sendSMSToNumber(number) {
-            window.location.href = 'sms:' + number;
-        }
-
-        function sendEmailTo(email) {
-            window.location.href = 'mailto:' + email;
-        }
-
-        function openAddressInGoogleMaps(address) {
-            window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank');
-        }
-
-        function openAddressInOSM(address) {
-            window.open(`https://www.openstreetmap.org/search?query=${address}`, '_blank');
-        }
-
-        // These functions would need the contact context - for simplicity, they use the first available
-        function callFirstPhoneNumber() {
-            // This would need to be implemented with actual contact data context
-            showToast('Use the specific phone buttons for each number', false, 'warning');
-        }
-
-        function emailFirstContact() {
-            showToast('Use the specific email buttons for each address', false, 'warning');
-        }
-
-        function openFirstUrl() {
-            showToast('Use the specific URL buttons for each website', false, 'warning');
-        }
-
-        // ============ ENHANCED vCARD PARSING ============
         function parseVCard(text) {
             const lines = text.split('\n');
             const contact = {
@@ -1850,27 +2370,45 @@
             }
         }
 
-        // ============ ENHANCED GEO LOCATION FUNCTIONS ============
-        function openGoogleMaps(text) {
-            if (text.startsWith('geo:')) {
-                const coords = text.replace('geo:', '');
-                window.open(`https://www.google.com/maps/search/?api=1&query=${coords}`, '_blank');
+        // vCard helper functions
+        function callPhoneNumber(number) {
+            window.location.href = 'tel:' + number;
+        }
+
+        function sendSMSToNumber(number) {
+            window.location.href = 'sms:' + number;
+        }
+
+        function sendEmailTo(email) {
+            window.location.href = 'mailto:' + email;
+        }
+
+        function openAddressInGoogleMaps(address) {
+            window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank');
+        }
+
+        function openAddressInOSM(address) {
+            window.open(`https://www.openstreetmap.org/search?query=${address}`, '_blank');
+        }
+
+        // These functions would need the contact context - for simplicity, they use the first available
+        function callFirstPhoneNumber() {
+            if (currentContact && currentContact.phones && currentContact.phones.length > 0) {
+                const phoneNumber = currentContact.phones[0].number.replace(/[^\d+]/g, '');
+                window.location.href = 'tel:' + phoneNumber;
             }
         }
 
-        function openOpenStreetMap(text) {
-            if (text.startsWith('geo:')) {
-                const coords = text.replace('geo:', '').split(',');
-                const lat = coords[0];
-                const lon = coords[1];
-                window.open(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}&zoom=15`, '_blank');
+        function emailFirstContact() {
+            if (currentContact && currentContact.emails && currentContact.emails.length > 0) {
+                window.location.href = 'mailto:' + currentContact.emails[0].address;
             }
         }
 
-        // Enhanced geo location with address parsing
-        function openAddressInMaps(address) {
-            // For addresses from vCards
-            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, '_blank');
+        function openFirstUrl() {
+            if (currentContact && currentContact.urls && currentContact.urls.length > 0) {
+                showUrlModal(currentContact.urls[0]);
+            }
         }
 
         function copyWifiPassword(text) {
@@ -1928,6 +2466,28 @@
             }
         }
 
+        function openGoogleMaps(text) {
+            if (text.startsWith('geo:')) {
+                const coords = text.replace('geo:', '');
+                window.open(`https://www.google.com/maps/search/?api=1&query=${coords}`, '_blank');
+            }
+        }
+
+        function openOpenStreetMap(text) {
+            if (text.startsWith('geo:')) {
+                const coords = text.replace('geo:', '').split(',');
+                const lat = coords[0];
+                const lon = coords[1];
+                window.open(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}&zoom=15`, '_blank');
+            }
+        }
+
+        // Enhanced geo location with address parsing
+        function openAddressInMaps(address) {
+            // For addresses from vCards
+            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, '_blank');
+        }
+
         function searchHistory(query) {
             renderHistory(query);
         }
@@ -1948,7 +2508,14 @@
             }
 
             container.innerHTML = favorites.map(item => `
-                <div class="card" style="border-color:#ffc107;">
+                <div class="card" data-id="${item.id}" style="border-color:#ffc107;">
+                    <!-- Swipe to delete overlay -->
+                    <div class="delete-swipe-overlay">
+                        <div class="delete-swipe-text">
+                            🗑️ Delete
+                        </div>
+                    </div>
+
                     <div class="card-header">
                         <span class="badge badge-${item.type}">${item.type.toUpperCase()}</span>
                         <button class="favorite-btn active" onclick="toggleFavorite(${item.id})">
@@ -1968,271 +2535,9 @@
                     </div>
                 </div>
             `).join('');
-        }
 
-        // ============ URL HANDLING ============
-        function openUrl(url) {
-            const isAllowed = settings.allowlist.some(prefix => url.startsWith(prefix));
-            if (isAllowed) {
-                window.open(url, '_blank');
-            } else {
-                // Show modal for non-allowlist URLs
-                handleUrl(url);
-            }
-        }
-
-        function openVirusTotalPage(url) {
-            // Correct VirusTotal URL encoding
-            const encodedUrl = btoa(url).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-            window.open(`https://www.virustotal.com/gui/url/${encodedUrl}`, '_blank');
-        }
-
-        async function checkUrlSafety(url) {
-            showToast('Checking URL safety...');
-            
-            // For demo, simulate VirusTotal check
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Mock response
-            const mockResults = {
-                total: 85,
-                malicious: Math.random() > 0.8 ? Math.floor(Math.random() * 5) + 1 : 0,
-                suspicious: Math.random() > 0.5 ? Math.floor(Math.random() * 3) : 0,
-                harmless: 80
-            };
-            
-            saveVirusScanResults(url, mockResults);
-            renderHistory(); // Refresh to show results
-            
-            if (mockResults.malicious > 0) {
-                showToast('⚠️ Dangerous URL detected!', true);
-            } else if (mockResults.suspicious > 0) {
-                showToast('⚠️ Suspicious URL detected', false, 'warning');
-            } else {
-                showToast('✓ URL appears safe');
-            }
-        }
-
-        function handleUrl(url) {
-            currentUrl = url;
-            document.getElementById('modalUrl').textContent = url;
-
-            // Check if in allowlist
-            const isAllowed = settings.allowlist.some(prefix => url.startsWith(prefix));
-            
-            // Show warning if not in allowlist
-            document.getElementById('urlWarning').style.display = isAllowed ? 'none' : 'block';
-            
-            // Check for existing virus scan results
-            const scanResults = getVirusScanResults(url);
-            if (scanResults) {
-                displayVirusScanResults(scanResults);
-            } else {
-                document.getElementById('virusScanResults').style.display = 'none';
-            }
-
-            document.getElementById('urlModal').style.display = 'flex';
-        }
-
-        function displayVirusScanResults(results) {
-            const container = document.getElementById('virusScanResults');
-            const statusElement = document.getElementById('scanStatus');
-            const statsElement = document.getElementById('scanStats');
-            
-            let statusClass = 'safe';
-            let statusIcon = '🟢';
-            let statusText = 'Clean';
-            
-            if (results.malicious > 0) {
-                statusClass = 'dangerous';
-                statusIcon = '🔴';
-                statusText = `${results.malicious} malicious engines detected`;
-            } else if (results.suspicious > 0) {
-                statusClass = 'suspicious';
-                statusIcon = '🟡';
-                statusText = `${results.suspicious} suspicious engines detected`;
-            } else {
-                statusText = 'No threats detected';
-            }
-            
-            statusElement.className = `scan-status ${statusClass}`;
-            statusElement.innerHTML = `${statusIcon} ${statusText}`;
-            
-            statsElement.innerHTML = `
-                <div class="stat-item">
-                    <span>Scanned:</span>
-                    <span>${new Date(results.scanDate).toLocaleDateString()}</span>
-                </div>
-                <div class="stat-item">
-                    <span>Total Engines:</span>
-                    <span>${results.total}</span>
-                </div>
-                <div class="stat-item">
-                    <span>Malicious:</span>
-                    <span style="color:#dc3545">${results.malicious}</span>
-                </div>
-                <div class="stat-item">
-                    <span>Suspicious:</span>
-                    <span style="color:#ffc107">${results.suspicious}</span>
-                </div>
-            `;
-            
-            container.style.display = 'block';
-        }
-
-        function getVirusScanResults(url) {
-            try {
-                const scans = JSON.parse(localStorage.getItem(CONFIG.VIRUS_SCAN_KEY) || '{}');
-                return scans[url];
-            } catch (e) {
-                return null;
-            }
-        }
-
-        function saveVirusScanResults(url, results) {
-            try {
-                const scans = JSON.parse(localStorage.getItem(CONFIG.VIRUS_SCAN_KEY) || '{}');
-                scans[url] = {
-                    ...results,
-                    scanDate: Date.now()
-                };
-                localStorage.setItem(CONFIG.VIRUS_SCAN_KEY, JSON.stringify(scans));
-            } catch (e) {
-                console.error('Error saving virus scan results:', e);
-            }
-        }
-
-        async function checkSafety() {
-            if (!currentUrl) return;
-            
-            const safetyBtn = document.getElementById('safetyCheckBtn');
-            const originalText = safetyBtn.innerHTML;
-            safetyBtn.innerHTML = '⏳ Checking...';
-            safetyBtn.disabled = true;
-            
-            try {
-                showToast('Checking URL safety...', false, '', 2000);
-                
-                // Simulate API delay
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                // Mock response for demo
-                const mockResults = {
-                    total: 85,
-                    malicious: Math.random() > 0.8 ? Math.floor(Math.random() * 5) + 1 : 0,
-                    suspicious: Math.random() > 0.5 ? Math.floor(Math.random() * 3) : 0,
-                    harmless: 80
-                };
-                
-                saveVirusScanResults(currentUrl, mockResults);
-                displayVirusScanResults(mockResults);
-                
-                showToast('Safety check completed');
-                
-            } catch (error) {
-                showToast('Could not check URL safety', true);
-                console.error('VirusTotal check error:', error);
-            } finally {
-                safetyBtn.innerHTML = originalText;
-                safetyBtn.disabled = false;
-            }
-        }
-
-        function refreshVirusScan() {
-            if (currentUrl) {
-                // Clear old results and check again
-                const scans = JSON.parse(localStorage.getItem(CONFIG.VIRUS_SCAN_KEY) || '{}');
-                delete scans[currentUrl];
-                localStorage.setItem(CONFIG.VIRUS_SCAN_KEY, JSON.stringify(scans));
-                
-                document.getElementById('virusScanResults').style.display = 'none';
-                checkSafety();
-            }
-        }
-
-        function openModalUrl() {
-            if (currentUrl) {
-                if (document.getElementById('addToAllowlist').checked) {
-                    addToAllowlist(currentUrl);
-                }
-                window.open(currentUrl, '_blank');
-                closeUrlModal();
-            }
-        }
-
-        function copyModalUrl() {
-            if (currentUrl) {
-                copyText(currentUrl);
-                closeUrlModal();
-            }
-        }
-
-        function closeUrlModal() {
-            document.getElementById('urlModal').style.display = 'none';
-            currentUrl = null;
-            document.getElementById('addToAllowlist').checked = false;
-            document.getElementById('virusScanResults').style.display = 'none';
-        }
-
-        // ============ WiFi SHARING ============
-        function showWifiShare(wifiText) {
-            currentWifiData = parseWifi(wifiText);
-            
-            document.getElementById('shareSsid').textContent = currentWifiData.ssid || 'Unknown';
-            document.getElementById('shareSecurity').textContent = currentWifiData.security || 'Unknown';
-            
-            // Reset password display
-            const passwordElement = document.getElementById('sharePassword');
-            passwordElement.textContent = 'Click to reveal';
-            passwordElement.classList.remove('revealed');
-            
-            document.getElementById('wifiShareModal').style.display = 'flex';
-        }
-
-        function togglePasswordReveal() {
-            const element = document.getElementById('sharePassword');
-            if (element.classList.contains('revealed')) {
-                element.textContent = 'Click to reveal';
-                element.classList.remove('revealed');
-            } else {
-                element.textContent = currentWifiData.password || 'No password';
-                element.classList.add('revealed');
-            }
-        }
-
-        function shareWiFi() {
-            if (!currentWifiData) return;
-
-            const pin = document.getElementById('sharePin').value;
-            let shareText = `WiFi Network: ${currentWifiData.ssid}\n`;
-            shareText += `Security: ${currentWifiData.security}\n`;
-            
-            if (pin) {
-                shareText += `PIN: ${pin}\n`;
-                shareText += `Password: ${currentWifiData.password || 'No password'}`;
-            } else {
-                shareText += `Password: ${currentWifiData.password || 'No password'}`;
-            }
-
-            if (navigator.share) {
-                navigator.share({
-                    title: 'WiFi Network Details',
-                    text: shareText
-                }).then(() => {
-                    showToast('WiFi details shared');
-                    closeWifiShareModal();
-                });
-            } else {
-                copyText(shareText);
-                showToast('WiFi details copied to clipboard');
-                closeWifiShareModal();
-            }
-        }
-
-        function closeWifiShareModal() {
-            document.getElementById('wifiShareModal').style.display = 'none';
-            currentWifiData = null;
-            document.getElementById('sharePin').value = '';
+            // Setup swipe to delete after rendering
+            setTimeout(setupSwipeToDelete, 100);
         }
 
         // ============ ALLOWLIST MANAGEMENT ============
@@ -2291,6 +2596,67 @@
             settings.allowlist.splice(index, 1);
             renderAllowlist();
             showToast('Removed from allowlist', true);
+        }
+
+        // ============ WiFi SHARING ============
+        function showWifiShare(wifiData) {
+            currentWifiData = wifiData;
+            
+            document.getElementById('shareSsid').textContent = currentWifiData.ssid || 'Unknown';
+            document.getElementById('shareSecurity').textContent = currentWifiData.security || 'Unknown';
+            
+            // Reset password display
+            const passwordElement = document.getElementById('sharePassword');
+            passwordElement.textContent = 'Click to reveal';
+            passwordElement.classList.remove('revealed');
+            
+            document.getElementById('wifiShareModal').style.display = 'flex';
+        }
+
+        function togglePasswordReveal() {
+            const element = document.getElementById('sharePassword');
+            if (element.classList.contains('revealed')) {
+                element.textContent = 'Click to reveal';
+                element.classList.remove('revealed');
+            } else {
+                element.textContent = currentWifiData.password || 'No password';
+                element.classList.add('revealed');
+            }
+        }
+
+        function shareWiFi() {
+            if (!currentWifiData) return;
+
+            const pin = document.getElementById('sharePin').value;
+            let shareText = `WiFi Network: ${currentWifiData.ssid}\n`;
+            shareText += `Security: ${currentWifiData.security}\n`;
+            
+            if (pin) {
+                shareText += `PIN: ${pin}\n`;
+                shareText += `Password: ${currentWifiData.password || 'No password'}`;
+            } else {
+                shareText += `Password: ${currentWifiData.password || 'No password'}`;
+            }
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'WiFi Network Details',
+                    text: shareText
+                }).then(() => {
+                    showToast('WiFi details shared');
+                    closeWifiShareModal();
+                });
+            } else {
+                copyText(shareText);
+                showToast('WiFi details copied to clipboard');
+                closeWifiShareModal();
+            }
+        }
+
+        function closeWifiShareModal() {
+            document.getElementById('wifiShareModal').style.display = 'none';
+            currentWifiData = null;
+            document.getElementById('sharePin').value = '';
         }
 
         // ============ QR GENERATION ============
@@ -2377,7 +2743,6 @@
                         showToast('Please enter WiFi name', true);
                         return;
                     }
-                    // Proper WiFi QR code format
                     content = `WIFI:S:${escapeWifiField(ssid)};T:${security};P:${escapeWifiField(password)};;`;
                     break;
                 case 'contact':
@@ -2482,14 +2847,6 @@
             showToast('QR code generated!');
         }
 
-        function escapeWifiField(field) {
-            // Escape special characters in WiFi fields
-            return field.replace(/\\/g, '\\\\')
-                       .replace(/;/g, '\\;')
-                       .replace(/:/g, '\\:')
-                       .replace(/,/g, '\\,');
-        }
-
         function downloadQR() {
             const canvas = document.getElementById('qrCodeCanvas');
             const link = document.createElement('a');
@@ -2509,6 +2866,14 @@
                     document.head.appendChild(script);
                 });
             }
+        }
+
+        function escapeWifiField(field) {
+            // Escape special characters in WiFi fields
+            return field.replace(/\\/g, '\\\\')
+                       .replace(/;/g, '\\;')
+                       .replace(/:/g, '\\:')
+                       .replace(/,/g, '\\,');
         }
 
         // ============ SETTINGS ============
@@ -2732,29 +3097,26 @@
         }
 
         function showHelp() {
-            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n3. Enable "Continuous Scan" in Settings for batch scanning\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙️ SETTINGS:\n• Set URL allowlist for safe opening\n• Configure history limits\n• Install as PWA from Settings\n\n🔄 GENERATE:\nCreate QR codes for WiFi, contacts, URLs, and more\n\n🌐 URL SAFETY:\n• URLs in allowlist open directly\n• Other URLs show confirmation\n• VirusTotal safety check available\n• Scan results displayed in history\n\n📶 WiFi SHARING:\n• Share WiFi details with optional PIN protection\n• Passwords are hidden by default\n\n👤 vCARDS (ENHANCED):\n• Full contact details display\n• Clickable phone numbers (call/SMS)\n• Clickable email addresses\n• Clickable website URLs with safety indicators\n• Addresses with Google Maps & OpenStreetMap buttons\n• Photo support\n• Quick action buttons for each contact\n\n📍 LOCATIONS:\n• Open in Google Maps\n• Open in OpenStreetMap\n• Address lookups from vCards\n\nAll data stays on your device!');
+            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n3. Enable "Continuous Scan" in Settings for batch scanning\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙ SETTINGS:\n• Set URL allowlist for safe opening\n• Configure history limits\n• Install as PWA from Settings\n\n🔄 GENERATE:\nCreate QR codes for WiFi, contacts, URLs, and more\n\n🌐 URL SAFETY:\n• URLs in allowlist open directly\n• Other URLs show confirmation\n• VirusTotal safety check available\n• Scan results displayed in history\n\n📶 WiFi SHARING:\n• Share WiFi details with optional PIN protection\n• Passwords are hidden by default\n\n👤 vCARDS (ENHANCED):\n• Full contact details display\n• Clickable phone numbers (call/SMS)\n• Clickable email addresses\n• Clickable website URLs\n• Addresses with Google Maps & OpenStreetMap buttons\n• Photo support\n• Quick action buttons for each contact\n\n📍 LOCATIONS:\n• Open in Google Maps\n• Open in OpenStreetMap\n• Address lookups from vCards\n\nAll data stays on your device!');
         }
 
         function showPrivacy() {
-            alert('🔒 Privacy Policy\n\nQR Actions:\n• Stores ALL data locally on your device\n• No internet connection required\n• No data sent to any servers\n• No tracking or analytics\n• No ads\n• VirusTotal checks use anonymous API calls\n\nYour QR code data never leaves your device!\n\nFor backup/transfer, use the Export feature.');
+            alert('🔒 Privacy Policy\n\nQR Actions:\n• Stores ALL data locally on your device\n• No internet connection required\n• No data sent to any servers\n• No tracking or analytics\n• No ads\n\nYour QR code data never leaves your device!\n\nFor backup/transfer, use the Export feature.');
         }
 
         function showAppInfo() {
             const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
-            const virusScans = JSON.parse(localStorage.getItem(CONFIG.VIRUS_SCAN_KEY) || '{}');
             const storage = (JSON.stringify(localStorage).length / 1024).toFixed(2);
-            alert(`App Information:\n\nVersion: 2.0\nType: Progressive Web App (PWA)\nScans: ${history.length}\nFavorites: ${history.filter(item => item.favorite).length}\nVirus Scans: ${Object.keys(virusScans).length}\nAllowlist: ${settings.allowlist.length} URLs\nStorage: ${storage} KB\n\nInstallation:\n• Android: Tap ⋮ menu → "Install app"\n• iOS: Tap Share → "Add to Home Screen"\n• Desktop: Click install button\n\nClear app data from Settings if needed.`);
+            alert(`App Information:\n\nVersion: 2.0\nType: Progressive Web App (PWA)\nScans: ${history.length}\nFavorites: ${history.filter(item => item.favorite).length}\nAllowlist: ${settings.allowlist.length} URLs\nStorage: ${storage} KB\n\nInstallation:\n• Android: Tap ⋮ menu → "Install app"\n• iOS: Tap Share → "Add to Home Screen"\n• Desktop: Click install button\n\nClear app data from Settings if needed.`);
         }
 
         function exportData() {
             const history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
-            const virusScans = JSON.parse(localStorage.getItem(CONFIG.VIRUS_SCAN_KEY) || '{}');
             const data = JSON.stringify({
                 version: '2.0',
                 exportDate: new Date().toISOString(),
                 history: history,
                 settings: settings,
-                virusScans: virusScans,
                 allowlist: settings.allowlist
             }, null, 2);
 
