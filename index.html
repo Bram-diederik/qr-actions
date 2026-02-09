@@ -722,7 +722,7 @@ function toggleFavorite(id) {
             if (settings.historyLimit > 0) history = history.slice(0, settings.historyLimit);
             localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
             updateStats();
-            showTypeModal(scanData);
+            showTypeModal(scanData); // FIXED: Always show modal for all QR types
             showToast('QR code scanned!');
         }
 
@@ -804,16 +804,18 @@ function renderHistory(search = '') {
         return;
     }
     
-    // FIX: Use double quotes for onclick and escape single quotes properly
+    // FIX 1: Fixed favorite button position - moved to separate flex container
     container.innerHTML = history.map(item => `
         <div class="card">
             <button class="delete-btn" onclick="deleteScan(${item.id})" title="Delete">✕</button>
             <div class="card-header">
-                <span class="badge badge-${item.type}">${item.type.toUpperCase()}</span>
-                <button class="favorite-btn ${item.favorite ? 'active' : ''}" 
-                        onclick="toggleFavorite(${item.id})">
-                    ${item.favorite ? '⭐' : '☆'}
-                </button>
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <span class="badge badge-${item.type}">${item.type.toUpperCase()}</span>
+                    <button class="favorite-btn ${item.favorite ? 'active' : ''}" 
+                            onclick="toggleFavorite(${item.id})">
+                        ${item.favorite ? '⭐' : '☆'}
+                    </button>
+                </div>
             </div>
             <div class="card-content">${formatContent(item.text, item.type)}</div>
             <div class="card-actions">
@@ -872,7 +874,7 @@ function renderHistory(search = '') {
             }
             container.innerHTML = favorites.map(item => `
                 <div class="card" style="border-color:#ffc107;">
-                    <div class="card-header"><span class="badge badge-${item.type}">${item.type.toUpperCase()}</span><button class="favorite-btn active" onclick="toggleFavorite(${item.id})">⭐</button></div>
+                    <div class="card-header"><div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><span class="badge badge-${item.type}">${item.type.toUpperCase()}</span><button class="favorite-btn active" onclick="toggleFavorite(${item.id})">⭐</button></div></div>
                     <div class="card-content">${formatContent(item.text, item.type)}</div>
                     <div class="card-actions">
                         <button class="btn btn-small btn-copy" onclick="copyText('${escapeText(item.text)}')">📋 Copy</button>
