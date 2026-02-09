@@ -546,19 +546,24 @@
         }
 
         // ============ FAVORITES FIX ============
-        function toggleFavorite(id) {
-            let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
-            const index = history.findIndex(item => item.id === id);
-            if (index !== -1) {
-                history[index].favorite = !history[index].favorite;
-                localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
-                if (currentScanResult && currentScanResult.id === id) currentScanResult.favorite = history[index].favorite;
-                renderHistory();
-                renderFavorites();
-                updateStats();
-                showToast(history[index].favorite ? 'Added to favorites' : 'Removed from favorites');
-            }
+function toggleFavorite(id) {
+    console.log('toggleFavorite called with id:', id); // Debug log
+    let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
+    const index = history.findIndex(item => item.id === id);
+    if (index !== -1) {
+        history[index].favorite = !history[index].favorite;
+        localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(history));
+        if (currentScanResult && currentScanResult.id === id) {
+            currentScanResult.favorite = history[index].favorite;
         }
+        renderHistory();
+        renderFavorites();
+        updateStats();
+        showToast(history[index].favorite ? 'Added to favorites' : 'Removed from favorites');
+    } else {
+        console.log('Item not found with id:', id); // Debug log
+    }
+}
 
         // ============ UPDATE DETECTION ============
         function checkForUpdates() {
@@ -784,32 +789,43 @@
             showToast('Scan deleted', true);
         }
 
-        function renderHistory(search = '') {
-            const container = document.getElementById('historyList');
-            let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
-            if (search) {
-                history = history.filter(item => item.text.toLowerCase().includes(search.toLowerCase()) || item.date.toLowerCase().includes(search.toLowerCase()));
-            }
-            if (history.length === 0) {
-                container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><p>${search ? 'No matching scans' : 'No scans yet'}</p></div>`;
-                return;
-            }
-            container.innerHTML = history.map(item => `
-                <div class="card">
-                    <button class="delete-btn" onclick="deleteScan(${item.id})" title="Delete">✕</button>
-                    <div class="card-header">
-                        <span class="badge badge-${item.type}">${item.type.toUpperCase()}</span>
-                        <button class="favorite-btn ${item.favorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})">${item.favorite ? '⭐' : '☆'}</button>
-                    </div>
-                    <div class="card-content">${formatContent(item.text, item.type)}</div>
-                    <div class="card-actions">
-                        <button class="btn btn-small btn-copy" onclick="copyText('${escapeText(item.text)}')">📋 Copy</button>
-                        ${getActionButtons(item)}
-                    </div>
-                    <div style="font-size:12px; color:#666; margin-top:10px;">📅 ${item.date}</div>
-                </div>
-            `).join('');
-        }
+function renderHistory(search = '') {
+    const container = document.getElementById('historyList');
+    let history = JSON.parse(localStorage.getItem(CONFIG.HISTORY_KEY) || '[]');
+    if (search) {
+        history = history.filter(item => 
+            item.text.toLowerCase().includes(search.toLowerCase()) || 
+            item.date.toLowerCase().includes(search.toLowerCase())
+        );
+    }
+    
+    if (history.length === 0) {
+        container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><p>${search ? 'No matching scans' : 'No scans yet'}</p></div>`;
+        return;
+    }
+    
+    // FIX: Use double quotes for onclick and escape single quotes properly
+    container.innerHTML = history.map(item => `
+        <div class="card">
+            <button class="delete-btn" onclick="deleteScan(${item.id})" title="Delete">✕</button>
+            <div class="card-header">
+                <span class="badge badge-${item.type}">${item.type.toUpperCase()}</span>
+                <button class="favorite-btn ${item.favorite ? 'active' : ''}" 
+                        onclick="toggleFavorite(${item.id})">
+                    ${item.favorite ? '⭐' : '☆'}
+                </button>
+            </div>
+            <div class="card-content">${formatContent(item.text, item.type)}</div>
+            <div class="card-actions">
+                <button class="btn btn-small btn-copy" 
+                        onclick="copyText('${escapeText(item.text)}')">📋 Copy</button>
+                ${getActionButtons(item)}
+            </div>
+            <div style="font-size:12px; color:#666; margin-top:10px;">📅 ${item.date}</div>
+        </div>
+    `).join('');
+}
+
 
         function getActionButtons(item) {
             const isAllowed = settings.allowlist.some(prefix => item.text.startsWith(prefix));
@@ -1226,9 +1242,14 @@
             }, duration);
         }
 
-        function escapeText(text) {
-            return text.replace(/'/g, "\\'").replace(/"/g, '\\"');
-        }
+function escapeText(text) {
+    return text
+        .replace(/\\/g, '\\\\')  // Escape backslashes first
+        .replace(/'/g, "\\'")    // Escape single quotes
+        .replace(/"/g, '\\"')    // Escape double quotes
+        .replace(/\n/g, '\\n')   // Escape newlines
+        .replace(/\r/g, '\\r');  // Escape carriage returns
+}
 
         function showAbout() {
             alert('QR Actions v2.1\n\nA professional QR code scanner and generator that works offline.\n\nFeatures:\n• Scan QR codes with camera\n• Upload images to scan\n• Generate QR codes\n• History and favorites\n• URL allowlist for safe opening\n• WiFi sharing with PIN protection\n• Type-specific popups for all QR types\n• Auto-update detection\n• PWA - Install on home screen\n\n100% offline - no data collection!\n\nBy Bram Diederik');
