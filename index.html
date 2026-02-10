@@ -922,16 +922,6 @@
                 <code id="modalUrl"></code>
             </div>
 
-            <!-- VirusTotal Link -->
-            <div class="virus-scan-results">
-                <h4 style="margin-bottom:10px;">🛡️ Check URL Safety</h4>
-                <p style="margin-bottom:10px; font-size:14px; color:#aaa;">Check this URL on VirusTotal for safety analysis:</p>
-                <a href="#" id="virusTotalLink" target="_blank" style="display:block; padding:10px; background:#17a2b8; color:white; text-align:center; border-radius:8px; text-decoration:none; margin-bottom:10px;">
-                    🔗 Open in VirusTotal
-                </a>
-                <p style="font-size:12px; color:#888;">VirusTotal analyzes URLs with 70+ antivirus engines</p>
-            </div>
-
             <div class="url-warning" id="urlWarning" style="display:none;">
                 ⚠️ This URL is not in your allowlist
             </div>
@@ -1359,11 +1349,6 @@
         function showUrlModal(url) {
             currentUrl = url;
             document.getElementById('modalUrl').textContent = url;
-            
-            // Create VirusTotal link (proper base64 encoding)
-            const encodedUrl = btoa(url).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-            const virusTotalLink = `https://www.virustotal.com/gui/url/${encodedUrl}`;
-            document.getElementById('virusTotalLink').href = virusTotalLink;
             
             // Check if in allowlist
             const isAllowed = settings.allowlist.some(prefix => url.startsWith(prefix));
@@ -3093,11 +3078,11 @@
         }
 
         function showAbout() {
-            alert('QR Actions v2.0\n\nA professional QR code scanner and generator that works offline.\n\nFeatures:\n• Scan QR codes with camera\n• Upload images to scan\n• Generate QR codes\n• History and favorites\n• URL allowlist for safe opening\n• WiFi sharing with PIN protection\n• VirusTotal safety checks\n• Enhanced vCard support with rich actions\n• Phone, email, and URL links in vCards\n• Address map lookups (Google Maps & OpenStreetMap)\n• PWA - Install on home screen\n\n100% offline - no data collection!\n\nBy Bram Diederik');
+            alert('QR Actions v2.0\n\nA professional QR code scanner and generator that works offline.\n\nFeatures:\n• Scan QR codes with camera\n• Upload images to scan\n• Generate QR codes\n• History and favorites\n• URL allowlist for safe opening\n• WiFi sharing with PIN protection\n• Enhanced vCard support with rich actions\n• Phone, email, and URL links in vCards\n• Address map lookups (Google Maps & OpenStreetMap)\n• PWA - Install on home screen\n\n100% offline - no data collection!\n\nBy Bram Diederik');
         }
 
         function showHelp() {
-            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n3. Enable "Continuous Scan" in Settings for batch scanning\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙ SETTINGS:\n• Set URL allowlist for safe opening\n• Configure history limits\n• Install as PWA from Settings\n\n🔄 GENERATE:\nCreate QR codes for WiFi, contacts, URLs, and more\n\n🌐 URL SAFETY:\n• URLs in allowlist open directly\n• Other URLs show confirmation\n• VirusTotal safety check available\n• Scan results displayed in history\n\n📶 WiFi SHARING:\n• Share WiFi details with optional PIN protection\n• Passwords are hidden by default\n\n👤 vCARDS (ENHANCED):\n• Full contact details display\n• Clickable phone numbers (call/SMS)\n• Clickable email addresses\n• Clickable website URLs\n• Addresses with Google Maps & OpenStreetMap buttons\n• Photo support\n• Quick action buttons for each contact\n\n📍 LOCATIONS:\n• Open in Google Maps\n• Open in OpenStreetMap\n• Address lookups from vCards\n\nAll data stays on your device!');
+            alert('How to use QR Actions:\n\n🔍 SCANNING:\n1. Tap "Scan QR Code" to use camera\n2. Tap "Upload" to scan from photo\n3. Enable "Continuous Scan" in Settings for batch scanning\n\n⭐ FAVORITES:\nTap the star icon on any scan to save it\n\n⚙ SETTINGS:\n• Set URL allowlist for safe opening\n• Configure history limits\n• Install as PWA from Settings\n\n🔄 GENERATE:\nCreate QR codes for WiFi, contacts, URLs, and more\n\n🌐 URL SAFETY:\n• URLs in allowlist open directly\n• Other URLs show confirmation\n• Scan results displayed in history\n\n📶 WiFi SHARING:\n• Share WiFi details with optional PIN protection\n• Passwords are hidden by default\n\n👤 vCARDS (ENHANCED):\n• Full contact details display\n• Clickable phone numbers (call/SMS)\n• Clickable email addresses\n• Clickable website URLs\n• Addresses with Google Maps & OpenStreetMap buttons\n• Photo support\n• Quick action buttons for each contact\n\n📍 LOCATIONS:\n• Open in Google Maps\n• Open in OpenStreetMap\n• Address lookups from vCards\n\nAll data stays on your device!');
         }
 
         function showPrivacy() {
