@@ -1207,6 +1207,206 @@
             });
         }
 
+        // ============ ENHANCED UPDATE DETECTION ============
+        let swRegistration = null;
+
+        // Enhanced service worker registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => {
+                        console.log('Service Worker registered:', reg);
+                        swRegistration = reg;
+                        
+                        // Check for updates every 30 minutes
+                        setInterval(() => {
+                            console.log('Checking for service worker updates...');
+                            reg.update();
+                        }, 30 * 60 * 1000);
+                        
+                        // Check when app becomes visible
+                        document.addEventListener('visibilitychange', () => {
+                            if (!document.hidden) {
+                                reg.update();
+                            }
+                        });
+                        
+                        // Listen for new service worker
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            console.log('New service worker found!');
+                            
+                            newWorker.addEventListener('statechange', () => {
+                                console.log('Service worker state:', newWorker.state);
+                                
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New version available!
+                                    showForceUpdateNotification();
+                                }
+                            });
+                        });
+                    })
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            });
+            
+            // Listen for controller change (new version activated)
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                console.log('New service worker activated - reloading...');
+                window.location.reload();
+            });
+        }
+
+        // Show update notification with force update option
+        function showForceUpdateNotification() {
+            // Remove any existing banner
+            const existingBanner = document.getElementById('forceUpdateBanner');
+            if (existingBanner) existingBanner.remove();
+            
+            const banner = document.createElement('div');
+            banner.id = 'forceUpdateBanner';
+            banner.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #007bff, #0056b3);
+                color: white;
+                padding: 15px;
+                text-align: center;
+                z-index: 10000;
+                font-weight: bold;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                animation: slideDown 0.3s ease;
+            `;
+            
+            // Add animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideDown {
+                    from { transform: translateY(-100%); }
+                    to { transform: translateY(0); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            banner.innerHTML = `
+                <div style="max-width: 600px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                    <span style="font-size: 18px;">🚀 New version available!</span>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="forceUpdate()" style="
+                            background: white;
+                            color: #007bff;
+                            border: none;
+                            padding: 8px 25px;
+                            border-radius: 25px;
+                            font-weight: bold;
+                            font-size: 14px;
+                            cursor: pointer;
+                            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                        ">Update Now</button>
+                        <button onclick="remindLater()" style="
+                            background: transparent;
+                            color: white;
+                            border: 2px solid white;
+                            padding: 8px 20px;
+                            border-radius: 25px;
+                            font-weight: bold;
+                            font-size: 14px;
+                            cursor: pointer;
+                        ">Later</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.prepend(banner);
+        }
+
+        // Force update function
+        window.forceUpdate = function() {
+            console.log('Force update triggered');
+            
+            const banner = document.getElementById('forceUpdateBanner');
+            if (banner) banner.remove();
+            
+            if (swRegistration && swRegistration.waiting) {
+                // Send message to skip waiting
+                swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                showToast('Updating app...', false, '', 2000);
+            } else {
+                // Fallback: aggressive reload
+                forceHardReload();
+            }
+        };
+
+        // Remind later function
+        window.remindLater = function() {
+            const banner = document.getElementById('forceUpdateBanner');
+            if (banner) banner.remove();
+            
+            // Store that user was notified but didn't update
+            localStorage.setItem('update_reminded', Date.now().toString());
+            
+            // Show reminder again in 2 hours if they don't update
+            setTimeout(() => {
+                if (swRegistration && swRegistration.waiting) {
+                    showForceUpdateNotification();
+                }
+            }, 2 * 60 * 60 * 1000);
+        };
+
+        // Hard reload function
+        function forceHardReload() {
+            showToast('Clearing cache and reloading...', false, '', 2000);
+            
+            // Clear all caches
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name);
+                    });
+                });
+            }
+            
+            // Clear service worker registrations
+            if (navigator.serviceWorker) {
+                navigator.serviceWorker.getRegistrations().then(regs => {
+                    regs.forEach(reg => reg.unregister());
+                });
+            }
+            
+            // Hard reload
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 500);
+        }
+
+        // Add version check via version.json
+        async function checkVersion() {
+            try {
+                const response = await fetch('./version.json?t=' + Date.now());
+                const data = await response.json();
+                
+                const currentVersion = localStorage.getItem('app_version');
+                
+                if (currentVersion && currentVersion !== data.version) {
+                    console.log('Version mismatch:', currentVersion, 'vs', data.version);
+                    
+                    // Check if service worker needs update
+                    if (swRegistration) {
+                        swRegistration.update();
+                    }
+                }
+                
+                localStorage.setItem('app_version', data.version);
+            } catch (e) {
+                console.log('Version check failed:', e);
+            }
+        }
+
+        // Check version on load and every hour
+        checkVersion();
+        setInterval(checkVersion, 60 * 60 * 1000);
+        
         // ============ SCANNER FUNCTIONS ============
         async function startScan() {
             try {
