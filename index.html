@@ -926,6 +926,11 @@
                 ⚠️ This URL is not in your allowlist
             </div>
 
+            <!-- VirusTotal button added here - uses base64 encoded URL -->
+            <button class="btn btn-safety" onclick="scanWithVirusTotal()" style="width:100%; margin-bottom:15px; background:#ff6f00;">
+                🔬 VirusTotal Scan
+            </button>
+
             <div class="action-modal-buttons">
                 <button class="btn btn-open" onclick="openModalUrl()" id="modalOpenBtn">Open</button>
                 <button class="btn btn-copy" onclick="copyModalUrl()">Copy</button>
@@ -1175,6 +1180,8 @@
         let touchStartX = 0;
         let touchEndX = 0;
         let currentSwipeCard = null;
+        let swipeStartTime = 0;
+        let isSwiping = false;
 
         // ============ PWA INSTALLATION ============
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -1853,6 +1860,17 @@
             }
         }
 
+        // VirusTotal scan function - uses base64 encoded URL
+        function scanWithVirusTotal() {
+            if (currentUrl) {
+                // Base64 encode the URL (remove padding = for VT)
+                const base64Url = btoa(currentUrl).replace(/=/g, '');
+                const vtUrl = `https://www.virustotal.com/gui/url/${base64Url}`;
+                window.open(vtUrl, '_blank');
+                showToast('Opening VirusTotal scan');
+            }
+        }
+
         // Parser functions for different types
         function parseEmail(text) {
             if (text.startsWith('mailto:')) {
@@ -1965,7 +1983,7 @@
             showToast('Scan deleted', true);
         }
 
-        // ============ SWIPE TO DELETE ============
+        // ============ SWIPE TO DELETE (FIXED) ============
         function setupSwipeToDelete() {
             const cards = document.querySelectorAll('.card');
             
@@ -1985,24 +2003,50 @@
         function handleTouchStart(e) {
             touchStartX = e.touches[0].clientX;
             currentSwipeCard = e.currentTarget;
+            swipeStartTime = Date.now();
+            isSwiping = false;
+            
+            // Reset any existing swipe overlay
+            const overlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+                overlay.style.opacity = '0';
+            }
+            currentSwipeCard.style.transition = 'none';
         }
 
         function handleTouchMove(e) {
             if (!currentSwipeCard) return;
             
-            touchEndX = e.touches[0].clientX;
-            const diff = touchStartX - touchEndX;
+            const touchX = e.touches[0].clientX;
+            const diffX = touchStartX - touchX;
+            const absDiffX = Math.abs(diffX);
+            const touchY = e.touches[0].clientY;
             
-            // Only allow right swipe (positive diff)
-            if (diff > 0) {
-                e.preventDefault();
-                const swipeDistance = Math.min(diff, 100);
-                currentSwipeCard.style.transform = `translateX(${swipeDistance}px)`;
+            // Calculate vertical movement from stored start Y if needed
+            // For simplicity, we'll just check if horizontal movement dominates
+            if (absDiffX > 10) {
+                e.preventDefault(); // Prevent scrolling when swiping horizontally
+                isSwiping = true;
+            }
+            
+            // Limit swipe distance to 150px
+            let translateX = Math.min(Math.max(-diffX, -150), 150);
+            
+            // Only apply if horizontal swipe is significant
+            if (absDiffX > 10) {
+                currentSwipeCard.style.transform = `translateX(${-translateX}px)`;
                 
-                // Show delete overlay when swiped enough
-                const deleteOverlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
-                if (deleteOverlay) {
-                    deleteOverlay.style.opacity = Math.min(swipeDistance / 100, 1);
+                // Show delete overlay based on swipe distance
+                const overlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
+                if (overlay) {
+                    const opacity = Math.min(Math.abs(translateX) / 100, 0.9);
+                    overlay.style.opacity = opacity;
+                    if (Math.abs(translateX) > 50) {
+                        overlay.classList.add('show');
+                    } else {
+                        overlay.classList.remove('show');
+                    }
                 }
             }
         }
@@ -2010,41 +2054,73 @@
         function handleTouchEnd(e) {
             if (!currentSwipeCard) return;
             
-            const diff = touchStartX - touchEndX;
+            const touchEnd = e.changedTouches[0].clientX;
+            const diffX = touchStartX - touchEnd;
+            const absDiffX = Math.abs(diffX);
+            const swipeTime = Date.now() - swipeStartTime;
             
-            if (diff > 50) {
-                // Swipe completed - show delete confirmation
-                currentSwipeCard.classList.add('swiped');
-                const deleteOverlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
-                if (deleteOverlay) {
-                    deleteOverlay.classList.add('show');
-                    
-                    // Add click listener to delete button
-                    const deleteBtn = deleteOverlay.querySelector('.delete-swipe-text');
-                    if (deleteBtn) {
-                        deleteBtn.onclick = function() {
-                            const id = parseInt(currentSwipeCard.dataset.id);
-                            if (id) {
-                                currentSwipeCard.classList.add('swipe-delete');
-                                setTimeout(() => deleteScan(id), 300);
-                            }
-                        };
+            // Get the delete overlay
+            const overlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
+            
+            // Add transition for smooth animation
+            currentSwipeCard.style.transition = 'transform 0.3s ease';
+            
+            // Check if swipe was significant enough (distance > 50px or fast flick)
+            if (absDiffX > 50 || (absDiffX > 30 && swipeTime < 300)) {
+                // Show confirmation dialog
+                const id = parseInt(currentSwipeCard.dataset.id);
+                if (id) {
+                    // Show the delete confirmation on overlay
+                    if (overlay) {
+                        overlay.style.opacity = '1';
+                        overlay.classList.add('show');
+                        
+                        // Add click handler to the delete text if not already added
+                        const deleteText = overlay.querySelector('.delete-swipe-text');
+                        if (deleteText && !deleteText.hasAttribute('data-listener')) {
+                            deleteText.setAttribute('data-listener', 'true');
+                            deleteText.addEventListener('click', function(event) {
+                                event.stopPropagation();
+                                const cardId = parseInt(currentSwipeCard.dataset.id);
+                                if (cardId && confirm('Delete this scan?')) {
+                                    currentSwipeCard.classList.add('swipe-delete');
+                                    setTimeout(() => deleteScan(cardId), 300);
+                                } else {
+                                    // Reset card
+                                    currentSwipeCard.style.transform = 'translateX(0)';
+                                    if (overlay) {
+                                        overlay.classList.remove('show');
+                                        overlay.style.opacity = '0';
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        // Fallback to confirm dialog if overlay not present
+                        if (confirm('Delete this scan?')) {
+                            currentSwipeCard.classList.add('swipe-delete');
+                            setTimeout(() => deleteScan(id), 300);
+                        } else {
+                            currentSwipeCard.style.transform = 'translateX(0)';
+                        }
                     }
+                } else {
+                    // No ID found, just reset
+                    currentSwipeCard.style.transform = 'translateX(0)';
                 }
             } else {
-                // Reset swipe
+                // Not swiped enough, reset position
                 currentSwipeCard.style.transform = 'translateX(0)';
-                const deleteOverlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
-                if (deleteOverlay) {
-                    deleteOverlay.style.opacity = '0';
-                    deleteOverlay.classList.remove('show');
+                if (overlay) {
+                    overlay.classList.remove('show');
+                    overlay.style.opacity = '0';
                 }
             }
             
-            // Reset touch variables
+            // Reset swipe variables
             touchStartX = 0;
-            touchEndX = 0;
             currentSwipeCard = null;
+            isSwiping = false;
         }
 
         function renderHistory(search = '') {
