@@ -172,7 +172,7 @@
             display: none;
         }
 
-        /* History Cards - Swipe to delete */
+        /* History Cards - Swipe to delete + regular delete button */
         .card {
             background: #1e1e1e;
             border: 1px solid #333;
@@ -271,7 +271,7 @@
 
         .card-actions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
             gap: 8px;
             position: relative;
             z-index: 1;
@@ -285,7 +285,7 @@
         .btn-copy { background: #17a2b8; }
         .btn-open { background: #28a745; }
         .btn-share { background: #007bff; }
-        .btn-delete { background: #6c757d; }
+        .btn-delete { background: #dc3545; }
         .btn-email { background: #20c997; }
         .btn-phone { background: #6610f2; }
         .btn-maps { background: #dc3545; }
@@ -497,6 +497,7 @@
             margin: 10px auto;
             display: block;
             background: #333;
+            border: 2px solid #ffc107;
         }
 
         /* vCard Action Buttons */
@@ -926,7 +927,7 @@
                 ⚠️ This URL is not in your allowlist
             </div>
 
-            <!-- VirusTotal button added here - uses base64 encoded URL -->
+            <!-- VirusTotal button - uses base64 encoded URL -->
             <button class="btn btn-safety" onclick="scanWithVirusTotal()" style="width:100%; margin-bottom:15px; background:#ff6f00;">
                 🔬 VirusTotal Scan
             </button>
@@ -1002,7 +1003,7 @@
 
             <div class="action-modal-buttons">
                 <button class="btn btn-copy" onclick="copyModalContact()">Copy vCard</button>
-                <button class="btn btn-share" onclick="shareModalContact()">Share</button>
+                <button class="btn btn-share" onclick="shareModalContact()">Share Contact</button>
                 <button class="btn" onclick="closeContactModal()" style="background:#444;">Close</button>
             </div>
         </div>
@@ -1022,6 +1023,7 @@
             <div class="action-modal-buttons">
                 <button class="btn btn-email" onclick="sendModalEmail()">Send Email</button>
                 <button class="btn btn-copy" onclick="copyModalEmail()">Copy</button>
+                <button class="btn btn-share" onclick="shareModalEmail()">Share</button>
                 <button class="btn" onclick="closeEmailModal()" style="background:#444;">Close</button>
             </div>
         </div>
@@ -1040,6 +1042,7 @@
                 <button class="btn btn-phone" onclick="callModalPhone()">Call</button>
                 <button class="btn btn-copy" onclick="copyModalPhone()">Copy</button>
                 <button class="btn btn-sms" onclick="smsModalPhone()">SMS</button>
+                <button class="btn btn-share" onclick="shareModalPhone()">Share</button>
                 <button class="btn" onclick="closePhoneModal()" style="background:#444;">Close</button>
             </div>
         </div>
@@ -1058,6 +1061,7 @@
             <div class="action-modal-buttons">
                 <button class="btn btn-sms" onclick="sendModalSms()">Send SMS</button>
                 <button class="btn btn-copy" onclick="copyModalSms()">Copy</button>
+                <button class="btn btn-share" onclick="shareModalSms()">Share</button>
                 <button class="btn" onclick="closeSmsModal()" style="background:#444;">Close</button>
             </div>
         </div>
@@ -1078,6 +1082,7 @@
                 <button class="btn btn-google-maps" onclick="openModalGoogleMaps()">Google Maps</button>
                 <button class="btn btn-osm" onclick="openModalOpenStreetMap()">OpenStreetMap</button>
                 <button class="btn btn-copy" onclick="copyModalLocation()">Copy</button>
+                <button class="btn btn-share" onclick="shareModalLocation()">Share</button>
                 <button class="btn" onclick="closeLocationModal()" style="background:#444;">Close</button>
             </div>
         </div>
@@ -1178,6 +1183,7 @@
 
         // Swipe to delete variables
         let touchStartX = 0;
+        let touchStartY = 0;
         let touchEndX = 0;
         let currentSwipeCard = null;
         let swipeStartTime = 0;
@@ -1217,7 +1223,6 @@
         // ============ ENHANCED UPDATE DETECTION ============
         let swRegistration = null;
 
-        // Enhanced service worker registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
@@ -1225,29 +1230,22 @@
                         console.log('Service Worker registered:', reg);
                         swRegistration = reg;
                         
-                        // Check for updates every 30 minutes
                         setInterval(() => {
-                            console.log('Checking for service worker updates...');
                             reg.update();
                         }, 30 * 60 * 1000);
                         
-                        // Check when app becomes visible
                         document.addEventListener('visibilitychange', () => {
                             if (!document.hidden) {
                                 reg.update();
                             }
                         });
                         
-                        // Listen for new service worker
                         reg.addEventListener('updatefound', () => {
                             const newWorker = reg.installing;
                             console.log('New service worker found!');
                             
                             newWorker.addEventListener('statechange', () => {
-                                console.log('Service worker state:', newWorker.state);
-                                
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // New version available!
                                     showForceUpdateNotification();
                                 }
                             });
@@ -1256,16 +1254,12 @@
                     .catch(err => console.error('Service Worker registration failed:', err));
             });
             
-            // Listen for controller change (new version activated)
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-                console.log('New service worker activated - reloading...');
                 window.location.reload();
             });
         }
 
-        // Show update notification with force update option
         function showForceUpdateNotification() {
-            // Remove any existing banner
             const existingBanner = document.getElementById('forceUpdateBanner');
             if (existingBanner) existingBanner.remove();
             
@@ -1286,7 +1280,6 @@
                 animation: slideDown 0.3s ease;
             `;
             
-            // Add animation
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes slideDown {
@@ -1328,32 +1321,23 @@
             document.body.prepend(banner);
         }
 
-        // Force update function
         window.forceUpdate = function() {
-            console.log('Force update triggered');
-            
             const banner = document.getElementById('forceUpdateBanner');
             if (banner) banner.remove();
             
             if (swRegistration && swRegistration.waiting) {
-                // Send message to skip waiting
                 swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
                 showToast('Updating app...', false, '', 2000);
             } else {
-                // Fallback: aggressive reload
                 forceHardReload();
             }
         };
 
-        // Remind later function
         window.remindLater = function() {
             const banner = document.getElementById('forceUpdateBanner');
             if (banner) banner.remove();
-            
-            // Store that user was notified but didn't update
             localStorage.setItem('update_reminded', Date.now().toString());
             
-            // Show reminder again in 2 hours if they don't update
             setTimeout(() => {
                 if (swRegistration && swRegistration.waiting) {
                     showForceUpdateNotification();
@@ -1361,11 +1345,9 @@
             }, 2 * 60 * 60 * 1000);
         };
 
-        // Hard reload function
         function forceHardReload() {
             showToast('Clearing cache and reloading...', false, '', 2000);
             
-            // Clear all caches
             if ('caches' in window) {
                 caches.keys().then(names => {
                     names.forEach(name => {
@@ -1374,20 +1356,17 @@
                 });
             }
             
-            // Clear service worker registrations
             if (navigator.serviceWorker) {
                 navigator.serviceWorker.getRegistrations().then(regs => {
                     regs.forEach(reg => reg.unregister());
                 });
             }
             
-            // Hard reload
             setTimeout(() => {
                 window.location.reload(true);
             }, 500);
         }
 
-        // Add version check via version.json
         async function checkVersion() {
             try {
                 const response = await fetch('./version.json?t=' + Date.now());
@@ -1396,21 +1375,15 @@
                 const currentVersion = localStorage.getItem('app_version');
                 
                 if (currentVersion && currentVersion !== data.version) {
-                    console.log('Version mismatch:', currentVersion, 'vs', data.version);
-                    
-                    // Check if service worker needs update
                     if (swRegistration) {
                         swRegistration.update();
                     }
                 }
                 
                 localStorage.setItem('app_version', data.version);
-            } catch (e) {
-                console.log('Version check failed:', e);
-            }
+            } catch (e) {}
         }
 
-        // Check version on load and every hour
         checkVersion();
         setInterval(checkVersion, 60 * 60 * 1000);
         
@@ -1420,9 +1393,8 @@
                 scanner = new Html5Qrcode("reader");
                 const cameras = await Html5Qrcode.getCameras();
 
-                let cameraId = 'environment'; // Default to back camera
+                let cameraId = 'environment';
 
-                // Persistent Camera Selection logic
                 if (settings.camera && settings.camera !== '') {
                     const savedCameraExists = cameras.some(cam => cam.id === settings.camera);
                     if (savedCameraExists) {
@@ -1455,7 +1427,6 @@
                 showToast('Camera started');
             } catch (err) {
                 showToast('Camera error: ' + err.message, true);
-                console.error('Camera error:', err);
             }
         }
 
@@ -1482,7 +1453,6 @@
             saveScan(decodedText);
             showToast('QR code scanned!');
             
-            // Show appropriate modal based on content type
             showContentModal(decodedText);
         }
 
@@ -1557,10 +1527,8 @@
             currentUrl = url;
             document.getElementById('modalUrl').textContent = url;
             
-            // Check if in allowlist
             const isAllowed = settings.allowlist.some(prefix => url.startsWith(prefix));
             
-            // Only show Open button if in allowlist
             const openBtn = document.getElementById('modalOpenBtn');
             openBtn.style.display = isAllowed ? 'block' : 'none';
             
@@ -1575,7 +1543,6 @@
             document.getElementById('modalWifiSsid').textContent = currentWifiData.ssid || 'Unknown';
             document.getElementById('modalWifiSecurity').textContent = currentWifiData.security || 'Unknown';
             
-            // Reset password display
             const passwordElement = document.getElementById('modalWifiPassword');
             passwordElement.textContent = 'Click to reveal';
             passwordElement.classList.remove('revealed');
@@ -1687,15 +1654,7 @@
 
         function shareModalContent() {
             const content = currentUrl || currentText || '';
-            if (content && navigator.share) {
-                navigator.share({
-                    title: 'QR Code Content',
-                    text: content
-                });
-            } else if (content) {
-                copyText(content);
-                showToast('Copied to clipboard');
-            }
+            shareContent(content, 'Content');
         }
 
         function toggleModalPasswordReveal() {
@@ -1724,7 +1683,6 @@
 
         function connectToWifi() {
             showToast('WiFi connection initiated');
-            // Note: Actual WiFi connection requires platform-specific APIs
         }
 
         function copyModalText() {
@@ -1736,7 +1694,6 @@
         }
 
         function copyModalContact() {
-            // Reconstruct vCard from parsed contact
             let vcard = `BEGIN:VCARD\nVERSION:3.0\n`;
             if (currentContact.name) vcard += `FN:${currentContact.name}\n`;
             if (currentContact.organization) vcard += `ORG:${currentContact.organization}\n`;
@@ -1748,6 +1705,11 @@
             if (currentContact.emails && currentContact.emails.length > 0) {
                 currentContact.emails.forEach(email => {
                     vcard += `EMAIL;TYPE=${email.type}:${email.address}\n`;
+                });
+            }
+            if (currentContact.urls && currentContact.urls.length > 0) {
+                currentContact.urls.forEach(url => {
+                    vcard += `URL:${url}\n`;
                 });
             }
             if (currentContact.notes) vcard += `NOTE:${currentContact.notes}\n`;
@@ -1767,16 +1729,20 @@
                         shareText += `  ${phone.type}: ${phone.number}\n`;
                     });
                 }
-                
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'Contact',
-                        text: shareText
+                if (currentContact.emails && currentContact.emails.length > 0) {
+                    shareText += 'Emails:\n';
+                    currentContact.emails.forEach(email => {
+                        shareText += `  ${email.type}: ${email.address}\n`;
                     });
-                } else {
-                    copyText(shareText);
-                    showToast('Contact details copied to clipboard');
                 }
+                if (currentContact.urls && currentContact.urls.length > 0) {
+                    shareText += 'Websites:\n';
+                    currentContact.urls.forEach(url => {
+                        shareText += `  ${url}\n`;
+                    });
+                }
+                
+                shareContent(shareText, 'Contact');
             }
         }
 
@@ -1803,6 +1769,15 @@
             }
         }
 
+        function shareModalEmail() {
+            if (currentEmail) {
+                let shareText = `Email to: ${currentEmail.to}`;
+                if (currentEmail.subject) shareText += `\nSubject: ${currentEmail.subject}`;
+                if (currentEmail.body) shareText += `\nBody: ${currentEmail.body}`;
+                shareContent(shareText, 'Email');
+            }
+        }
+
         function callModalPhone() {
             if (currentPhone && currentPhone.number) {
                 window.location.href = `tel:${currentPhone.number}`;
@@ -1819,6 +1794,12 @@
         function smsModalPhone() {
             if (currentPhone && currentPhone.number) {
                 window.location.href = `sms:${currentPhone.number}`;
+            }
+        }
+
+        function shareModalPhone() {
+            if (currentPhone && currentPhone.number) {
+                shareContent(`Phone: ${currentPhone.number}`, 'Phone');
             }
         }
 
@@ -1841,6 +1822,14 @@
             }
         }
 
+        function shareModalSms() {
+            if (currentSms) {
+                let shareText = `SMS to: ${currentSms.number}`;
+                if (currentSms.message) shareText += `\nMessage: ${currentSms.message}`;
+                shareContent(shareText, 'SMS');
+            }
+        }
+
         function openModalGoogleMaps() {
             if (currentLocation) {
                 window.open(`https://www.google.com/maps/search/?api=1&query=${currentLocation.lat},${currentLocation.lng}`, '_blank');
@@ -1860,14 +1849,33 @@
             }
         }
 
+        function shareModalLocation() {
+            if (currentLocation) {
+                shareContent(`Location: ${currentLocation.lat}, ${currentLocation.lng}`, 'Location');
+            }
+        }
+
         // VirusTotal scan function - uses base64 encoded URL
         function scanWithVirusTotal() {
             if (currentUrl) {
-                // Base64 encode the URL (remove padding = for VT)
                 const base64Url = btoa(currentUrl).replace(/=/g, '');
                 const vtUrl = `https://www.virustotal.com/gui/url/${base64Url}`;
                 window.open(vtUrl, '_blank');
                 showToast('Opening VirusTotal scan');
+            }
+        }
+
+        // Universal share function
+        function shareContent(text, title = 'QR Content') {
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    text: text
+                }).catch(() => {
+                    copyText(text);
+                });
+            } else {
+                copyText(text);
             }
         }
 
@@ -1988,12 +1996,10 @@
             const cards = document.querySelectorAll('.card');
             
             cards.forEach(card => {
-                // Remove existing listeners
                 card.removeEventListener('touchstart', handleTouchStart);
                 card.removeEventListener('touchmove', handleTouchMove);
                 card.removeEventListener('touchend', handleTouchEnd);
                 
-                // Add new listeners
                 card.addEventListener('touchstart', handleTouchStart);
                 card.addEventListener('touchmove', handleTouchMove);
                 card.addEventListener('touchend', handleTouchEnd);
@@ -2002,11 +2008,11 @@
 
         function handleTouchStart(e) {
             touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
             currentSwipeCard = e.currentTarget;
             swipeStartTime = Date.now();
             isSwiping = false;
             
-            // Reset any existing swipe overlay
             const overlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
             if (overlay) {
                 overlay.classList.remove('show');
@@ -2019,25 +2025,20 @@
             if (!currentSwipeCard) return;
             
             const touchX = e.touches[0].clientX;
-            const diffX = touchStartX - touchX;
-            const absDiffX = Math.abs(diffX);
             const touchY = e.touches[0].clientY;
+            const diffX = touchStartX - touchX;
+            const diffY = Math.abs(touchStartY - touchY);
+            const absDiffX = Math.abs(diffX);
             
-            // Calculate vertical movement from stored start Y if needed
-            // For simplicity, we'll just check if horizontal movement dominates
-            if (absDiffX > 10) {
-                e.preventDefault(); // Prevent scrolling when swiping horizontally
+            if (absDiffX > 10 && diffY < 20) {
+                e.preventDefault();
                 isSwiping = true;
             }
             
-            // Limit swipe distance to 150px
-            let translateX = Math.min(Math.max(-diffX, -150), 150);
-            
-            // Only apply if horizontal swipe is significant
-            if (absDiffX > 10) {
+            if (isSwiping) {
+                let translateX = Math.min(Math.max(-diffX, -120), 120);
                 currentSwipeCard.style.transform = `translateX(${-translateX}px)`;
                 
-                // Show delete overlay based on swipe distance
                 const overlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
                 if (overlay) {
                     const opacity = Math.min(Math.abs(translateX) / 100, 0.9);
@@ -2057,59 +2058,28 @@
             const touchEnd = e.changedTouches[0].clientX;
             const diffX = touchStartX - touchEnd;
             const absDiffX = Math.abs(diffX);
-            const swipeTime = Date.now() - swipeStartTime;
             
-            // Get the delete overlay
-            const overlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
-            
-            // Add transition for smooth animation
             currentSwipeCard.style.transition = 'transform 0.3s ease';
             
-            // Check if swipe was significant enough (distance > 50px or fast flick)
-            if (absDiffX > 50 || (absDiffX > 30 && swipeTime < 300)) {
-                // Show confirmation dialog
+            const overlay = currentSwipeCard.querySelector('.delete-swipe-overlay');
+            
+            if (isSwiping && absDiffX > 60) {
                 const id = parseInt(currentSwipeCard.dataset.id);
                 if (id) {
-                    // Show the delete confirmation on overlay
-                    if (overlay) {
-                        overlay.style.opacity = '1';
-                        overlay.classList.add('show');
-                        
-                        // Add click handler to the delete text if not already added
-                        const deleteText = overlay.querySelector('.delete-swipe-text');
-                        if (deleteText && !deleteText.hasAttribute('data-listener')) {
-                            deleteText.setAttribute('data-listener', 'true');
-                            deleteText.addEventListener('click', function(event) {
-                                event.stopPropagation();
-                                const cardId = parseInt(currentSwipeCard.dataset.id);
-                                if (cardId && confirm('Delete this scan?')) {
-                                    currentSwipeCard.classList.add('swipe-delete');
-                                    setTimeout(() => deleteScan(cardId), 300);
-                                } else {
-                                    // Reset card
-                                    currentSwipeCard.style.transform = 'translateX(0)';
-                                    if (overlay) {
-                                        overlay.classList.remove('show');
-                                        overlay.style.opacity = '0';
-                                    }
-                                }
-                            });
-                        }
+                    if (confirm('Delete this scan?')) {
+                        currentSwipeCard.classList.add('swipe-delete');
+                        setTimeout(() => deleteScan(id), 300);
                     } else {
-                        // Fallback to confirm dialog if overlay not present
-                        if (confirm('Delete this scan?')) {
-                            currentSwipeCard.classList.add('swipe-delete');
-                            setTimeout(() => deleteScan(id), 300);
-                        } else {
-                            currentSwipeCard.style.transform = 'translateX(0)';
+                        currentSwipeCard.style.transform = 'translateX(0)';
+                        if (overlay) {
+                            overlay.classList.remove('show');
+                            overlay.style.opacity = '0';
                         }
                     }
                 } else {
-                    // No ID found, just reset
                     currentSwipeCard.style.transform = 'translateX(0)';
                 }
             } else {
-                // Not swiped enough, reset position
                 currentSwipeCard.style.transform = 'translateX(0)';
                 if (overlay) {
                     overlay.classList.remove('show');
@@ -2117,8 +2087,8 @@
                 }
             }
             
-            // Reset swipe variables
             touchStartX = 0;
+            touchStartY = 0;
             currentSwipeCard = null;
             isSwiping = false;
         }
@@ -2146,7 +2116,6 @@
 
             container.innerHTML = history.map(item => `
                 <div class="card" data-id="${item.id}">
-                    <!-- Swipe to delete overlay -->
                     <div class="delete-swipe-overlay">
                         <div class="delete-swipe-text">
                             🗑️ Delete
@@ -2169,6 +2138,9 @@
                             📋 Copy
                         </button>
                         ${getActionButtons(item)}
+                        <button class="btn btn-small btn-delete" onclick="deleteScan(${item.id})">
+                            🗑️ Delete
+                        </button>
                     </div>
 
                     <div style="font-size:12px; color:#666; margin-top:10px;">
@@ -2177,72 +2149,43 @@
                 </div>
             `).join('');
 
-            // Setup swipe to delete after rendering
             setTimeout(setupSwipeToDelete, 100);
         }
 
         function getActionButtons(item) {
-            const isAllowed = settings.allowlist.some(prefix => item.text.startsWith(prefix));
+            const buttons = [];
             
+            // Add type-specific buttons
             switch(item.type) {
                 case 'url':
-                    return `
-                        <button class="btn btn-small btn-open" onclick="showUrlModal('${escapeText(item.text)}')">
-                            🌐 Open
-                        </button>
-                        <button class="btn btn-small btn-share" onclick="shareScan('${escapeText(item.text)}')">
-                            📤 Share
-                        </button>
-                    `;
+                    buttons.push(`<button class="btn btn-small btn-open" onclick="showUrlModal('${escapeText(item.text)}')">🌐 Open</button>`);
+                    break;
                 case 'wifi':
-                    return `
-                        <button class="btn btn-small btn-copy" onclick="copyWifiPassword('${escapeText(item.text)}')">
-                            📋 Password
-                        </button>
-                        <button class="btn btn-small btn-wifi-share" onclick="showWifiModal('${escapeText(item.text)}')">
-                            📶 WiFi
-                        </button>
-                    `;
+                    buttons.push(`<button class="btn btn-small btn-wifi-share" onclick="showWifiModal('${escapeText(item.text)}')">📶 WiFi</button>`);
+                    break;
                 case 'email':
-                    return `
-                        <button class="btn btn-small btn-email" onclick="showEmailModal('${escapeText(item.text)}')">
-                            📧 Email
-                        </button>
-                    `;
+                    buttons.push(`<button class="btn btn-small btn-email" onclick="showEmailModal('${escapeText(item.text)}')">📧 Email</button>`);
+                    break;
                 case 'phone':
-                    return `
-                        <button class="btn btn-small btn-phone" onclick="showPhoneModal('${escapeText(item.text)}')">
-                            📞 Call
-                        </button>
-                    `;
+                    buttons.push(`<button class="btn btn-small btn-phone" onclick="showPhoneModal('${escapeText(item.text)}')">📞 Call</button>`);
+                    break;
                 case 'sms':
-                    return `
-                        <button class="btn btn-small btn-sms" onclick="showSmsModal('${escapeText(item.text)}')">
-                            💬 SMS
-                        </button>
-                    `;
+                    buttons.push(`<button class="btn btn-small btn-sms" onclick="showSmsModal('${escapeText(item.text)}')">💬 SMS</button>`);
+                    break;
                 case 'geo':
-                    return `
-                        <button class="btn btn-small btn-google-maps" onclick="showLocationModal('${escapeText(item.text)}')">
-                            🗺️ Maps
-                        </button>
-                    `;
+                    buttons.push(`<button class="btn btn-small btn-google-maps" onclick="showLocationModal('${escapeText(item.text)}')">🗺️ Maps</button>`);
+                    break;
                 case 'vcard':
-                    return `
-                        <button class="btn btn-small btn-copy" onclick="copyVCard('${escapeText(item.text)}')">
-                            👤 Copy
-                        </button>
-                        <button class="btn btn-small btn-share" onclick="showContactModal('${escapeText(item.text)}')">
-                            👤 Contact
-                        </button>
-                    `;
+                    buttons.push(`<button class="btn btn-small btn-share" onclick="showContactModal('${escapeText(item.text)}')">👤 Contact</button>`);
+                    break;
                 default:
-                    return `
-                        <button class="btn btn-small btn-share" onclick="showTextModal('${escapeText(item.text)}')">
-                            📝 View
-                        </button>
-                    `;
+                    buttons.push(`<button class="btn btn-small btn-share" onclick="showTextModal('${escapeText(item.text)}')">📝 View</button>`);
             }
+            
+            // Add share button for all types
+            buttons.push(`<button class="btn btn-small btn-share" onclick="shareScan('${escapeText(item.text)}')">📤 Share</button>`);
+            
+            return buttons.join('');
         }
 
         function formatContent(text, type) {
@@ -2281,11 +2224,6 @@
                             <strong>Location:</strong><br>
                             Latitude: ${coords[0]}<br>
                             Longitude: ${coords[1]}
-                            <div class="location-actions">
-                                <button class="btn btn-small btn-google-maps" onclick="showLocationModal('${escapeText(text)}')" style="padding:8px; font-size:12px;">
-                                    🗺️ Maps
-                                </button>
-                            </div>
                         </div>
                     `;
                 default:
@@ -2333,14 +2271,11 @@
                         <div class="vcard-field-value" style="margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
                             <span>${phone.type}:</span>
                             <div>
-                                <a href="tel:${phoneNumber}" class="vcard-link" style="margin-right:8px;">
-                                    📞 ${phone.number}
-                                </a>
-                                <button class="contact-action-btn" onclick="callPhoneNumber('${escapeText(phoneNumber)}')" title="Call">
-                                    Call
+                                <button class="contact-action-btn" onclick="window.location.href='tel:${phoneNumber}'" title="Call">
+                                    📞 Call
                                 </button>
-                                <button class="contact-action-btn" onclick="sendSMSToNumber('${escapeText(phoneNumber)}')" title="SMS">
-                                    SMS
+                                <button class="contact-action-btn" onclick="window.location.href='sms:${phoneNumber}'" title="SMS">
+                                    💬 SMS
                                 </button>
                             </div>
                         </div>
@@ -2356,11 +2291,25 @@
                         <div class="vcard-field-value" style="margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
                             <span>${email.type}:</span>
                             <div>
-                                <a href="mailto:${email.address}" class="vcard-link" style="margin-right:8px;">
-                                    ✉ ${email.address}
-                                </a>
-                                <button class="contact-action-btn" onclick="sendEmailTo('${escapeText(email.address)}')" title="Send Email">
-                                    Send
+                                <button class="contact-action-btn" onclick="window.location.href='mailto:${email.address}'" title="Send Email">
+                                    ✉ Send
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            
+            if (contact.urls && contact.urls.length > 0) {
+                html += `<div class="vcard-field"><div class="vcard-field-label">Websites</div>`;
+                contact.urls.forEach(url => {
+                    html += `
+                        <div class="vcard-field-value" style="margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
+                            <span>${url}</span>
+                            <div>
+                                <button class="contact-action-btn" onclick="window.open('${url}', '_blank')" title="Open">
+                                    🔗 Open
                                 </button>
                             </div>
                         </div>
@@ -2378,34 +2327,11 @@
                             <div><strong>${addr.type}:</strong></div>
                             <div style="margin:5px 0; padding:5px; background:#2a2a2a; border-radius:4px;">${addr.address.replace(/\n/g, '<br>')}</div>
                             <div class="vcard-action-buttons">
-                                <button class="vcard-action-btn address" onclick="openAddressInGoogleMaps('${encodedAddress}')">
+                                <button class="vcard-action-btn address" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${encodedAddress}', '_blank')">
                                     🗺 Google Maps
                                 </button>
-                                <button class="vcard-action-btn address" onclick="openAddressInOSM('${encodedAddress}')">
+                                <button class="vcard-action-btn address" onclick="window.open('https://www.openstreetmap.org/search?query=${encodedAddress}', '_blank')">
                                     🗺 OpenStreetMap
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-                html += `</div>`;
-            }
-            
-            if (contact.urls && contact.urls.length > 0) {
-                html += `<div class="vcard-field"><div class="vcard-field-label">Websites</div>`;
-                contact.urls.forEach(url => {
-                    const isAllowed = settings.allowlist.some(prefix => url.startsWith(prefix));
-                    
-                    html += `
-                        <div class="vcard-field-value" style="margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <a href="${url}" target="_blank" class="vcard-link" style="${isAllowed ? 'border-color:#28a745;' : 'border-color:#ffc107;'}">
-                                    🔗 ${url.length > 40 ? url.substring(0, 40) + '...' : url}
-                                </a>
-                            </div>
-                            <div>
-                                <button class="contact-action-btn url" onclick="showUrlModal('${escapeText(url)}')" title="Open">
-                                    Open
                                 </button>
                             </div>
                         </div>
@@ -2422,27 +2348,6 @@
                     </div>
                 `;
             }
-            
-            // Add quick action buttons for the entire contact
-            html += `
-                <div class="vcard-action-buttons" style="margin-top:15px; justify-content:center;">
-                    ${contact.phones && contact.phones.length > 0 ? `
-                        <button class="vcard-action-btn phone" onclick="callFirstPhoneNumber()" title="Call First Number">
-                            📞 Call
-                        </button>
-                    ` : ''}
-                    ${contact.emails && contact.emails.length > 0 ? `
-                        <button class="vcard-action-btn email" onclick="emailFirstContact()" title="Email First Address">
-                            ✉ Email
-                        </button>
-                    ` : ''}
-                    ${contact.urls && contact.urls.length > 0 ? `
-                        <button class="vcard-action-btn url" onclick="openFirstUrl()" title="Open First Website">
-                            🔗 Website
-                        </button>
-                    ` : ''}
-                </div>
-            `;
             
             html += '</div>';
             return html;
@@ -2475,7 +2380,6 @@
             
             let currentLine = '';
             for (let i = 0; i < lines.length; i++) {
-                // Handle folded lines (lines that start with space or tab)
                 if (lines[i].startsWith(' ') || lines[i].startsWith('\t')) {
                     currentLine += lines[i].substring(1);
                 } else {
@@ -2493,30 +2397,24 @@
         }
 
         function processVCardLine(line, contact) {
-            // Skip empty lines and END:VCARD
             if (!line || line.startsWith('END:VCARD')) return;
             
-            // Parse name
             if (line.startsWith('FN:')) {
                 contact.name = line.substring(3);
             }
             
-            // Parse title
             if (line.startsWith('TITLE:')) {
                 contact.title = line.substring(6);
             }
             
-            // Parse organization
             if (line.startsWith('ORG:')) {
                 contact.organization = line.substring(4);
             }
             
-            // Parse notes
             if (line.startsWith('NOTE:')) {
                 contact.notes = line.substring(5);
             }
             
-            // Parse phones
             if (line.startsWith('TEL')) {
                 const parts = line.split(';');
                 let type = 'Other';
@@ -2539,7 +2437,6 @@
                 }
             }
             
-            // Parse emails
             if (line.startsWith('EMAIL')) {
                 const parts = line.split(';');
                 let type = 'Other';
@@ -2562,11 +2459,9 @@
                 }
             }
             
-            // Parse addresses (enhanced)
             if (line.startsWith('ADR')) {
                 const parts = line.split(';');
                 let type = 'Other';
-                let addressParts = [];
                 
                 for (let part of parts) {
                     if (part.startsWith('TYPE=')) {
@@ -2574,9 +2469,7 @@
                     } else if (part.includes(':')) {
                         const addrData = part.split(':')[1];
                         if (addrData) {
-                            // ADR format: post office box; extended address; street; city; region; postal code; country
                             const addrComponents = addrData.split(';');
-                            // Build a readable address
                             let street = addrComponents[2] || '';
                             let city = addrComponents[3] || '';
                             let region = addrComponents[4] || '';
@@ -2594,18 +2487,13 @@
                             if (country) address += country;
                             
                             if (address.trim()) {
-                                contact.addresses.push({ 
-                                    type, 
-                                    address: address.trim(),
-                                    components: { street, city, region, postalCode, country }
-                                });
+                                contact.addresses.push({ type, address: address.trim() });
                             }
                         }
                     }
                 }
             }
             
-            // Parse URLs
             if (line.startsWith('URL')) {
                 const url = line.split(':')[1];
                 if (url && url.trim()) {
@@ -2613,62 +2501,18 @@
                 }
             }
             
-            // Parse photo (basic support)
             if (line.startsWith('PHOTO')) {
                 if (line.includes('data:image/')) {
-                    // Extract base64 image data
                     const match = line.match(/data:image\/[^;]+;base64,([^"]+)/);
                     if (match && match[1]) {
-                        contact.photo = `data:image/jpeg;base64,${match[1]}`;
+                        contact.photo = line.substring(line.indexOf('http'));
                     }
                 } else if (line.includes('http')) {
-                    // Handle URL photos
                     const urlMatch = line.match(/http[^\s]+/);
                     if (urlMatch) {
                         contact.photo = urlMatch[0];
                     }
                 }
-            }
-        }
-
-        // vCard helper functions
-        function callPhoneNumber(number) {
-            window.location.href = 'tel:' + number;
-        }
-
-        function sendSMSToNumber(number) {
-            window.location.href = 'sms:' + number;
-        }
-
-        function sendEmailTo(email) {
-            window.location.href = 'mailto:' + email;
-        }
-
-        function openAddressInGoogleMaps(address) {
-            window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank');
-        }
-
-        function openAddressInOSM(address) {
-            window.open(`https://www.openstreetmap.org/search?query=${address}`, '_blank');
-        }
-
-        // These functions would need the contact context - for simplicity, they use the first available
-        function callFirstPhoneNumber() {
-            if (currentContact && currentContact.phones && currentContact.phones.length > 0) {
-                const phoneNumber = currentContact.phones[0].number.replace(/[^\d+]/g, '');
-                window.location.href = 'tel:' + phoneNumber;
-            }
-        }
-
-        function emailFirstContact() {
-            if (currentContact && currentContact.emails && currentContact.emails.length > 0) {
-                window.location.href = 'mailto:' + currentContact.emails[0].address;
-            }
-        }
-
-        function openFirstUrl() {
-            if (currentContact && currentContact.urls && currentContact.urls.length > 0) {
-                showUrlModal(currentContact.urls[0]);
             }
         }
 
@@ -2695,58 +2539,7 @@
                 });
             }
             
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Contact',
-                    text: shareText
-                });
-            } else {
-                copyText(shareText);
-                showToast('Contact details copied to clipboard');
-            }
-        }
-
-        function sendEmail(text) {
-            if (text.startsWith('mailto:')) {
-                window.location.href = text;
-            } else {
-                window.location.href = 'mailto:' + text;
-            }
-        }
-
-        function callPhone(text) {
-            const number = text.replace('tel:', '');
-            window.location.href = 'tel:' + number;
-        }
-
-        function sendSMS(text) {
-            if (text.startsWith('sms:')) {
-                window.location.href = text;
-            } else {
-                window.location.href = 'sms:' + text;
-            }
-        }
-
-        function openGoogleMaps(text) {
-            if (text.startsWith('geo:')) {
-                const coords = text.replace('geo:', '');
-                window.open(`https://www.google.com/maps/search/?api=1&query=${coords}`, '_blank');
-            }
-        }
-
-        function openOpenStreetMap(text) {
-            if (text.startsWith('geo:')) {
-                const coords = text.replace('geo:', '').split(',');
-                const lat = coords[0];
-                const lon = coords[1];
-                window.open(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}&zoom=15`, '_blank');
-            }
-        }
-
-        // Enhanced geo location with address parsing
-        function openAddressInMaps(address) {
-            // For addresses from vCards
-            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, '_blank');
+            shareContent(shareText, 'Contact');
         }
 
         function searchHistory(query) {
@@ -2770,7 +2563,6 @@
 
             container.innerHTML = favorites.map(item => `
                 <div class="card" data-id="${item.id}" style="border-color:#ffc107;">
-                    <!-- Swipe to delete overlay -->
                     <div class="delete-swipe-overlay">
                         <div class="delete-swipe-text">
                             🗑️ Delete
@@ -2793,11 +2585,13 @@
                             📋 Copy
                         </button>
                         ${getActionButtons(item)}
+                        <button class="btn btn-small btn-delete" onclick="deleteScan(${item.id})">
+                            🗑️ Delete
+                        </button>
                     </div>
                 </div>
             `).join('');
 
-            // Setup swipe to delete after rendering
             setTimeout(setupSwipeToDelete, 100);
         }
 
@@ -2866,7 +2660,6 @@
             document.getElementById('shareSsid').textContent = currentWifiData.ssid || 'Unknown';
             document.getElementById('shareSecurity').textContent = currentWifiData.security || 'Unknown';
             
-            // Reset password display
             const passwordElement = document.getElementById('sharePassword');
             passwordElement.textContent = 'Click to reveal';
             passwordElement.classList.remove('revealed');
@@ -2899,19 +2692,8 @@
                 shareText += `Password: ${currentWifiData.password || 'No password'}`;
             }
 
-            if (navigator.share) {
-                navigator.share({
-                    title: 'WiFi Network Details',
-                    text: shareText
-                }).then(() => {
-                    showToast('WiFi details shared');
-                    closeWifiShareModal();
-                });
-            } else {
-                copyText(shareText);
-                showToast('WiFi details copied to clipboard');
-                closeWifiShareModal();
-            }
+            shareContent(shareText, 'WiFi Details');
+            closeWifiShareModal();
         }
 
         function closeWifiShareModal() {
@@ -3130,7 +2912,6 @@
         }
 
         function escapeWifiField(field) {
-            // Escape special characters in WiFi fields
             return field.replace(/\\/g, '\\\\')
                        .replace(/;/g, '\\;')
                        .replace(/:/g, '\\:')
@@ -3191,7 +2972,6 @@
                     select.appendChild(option);
                 });
 
-                // Apply persisted camera ID from settings
                 if (settings.camera) {
                     const cameraExists = cameras.some(cam => cam.id === settings.camera);
                     if (cameraExists) {
@@ -3319,14 +3099,7 @@
         }
 
         function shareScan(text) {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'QR Code Data',
-                    text: text
-                });
-            } else {
-                copyText(text);
-            }
+            shareContent(text, 'QR Content');
         }
 
         function vibrate() {
@@ -3393,16 +3166,10 @@
 
         // ============ INITIALIZATION ============
         document.addEventListener('DOMContentLoaded', function() {
-            // Load settings
             loadSettings();
-
-            // Update stats
             updateStats();
-
-            // Show scan tab
             switchTab('scan');
 
-            // Show welcome message
             if (!localStorage.getItem('welcome_shown')) {
                 setTimeout(() => {
                     showToast('Welcome to QR Actions! Install for best experience.', false, 'warning', 5000);
@@ -3410,12 +3177,10 @@
                 localStorage.setItem('welcome_shown', 'true');
             }
 
-            // Handle offline/online
             window.addEventListener('offline', () => showToast('Working offline', false, '', 2000));
             window.addEventListener('online', () => showToast('Back online', false, '', 2000));
         });
 
-        // Prevent pinch zoom
         document.addEventListener('gesturestart', function(e) {
             e.preventDefault();
         });

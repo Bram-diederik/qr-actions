@@ -1,5 +1,5 @@
 /* Service Worker for QR Actions - Enhanced with Update Detection */
-const CACHE_NAME = 'qr-actions-v101'; // CHANGE THIS VERSION WHEN YOU UPDATE!
+const CACHE_NAME = 'qr-actions-v102'; // CHANGE THIS VERSION WHEN YOU UPDATE!
 const ASSETS = [
   './',
   './index.html',
